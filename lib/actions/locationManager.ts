@@ -5,11 +5,9 @@ import { cookies } from "next/headers";
 import db from "../dbPool";
 import { redirect } from "next/navigation";
 import { RowDataPacket } from "mysql2";
-import { sendLoginOtpEmail } from "../email";
-import { getSessionUser } from "../checkSession";
-import { CompanyFormData, LocationData } from "../types/types";
-import { ResultSetHeader } from "mysql2";
 import { generateOTP } from "../otp";
+import { ValetBoyData, ValetBoyDetails } from "../types/types";
+import { getSessionUser } from "../checkSession";
 
 
 export async function sendManagerOtp({ ...payload }: {
@@ -20,24 +18,24 @@ export async function sendManagerOtp({ ...payload }: {
     try {
         const [rows] = await db.query<RowDataPacket[]>(
             `
-            SELECT id, email, company_id
+            SELECT id, contact_person_mobile, company_id
             FROM location_manager
-            WHERE email = ? OR contact_person_mobile = ?
+            WHERE contact_person_mobile = ?
             LIMIT 1
             `,
-            [payload.email || null, payload.mobile || null]
+            [payload.mobile || null]
         );
 
         if (rows.length === 0) {
             return {
                 success: false,
-                message: "Invalid Email or Mobbile"
+                message: "Invalid Credentials"
             }
         }
 
-        const email = rows[0].email;
         const user_id = rows[0].id;
         const companyId = rows[0].company_id;
+        const mobile = rows[0].contact_person_mobile;
 
         const otp = await generateOTP();
         const expires_at = new Date(Date.now() + 10 * 60 * 1000);
@@ -49,7 +47,7 @@ export async function sendManagerOtp({ ...payload }: {
         const res = await db.execute(query, [
             companyId,
             user_id,
-            email,
+            mobile,
             otp,
             expires_at
         ]);
@@ -70,7 +68,7 @@ export async function sendManagerOtp({ ...payload }: {
 
         return {
             success: true,
-            email: rows[0].email,
+            identifier: rows[0].contact_person_mobile,
             message: "Otp Sent Successfully"
         }
 
@@ -84,9 +82,11 @@ export async function sendManagerOtp({ ...payload }: {
     }
 }
 
-export const matchManagerOTP = async (email: string, inputOTP: string) => {
+export const matchManagerOTP = async (mobile: string, inputOTP: string) => {
 
     // Fetch latest valid OTP
+
+    console.log(mobile)
     const [rows]: any = await db.execute(
         `
     SELECT id, otp, user_id, company_id, attempts
@@ -96,7 +96,7 @@ export const matchManagerOTP = async (email: string, inputOTP: string) => {
     ORDER BY created_at DESC
     LIMIT 1
     `,
-        [email]
+        [mobile]
     );
 
     if (!rows.length) {
@@ -146,11 +146,10 @@ export const matchManagerOTP = async (email: string, inputOTP: string) => {
         maxAge: 24 * 60 * 60,
     });
 
-    redirect("/maletLocationManager/dashboard");
-
+    redirect("/valetLocationManager/dashboard");
 };
 
-export const insertLocation = async (data: LocationData) => {
+export const insertValetBoy = async (data: ValetBoyData) => {
     const conn = await db.getConnection();
 
     try {
@@ -158,28 +157,30 @@ export const insertLocation = async (data: LocationData) => {
         if (!session) throw new Error("Unauthorized");
 
         const companyId = session.company_id;
-
+        const locationId = session.id;
 
         const values = [];
 
-        for (let i = 0; i < data.locationCount; i++) {
+        for (let i = 0; i < data.count; i++) {
             values.push([
                 companyId,
-                data.locationName[i],
-                data.locationAddress[i],
-                data.contactPerson[i],
-                data.personMobile[i]
+                locationId,
+                data.name[i],
+                data.valet_boy_id[i],
+                data.prk_lot_id[i],
+                data.mobile[i]
             ]);
         }
 
         await conn.query(
             `
-            INSERT INTO location_manager (
+            INSERT INTO valet_boy (
             company_id,
-            location_name,
-            location_address,
-            contact_person_name,
-            contact_person_mobile
+            valet_location_id,
+            valet_boy_name,
+            valet_boy_id,
+            prk_lot_id,
+            mobile
             )
             VALUES ?
             `,
@@ -188,7 +189,7 @@ export const insertLocation = async (data: LocationData) => {
 
         return {
             success: true,
-            message: "Successfully inserted all locations"
+            message: "Successfully inserted all Valet boys"
         };
 
     } catch (error: any) {
@@ -203,3 +204,78 @@ export const insertLocation = async (data: LocationData) => {
         conn.release();
     }
 };
+
+export const fetchValetBoyData = async () => {
+    const conn = await db.getConnection();
+
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const company_id = session.company_id;
+        const location_id = session.id
+
+        const [rows]: any = await conn.execute(
+            `
+      SELECT *
+      FROM valet_boy
+      WHERE company_id = ? and valet_location_id = ?
+      ORDER BY id DESC
+      `, [company_id, location_id]
+        );
+
+        return {
+            success: true,
+            data: rows as ValetBoyDetails[]
+        };
+
+    } catch (error: any) {
+        console.error("Fetch Companies Error:", error);
+
+        return {
+            success: false,
+            message: error.message || "Something went wrong"
+        };
+
+    } finally {
+        conn.release();
+    }
+};
+
+export const getLocationDetails = async () => {
+    const conn = await db.getConnection();
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const company_id = session.company_id;
+        const location_id = session.id
+
+        const [rows]: any = await conn.execute(
+            `
+      SELECT *
+      FROM location_manager
+      WHERE company_id = ? and valet_location_id = ?
+      ORDER BY id DESC
+      `, [company_id, location_id]
+        );
+
+        return {
+            success: true,
+            data: rows as ValetBoyDetails[]
+        };
+
+    } catch (error: any) {
+        console.error("Fetch Companies Error:", error);
+
+        return {
+            success: false,
+            message: error.message || "Something went wrong"
+        };
+
+    } finally {
+        conn.release();
+    }
+
+
+}

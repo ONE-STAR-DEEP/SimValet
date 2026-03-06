@@ -1,15 +1,14 @@
 import AddLocationPopup from "@/components/company/addLocationPopup"
-import AddCompanyPopup from "@/components/system-admin/addCompanyPopup"
 import { DataTable } from "@/components/system-admin/dataTable"
-import { columns } from "@/components/system-admin/tableColumn"
+import { columns } from "@/components/company/TableColumn"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { fetchCompanies } from "@/lib/actions/systemAdmin"
+import { fetchLocations } from "@/lib/actions/company"
 
 
 const Dashboard = async () => {
 
-    const companyData = await fetchCompanies()
+    const locationData = await fetchLocations()
 
     return (
         <div>
@@ -20,7 +19,7 @@ const Dashboard = async () => {
                 </p>
 
                 <div className="flex gap-6 mt-4 text-sm text-muted-foreground">
-                    <span>• Total Locations: {}</span>
+                    <span>• Total Locations: {Array.isArray(locationData?.data) ? locationData.data.length : 0}</span>
                     <span>• Active: {}</span>
                     <span>• Inactive: {}</span>
                 </div>
@@ -41,7 +40,7 @@ const Dashboard = async () => {
             </header>
 
             <main className="mt-4">
-                <DataTable columns={columns} data={Array.isArray(companyData.data) ? companyData.data : []} />
+                <DataTable columns={columns} data={Array.isArray(locationData.data) ? locationData.data : []} />
             </main>
 
         </div>

@@ -10,7 +10,7 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { FormEvent, useState } from "react"
-import { matchOTP, sendOtp } from "@/lib/actions/systemAdmin"
+import { matchOTP, sendOtp } from "@/lib/actions/valetBoy"
 import Image from "next/image"
 
 export function LoginForm({
@@ -18,11 +18,10 @@ export function LoginForm({
     ...props
 }: React.ComponentProps<"div">) {
 
-    const [identifier, setIdentifier] = useState("");
     const [otp, setOtp] = useState("");
     const [showInput, setShowInput] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState("");
+    const [mobile, setmobile] = useState("");
     const [msg, setMsg] = useState("");
     const [success, setSuccess] = useState("");
 
@@ -31,18 +30,12 @@ export function LoginForm({
         setLoading(true);
 
         try {
-            const isEmail = /\S+@\S+\.\S+/.test(identifier);
 
-            const payload = {
-                email: isEmail ? identifier : undefined,
-                mobile: !isEmail ? identifier : undefined,
-            };
-
-            const res = await sendOtp({ ...payload });
+            const res = await sendOtp(mobile);
 
             if (res.success) {
                 setShowInput(true);
-                setEmail(res.email);
+                setmobile(res.mobile);
                 setSuccess(res.message)
                 setMsg("");
             } else {
@@ -70,7 +63,7 @@ export function LoginForm({
         setLoading(true);
 
         try {
-            const res = await matchOTP(email, otp);
+            const res = await matchOTP(mobile, otp);
             if (!res.success) {
                 setMsg(res.message)
                 setSuccess("");
@@ -108,24 +101,24 @@ export function LoginForm({
                         </FieldDescription>
                     </div>
                     <Field>
-                        <FieldLabel htmlFor="email">Email/Mobile</FieldLabel>
+                        <FieldLabel htmlFor="mobile">Mobile</FieldLabel>
                         <Input
-                            id="identifier"
+                            id="mobile"
                             type="text"
-                            placeholder="m@example.com"
-                            value={identifier}
+                            placeholder="9876543210"
+                            value={mobile}
                             required
-                            onChange={(e)=>{setIdentifier(e.target.value)}}
+                            onChange={(e)=>{setmobile(e.target.value)}}
                         />
                     </Field>
 
                     {showInput &&
                         <Field>
-                            <FieldLabel htmlFor="email">OTP</FieldLabel>
+                            <FieldLabel htmlFor="mobile">OTP</FieldLabel>
                             <Input
                                 id="otp"
                                 type="password"
-                                placeholder="m@example.com"
+                                placeholder="******"
                                 value={otp}
                                 required
                                 maxLength={6}

@@ -9,10 +9,7 @@ import { sendLoginOtpEmail } from "../email";
 import { getSessionUser } from "../checkSession";
 import { CompanyFormData } from "../types/types";
 import { ResultSetHeader } from "mysql2";
-
-export const generateOTP = async () =>
-    Math.floor(100000 + Math.random() * 900000).toString();
-
+import { generateOTP } from "../otp";
 
 export async function sendOtp({ ...payload }: {
     email?: string;
@@ -33,7 +30,7 @@ export async function sendOtp({ ...payload }: {
         if (rows.length === 0) {
             return {
                 success: false,
-                message: "Invalid Email or Mobbile"
+                message: "Invalid Email or Mobile"
             }
         }
 
@@ -164,6 +161,7 @@ export const insertCompany = async (data: CompanyFormData) => {
     const {
       companyName,
       gstNo,
+      email,
       address,
       country,
       state,
@@ -179,6 +177,7 @@ export const insertCompany = async (data: CompanyFormData) => {
       INSERT INTO company (
         name,
         gst,
+        email,
         address,
         country,
         state,
@@ -189,11 +188,12 @@ export const insertCompany = async (data: CompanyFormData) => {
         contact_person_designation,
         is_active
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         companyName,
         gstNo.toUpperCase().trim(),
+        email,
         address,
         country,
         state,

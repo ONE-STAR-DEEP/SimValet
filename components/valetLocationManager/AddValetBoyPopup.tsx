@@ -15,21 +15,23 @@ import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
 import { FormEvent, useState } from "react";
 import { useRouter } from "next/navigation";
-import { LocationData } from "@/lib/types/types";
-import { insertLocation } from "@/lib/actions/company";
+import { ValetBoyData } from "@/lib/types/types";
+import { insertValetBoy } from "@/lib/actions/locationManager";
 
 
-const AddLocationPopup = () => {
+const AddValetBoyPopup = () => {
 
     const router = useRouter();
 
-    const [data, setData] = useState<LocationData>({
-        locationCount: 1,
-        locationName: [],
-        locationAddress: [],
-        contactPerson: [],
-        personMobile: [],
-    })
+    const initialState: ValetBoyData = {
+        count: 1,
+        name: [],
+        prk_lot_id: [],
+        valet_boy_id: [],
+        mobile: [],
+    }
+
+    const [data, setData] = useState<ValetBoyData>(initialState)
 
     const [open, setOpen] = useState(false)
 
@@ -38,12 +40,12 @@ const AddLocationPopup = () => {
 
         console.log(data)
 
-        const res = await insertLocation(data);
+        const res = await insertValetBoy(data);
 
-        if(!res.success){
+        if (!res.success) {
             alert("Failed to Insert")
         }
-
+        setData(initialState)
         setOpen(false);
         router.refresh();
     }
@@ -51,7 +53,7 @@ const AddLocationPopup = () => {
     return (
         <div>
             <Button type="button" onClick={() => { setOpen(true) }}>
-                <Plus /> Add Location
+                <Plus /> Add Valet Boys
             </Button>
 
 
@@ -71,9 +73,11 @@ const AddLocationPopup = () => {
                 >
                     <form onSubmit={handleSubmit}>
                         <DialogHeader className="p-6 pb-2">
-                            <DialogTitle className="text-xl text-primary">Register New Locations</DialogTitle>
+                            <DialogTitle className="text-xl text-primary">
+                                Register New Valet Staff
+                            </DialogTitle>
                             <DialogDescription>
-                                Select the location count and provide complete information for each valet service location to be added to the system.
+                                Add new valet staff members to this location by providing their complete details below.
                             </DialogDescription>
                         </DialogHeader>
 
@@ -85,7 +89,7 @@ const AddLocationPopup = () => {
                             </FieldLabel>
 
                             <Field>
-                                <FieldLabel className="text-primary">Number of Locations</FieldLabel>
+                                <FieldLabel className="text-primary">Number of Boys</FieldLabel>
 
                                 <div className="flex items-center gap-3">
 
@@ -93,11 +97,11 @@ const AddLocationPopup = () => {
                                         type="button"
                                         variant="outline"
                                         size="icon"
-                                        disabled={data.locationCount <= 1}
+                                        disabled={data.count <= 1}
                                         onClick={() =>
                                             setData(prev => ({
                                                 ...prev,
-                                                locationCount: Math.max(1, prev.locationCount - 1)
+                                                count: Math.max(1, prev.count - 1)
                                             }))
                                         }
                                     >
@@ -108,7 +112,7 @@ const AddLocationPopup = () => {
                                         type="number"
                                         min={1}
                                         max={99}
-                                        value={data.locationCount}
+                                        value={data.count}
                                         onChange={(e) => {
                                             let value = Number(e.target.value)
 
@@ -117,7 +121,7 @@ const AddLocationPopup = () => {
 
                                             setData(prev => ({
                                                 ...prev,
-                                                locationCount: value
+                                                count: value
                                             }))
                                         }}
                                         className="w-20 h-9 text-center"
@@ -127,11 +131,11 @@ const AddLocationPopup = () => {
                                         type="button"
                                         variant="outline"
                                         size="icon"
-                                        disabled={data.locationCount >= 99}
+                                        disabled={data.count >= 99}
                                         onClick={() =>
                                             setData(prev => ({
                                                 ...prev,
-                                                locationCount: Math.min(99, prev.locationCount + 1)
+                                                count: Math.min(99, prev.count + 1)
                                             }))
                                         }
                                     >
@@ -143,78 +147,78 @@ const AddLocationPopup = () => {
 
                             <FieldGroup className="flex flex-col gap-4 mt-4">
 
-                                {Array.from({ length: data.locationCount }).map((_, index) => (
+                                {Array.from({ length: data.count }).map((_, index) => (
                                     <div key={index} className="border p-4 rounded-lg mt-4 space-y-3">
 
                                         <h3 className="font-semibold text-primary">
-                                            Location {index + 1}
+                                            Valet Boy {index + 1}
                                         </h3>
 
                                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-4">
                                             <Field>
-                                                <FieldLabel>Location Name</FieldLabel>
+                                                <FieldLabel>Name</FieldLabel>
                                                 <Input
-                                                    placeholder="Enter location name"
-                                                    value={data.locationName[index] || ""}
+                                                    placeholder="Enter name"
+                                                    value={data.name[index] || ""}
                                                     required
                                                     onChange={(e) => {
-                                                        const updated = [...data.locationName]
+                                                        const updated = [...data.name]
                                                         updated[index] = e.target.value
 
                                                         setData(prev => ({
                                                             ...prev,
-                                                            locationName: updated
+                                                            name: updated
                                                         }))
                                                     }}
                                                 />
                                             </Field>
 
                                             <Field>
-                                                <FieldLabel>Location Address</FieldLabel>
-                                                <Input placeholder="Enter address"
-                                                    value={data.locationAddress[index] || ""}
+                                                <FieldLabel>Parking lot</FieldLabel>
+                                                <Input placeholder="Enter Parking Lot No"
+                                                    value={data.prk_lot_id[index] || ""}
                                                     required
                                                     onChange={(e) => {
-                                                        const updated = [...data.locationAddress]
+                                                        const updated = [...data.prk_lot_id]
                                                         updated[index] = e.target.value
 
                                                         setData(prev => ({
                                                             ...prev,
-                                                            locationAddress: updated
+                                                            prk_lot_id: updated
                                                         }))
                                                     }}
                                                 />
                                             </Field>
 
                                             <Field>
-                                                <FieldLabel>Contact Person</FieldLabel>
-                                                <Input placeholder="Enter contact person name"
-                                                    value={data.contactPerson[index] || ""}
+                                                <FieldLabel>Valet Boy ID</FieldLabel>
+                                                <Input placeholder="Enter assigned physical ID"
+                                                    value={data.valet_boy_id[index] || ""}
                                                     required
                                                     onChange={(e) => {
-                                                        const updated = [...data.contactPerson]
+                                                        const updated = [...data.valet_boy_id]
                                                         updated[index] = e.target.value
 
                                                         setData(prev => ({
                                                             ...prev,
-                                                            contactPerson: updated
+                                                            valet_boy_id: updated
                                                         }))
                                                     }}
                                                 />
                                             </Field>
 
                                             <Field>
-                                                <FieldLabel>Person Mobile</FieldLabel>
+                                                <FieldLabel>Mobile</FieldLabel>
                                                 <Input placeholder="Enter mobile number"
-                                                    value={data.personMobile[index] || ""}
+                                                    value={data.mobile[index] || ""}
                                                     required
                                                     onChange={(e) => {
-                                                        const updated = [...data.personMobile]
+                                                        const updated = [...data.mobile]
                                                         updated[index] = e.target.value
 
                                                         setData(prev => ({
                                                             ...prev,
-                                                            personMobile: updated
+                                                            mobile: updated
                                                         }))
                                                     }}
                                                 />
@@ -240,4 +244,4 @@ const AddLocationPopup = () => {
     )
 }
 
-export default AddLocationPopup
+export default AddValetBoyPopup

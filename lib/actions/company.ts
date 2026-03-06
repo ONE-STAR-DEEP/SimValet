@@ -5,10 +5,8 @@ import { cookies } from "next/headers";
 import db from "../dbPool";
 import { redirect } from "next/navigation";
 import { RowDataPacket } from "mysql2";
-import { sendLoginOtpEmail } from "../email";
 import { getSessionUser } from "../checkSession";
-import { CompanyFormData } from "../types/types";
-import { ResultSetHeader } from "mysql2";
+import { CompanyFormData, LocationData } from "../types/types";
 import { generateOTP } from "../otp";
 
 
@@ -68,7 +66,7 @@ export async function sendCompanyOtp({ ...payload }: {
 
         return {
             success: true,
-            email: rows[0].email,
+            identifier: rows[0].email,
             message: "Otp Sent Successfully"
         }
 
@@ -147,68 +145,85 @@ export const matchCompanyOTP = async (email: string, inputOTP: string) => {
 
 };
 
-export const insertCompany = async (data: CompanyFormData) => {
+export const insertLocation = async (data: LocationData) => {
+    const conn = await db.getConnection();
+
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const companyId = session.company_id;
+
+
+        const values = [];
+
+        for (let i = 0; i < data.locationCount; i++) {
+            values.push([
+                companyId,
+                data.locationName[i],
+                data.locationAddress[i],
+                data.contactPerson[i],
+                data.personMobile[i]
+            ]);
+        }
+
+        await conn.query(
+            `
+            INSERT INTO location_manager (
+            company_id,
+            location_name,
+            location_address,
+            contact_person_name,
+            contact_person_mobile
+            )
+            VALUES ?
+            `,
+            [values]
+        );
+
+        return {
+            success: true,
+            message: "Successfully inserted all locations"
+        };
+
+    } catch (error: any) {
+        console.error("Insert Company Error:", error);
+
+        return {
+            success: false,
+            message: error.message || "Something went wrong"
+        };
+
+    } finally {
+        conn.release();
+    }
+};
+
+export const fetchLocations = async () => {
   const conn = await db.getConnection();
 
   try {
     const session = await getSessionUser();
     if (!session) throw new Error("Unauthorized");
 
-    const {
-      companyName,
-      email,
-      gstNo,
-      address,
-      country,
-      state,
-      city,
-      pincode,
-      contactPerson,
-      personMobile,
-      personDesignation
-    } = data;
+    const company_id = session.company_id;
 
-    const [result] = await conn.execute<ResultSetHeader>(
+    const [rows]: any = await conn.execute(
       `
-      INSERT INTO company (
-        name,
-        email,
-        gst,
-        address,
-        country,
-        state,
-        city,
-        pin,
-        contact_person_name,
-        contact_person_mobile,
-        contact_person_designation,
-        is_active
-      )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-      `,
-      [
-        companyName,
-        email,
-        gstNo.toUpperCase().trim(),
-        address,
-        country,
-        state,
-        city,
-        pincode,
-        contactPerson,
-        personMobile,
-        personDesignation,
-        1 
-      ]
+      SELECT *
+      FROM location_manager
+      WHERE company_id = ?
+      ORDER BY id DESC
+      `,[company_id]
     );
 
     return {
       success: true,
-      insertId: result.insertId
+      data: rows as CompanyFormData 
     };
 
   } catch (error: any) {
-    console.error("Insert Company Error:", error);
+    console.error("Fetch Companies Error:", error);
 
     return {
       success: false,

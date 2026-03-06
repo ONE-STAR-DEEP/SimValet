@@ -34,7 +34,7 @@ export function LoginForm({
     const [otp, setOtp] = useState("");
     const [showInput, setShowInput] = useState(false);
     const [loading, setLoading] = useState(false);
-    const [email, setEmail] = useState("");
+    const [param, setParam] = useState("");
     const [msg, setMsg] = useState("");
     const [success, setSuccess] = useState("");
     const [loginType, setLoginType] = useState("");
@@ -57,15 +57,15 @@ export function LoginForm({
             }
             else if (loginType === "locationManager") {
                 res = await sendManagerOtp({ ...payload });
+                console.log(res)
             }
             else {
                 setMsg("Select Login Type")
             }
 
-
             if (res?.success) {
                 setShowInput(true);
-                setEmail(res.email);
+                setParam(res.identifier);
                 setSuccess(res.message)
                 setMsg("");
             } else {
@@ -95,10 +95,10 @@ export function LoginForm({
         try {
             let res;
             if (loginType === "Company") {
-                res = await matchCompanyOTP(email, otp);
+                res = await matchCompanyOTP(param, otp);
             }
             else if (loginType === "locationManager") {
-                res = await matchManagerOTP(email, otp);
+                res = await matchManagerOTP(param, otp);
             }
             else {
                 setMsg("Select Login Type")
@@ -148,7 +148,7 @@ export function LoginForm({
                             placeholder="m@example.com"
                             value={identifier}
                             required
-                            onChange={(e) => { setIdentifier(e.target.value) }}
+                            onChange={(e) => { setIdentifier(e.target.value)}}
                         />
                     </Field>
 
@@ -156,7 +156,7 @@ export function LoginForm({
                         <Label>Login Type</Label>
                         <Select value={loginType} onValueChange={(value) => setLoginType(value)}>
                             <SelectTrigger className="w-45">
-                                <SelectValue placeholder="Select login type" />
+                                <SelectValue placeholder="Select login type"/>
                             </SelectTrigger>
                             <SelectContent>
                                 <SelectGroup>
