@@ -85,12 +85,12 @@ export const matchCompanyOTP = async (email: string, inputOTP: string) => {
     // Fetch latest valid OTP
     const [rows]: any = await db.execute(
         `
-    SELECT id, otp, company_id, attempts
-    FROM otps
-    WHERE identifier = ?
-      AND expires_at > NOW()
-    ORDER BY created_at DESC
-    LIMIT 1
+        SELECT id, otp, company_id, attempts
+        FROM otps
+        WHERE identifier = ?
+        AND expires_at > NOW()
+        ORDER BY created_at DESC
+        LIMIT 1
     `,
         [email]
     );
@@ -99,7 +99,7 @@ export const matchCompanyOTP = async (email: string, inputOTP: string) => {
         return { success: false, errno: 410, message: "OTP expired or not found" };
     }
 
-    const { id, otp, user_id, company_id, attempts } = rows[0];
+    const { id, otp, company_id, attempts } = rows[0];
 
     // Block after 3 attempts
     if (attempts > 3) {
@@ -153,7 +153,6 @@ export const insertLocation = async (data: LocationData) => {
         if (!session) throw new Error("Unauthorized");
 
         const companyId = session.company_id;
-
 
         const values = [];
 

@@ -127,16 +127,16 @@ export const matchOTP = async (mobile: string, inputOTP: string) => {
             lastActivity: Date.now(),
         },
         process.env.JWT_SECRET!,
-        { expiresIn: "1d" } //  
+        { expiresIn: "30d" } //  
     );
 
     const cookieStore = await cookies();
     cookieStore.set("session", token, {
         httpOnly: true,
-        secure: false,
+        secure: process.env.NODE_ENV === "production",
         sameSite: "lax",
         path: "/",
-        maxAge: 24 * 60 * 60,
+        maxAge: 30 * 24 * 60 * 60,
     });
 
     redirect("/valet-boy/dashboard");
@@ -209,7 +209,7 @@ export const submitEntry = async ({ data }: { data: VehicleEntry }) => {
             [carNumber, companyId]
         );
 
-        if(entryCheck.length > 0){
+        if (entryCheck.length > 0) {
             return {
                 success: false,
                 message: "Failed to Insert! Entry Exist"
@@ -263,7 +263,7 @@ export const submitEntry = async ({ data }: { data: VehicleEntry }) => {
     }
 }
 
-export const exitEntry = async ( carNumber: string ) => {
+export const exitEntry = async (carNumber: string) => {
 
     const session = await getSessionUser();
     if (!session) throw new Error("Unauthorized");
@@ -271,7 +271,7 @@ export const exitEntry = async ( carNumber: string ) => {
     const companyId = session.company_id;
     const valetId = session.id;
 
-    
+
     try {
 
         const [rows]: any = await db.execute(

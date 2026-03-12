@@ -97,7 +97,7 @@ export function LoginForm({
                         </a>
                         <h1 className="text-xl font-bold">Welcome to SimValetPark</h1>
                         <FieldDescription>
-                            Login to access the System Control Dashboard
+                            Login to access the Valet panel
                         </FieldDescription>
                     </div>
                     <Field>
@@ -147,7 +147,7 @@ export function LoginForm({
                 </FieldGroup>
             </form>
             <FieldDescription className="px-6 text-center">
-                Designed for Internal Admin use.
+                Designed for Valet Parkings.
             </FieldDescription>
         </div>
     )

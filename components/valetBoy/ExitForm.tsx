@@ -12,19 +12,19 @@ const ExitForm = ({ vehicle }: { vehicle: string }) => {
 
     const router = useRouter();
 
-    const [carNumber, setCarNumber] = useState("");
+    const [carNumber, setCarNumber] = useState(vehicle);
 
     const handleSubmit = async () => {
 
         try {
-            
-            const res = await exitEntry(carNumber) 
-
-
+            const res = await exitEntry(carNumber);
+            if(!res.success){
+                alert(res.message)
+            }
+            router.push("/valet-boy/dashboard")
         } catch (error) {
-            
+            console.log(error)
         }
-
     }
 
     return (

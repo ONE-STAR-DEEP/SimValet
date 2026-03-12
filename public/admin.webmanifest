@@ -1,0 +1,23 @@
+{
+    "id": "/admin",
+    "name": "SimValetPark Admin",
+    "short_name": "SVP Admin",
+    "start_url": "/system-admin",
+    "scope": "/system-admin",
+    "display": "standalone",
+    "background_color": "#ffffff",
+    "theme_color": "#000000",
+    "orientation": "portrait",
+    "icons": [
+        {
+            "src": "/assets/images/icons/manifest-icon-192.maskable.png",
+            "sizes": "192x192",
+            "type": "image/png"
+        },
+        {
+            "src": "/assets/images/icons/manifest-icon-512.maskable.png",
+            "sizes": "512x512",
+            "type": "image/png"
+        }
+    ]
+}

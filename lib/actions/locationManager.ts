@@ -146,7 +146,7 @@ export const matchManagerOTP = async (mobile: string, inputOTP: string) => {
         maxAge: 24 * 60 * 60,
     });
 
-    redirect("/valetLocationManager/dashboard");
+    redirect("/company/valetLocationManager/dashboard");
 };
 
 export const insertValetBoy = async (data: ValetBoyData) => {

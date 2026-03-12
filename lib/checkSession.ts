@@ -1,10 +1,7 @@
-// lib/session.ts
-
 'use server'
+
 import jwt from "jsonwebtoken";
 import { cookies } from "next/headers";
-
-const INACTIVITY_LIMIT = 60 * 60 * 1000;
 
 export async function getSessionUser() {
   const cookieStore = await cookies();
@@ -18,20 +15,28 @@ export async function getSessionUser() {
       process.env.JWT_SECRET!
     ) as any;
 
-    const inactiveTime = Date.now() - payload.lastActivity;
+    // create new token with refreshed expiry
+    const newToken = jwt.sign(
+      {
+        id: payload.id,
+        company_id: payload.company_id,
+      },
+      process.env.JWT_SECRET!,
+      { expiresIn: "30d" }
+    );
 
-    if (inactiveTime > INACTIVITY_LIMIT) {
-      return null;
-    }
+    // reset cookie expiry
+    cookieStore.set("session", newToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "lax",
+      path: "/",
+      maxAge: 30 * 24 * 60 * 60,
+    });
 
     return payload;
+
   } catch {
     return null;
   }
-}
-
-
-export async function checkSession() {
-  const user = await getSessionUser();
-  return Boolean(user);
 }

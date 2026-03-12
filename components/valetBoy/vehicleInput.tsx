@@ -24,13 +24,14 @@ const VehicleInput = () => {
             if(input.length === 0){
                 return;
             }
+            const formatedInput = input.toUpperCase();
             if (action === "entry") {
-                router.push(`/valet-boy/${input}/entry`)
+                router.push(`/valet-boy/${formatedInput}/entry`)
                 console.log("Vehicle Entry:", input)
             }
 
             if (action === "exit") {
-                router.push(`/valet-boy/${input}/exit`)
+                router.push(`/valet-boy/${formatedInput}/exit`)
                 console.log("Vehicle Exit:", input)
             }
         } catch (error) {

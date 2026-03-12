@@ -2,6 +2,7 @@ import LogoutButton from "@/components/logout-button";
 import { getSessionUser } from "@/lib/checkSession";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+export const dynamic = "force-dynamic";
 
 export default async function SuperAdminLayout({
     children,
@@ -48,9 +49,10 @@ export default async function SuperAdminLayout({
             {/* Footer */}
             <footer className="bg-gray-900 text-white text-center py-4">
                 <small className="text-sm">
-                    © {new Date().getFullYear()} System Admin
+                    © {new Date().getFullYear()} SimValetPark
                 </small>
             </footer>
+
 
         </div>
     );

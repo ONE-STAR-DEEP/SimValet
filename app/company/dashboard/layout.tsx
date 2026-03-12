@@ -2,6 +2,7 @@ import LogoutButton from "@/components/logout-button";
 import { getSessionUser } from "@/lib/checkSession";
 import Image from "next/image";
 import { redirect } from "next/navigation";
+export const dynamic = "force-dynamic";
 
 export default async function SuperAdminLayout({
     children,

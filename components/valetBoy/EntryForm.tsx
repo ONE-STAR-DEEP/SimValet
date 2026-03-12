@@ -25,8 +25,7 @@ const EntryForm = ({ vehicle }: { vehicle: string }) => {
         try {
             const res = await submitEntry({ data });
             if (!res.success) {
-                alert("Failed");
-                return;
+                alert(res.message);
             }
             router.push("/valet-boy");
         } catch (error) {
