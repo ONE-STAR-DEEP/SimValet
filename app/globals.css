@@ -171,3 +171,43 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield;
 }
+
+@media (display-mode: standalone) {
+  ::-webkit-scrollbar {
+    display: none;
+  }
+
+  * {
+    scrollbar-width: none;
+  }
+}
+
+@media (display-mode: standalone) {
+  a,
+  a:visited,
+  a:hover,
+  a:active {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+@media (display-mode: standalone) {
+  * {
+    user-select: none;
+    -webkit-user-select: none;
+  }
+}
+
+@media (display-mode: standalone) {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+@media (display-mode: standalone) {
+  img {
+    -webkit-user-drag: none;
+    user-drag: none;
+  }
+}

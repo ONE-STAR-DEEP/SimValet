@@ -155,7 +155,7 @@ export const fetchLocationInfo = async () => {
 
         const [rows]: any = await db.execute(
             `
-            SELECT valet_location_id
+            SELECT valet_location_id, valet_boy_name, valet_boy_id, prk_lot_id
             FROM valet_boy
             WHERE id = ? AND company_id = ?
             `,
@@ -175,8 +175,11 @@ export const fetchLocationInfo = async () => {
 
         return {
             success: true,
-            data: location[0] as Location
+            data: {
+            ...rows[0],
+            ...location[0]
         }
+    };
 
     } catch (error) {
         return {

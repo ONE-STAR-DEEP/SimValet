@@ -14,7 +14,8 @@ const ExitForm = ({ vehicle }: { vehicle: string }) => {
 
     const [carNumber, setCarNumber] = useState(vehicle);
 
-    const handleSubmit = async () => {
+    const handleSubmit = async (e: React.FormEvent) => {
+         e.preventDefault();
 
         try {
             const res = await exitEntry(carNumber);

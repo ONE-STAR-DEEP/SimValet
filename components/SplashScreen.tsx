@@ -19,8 +19,8 @@ export default function SplashWrapper({
 
                 {/* Logo Section */}
                 <div className="text-center mb-8">
-                    <div className="bg-black rounded-full w-24 h-24 flex items-center justify-center mb-4 mx-auto">
-                        <img src="/assets/images/logo.png" className="w-20" />
+                    <div className="rounded-full w-40 h-40 flex items-center justify-center mb-1 mx-auto">
+                        <img src="/assets/images/logo3.png" className="w-36" />
                     </div>
 
                     <p className="font-semibold text-xl tracking-wide">
