@@ -7,10 +7,9 @@
   "scope": "/valet-boy",
   "display": "standalone",
   "display_override": [
-    "standalone",
-    "window-controls-overlay"
+    "standalone"
   ],
-  "background_color": "#ffffff",
+  "background_color": "#101828",
   "theme_color": "#101828",
   "orientation": "portrait",
   "icons": [
