@@ -71,7 +71,6 @@ export default function CameraCapture({ data, setData }: Props) {
 
     return (
         <div className="flex flex-col gap-4">
-
             {/* Camera Icon */}
             {loading ?
                 <button
