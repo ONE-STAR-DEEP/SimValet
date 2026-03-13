@@ -14,6 +14,7 @@ export default function CameraCapture({ data, setData }: Props) {
 
     const inputRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false)
+    const [msg, setMsg] = useState("")
 
     const openCamera = () => {
         inputRef.current?.click();
@@ -21,17 +22,19 @@ export default function CameraCapture({ data, setData }: Props) {
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoading(true)
+        setMsg("Waiting")
         const file = e.target.files?.[0];
         if (!file) {
             alert("Failed to Capture Image");
             return
         };
+        setMsg("Image Captured")
 
         try {
             const formData = new FormData();
             formData.append("upload", file);
             formData.append("regions", "in");
-
+            setMsg("Sending Image")
             const res = await fetch("https://api.platerecognizer.com/v1/plate-reader/", {
                 method: "POST",
                 headers: {
@@ -40,10 +43,15 @@ export default function CameraCapture({ data, setData }: Props) {
                 body: formData,
             });
 
+            setMsg("Responce Received")
+
+
             const result: any = await res.json();
 
             if (result.results?.length > 0) {
                 const plate = result.results[0].plate;
+
+                setMsg(plate)
 
                 setData(prev => ({
                     ...prev,
@@ -91,6 +99,7 @@ export default function CameraCapture({ data, setData }: Props) {
                 style={{ display: "none" }}
             />
 
+            <p>{msg}</p>
         </div>
     );
 }
