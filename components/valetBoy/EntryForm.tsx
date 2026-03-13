@@ -66,6 +66,8 @@ const EntryForm = () => {
                         <Label>
                             Vehicle Number
                         </Label>
+                        <div className='flex gap-2'>
+
                         <Input
                             className='bg-white'
                             value={data.vehicleNumber}
@@ -75,8 +77,9 @@ const EntryForm = () => {
                                     ...prev,
                                     vehicleNumber: e.target.value
                                 }))}
-                        ></Input>
+                                ></Input>
                         <CameraCapture/>
+                                </div>
                     </Field>
 
                     <Field>

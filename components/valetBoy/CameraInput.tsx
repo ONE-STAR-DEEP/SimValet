@@ -1,7 +1,7 @@
 'use client'
 
 import { useRef, useState } from "react";
-import { Camera } from "lucide-react";
+import { Camera, CameraIcon } from "lucide-react";
 
 export default function CameraCapture() {
 
@@ -26,9 +26,9 @@ export default function CameraCapture() {
       <button
         type="button"
         onClick={openCamera}
-        className="p-3 bg-gray-200 rounded-full w-fit"
+        className="p-2 border border-primary/20 bg-white rounded-lg w-fit"
       >
-        <Camera size={20} />
+        <CameraIcon className="" size={16} />
       </button>
 
       {/* Hidden camera input */}
