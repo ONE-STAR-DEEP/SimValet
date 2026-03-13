@@ -8,6 +8,7 @@ import { RowDataPacket } from "mysql2";
 import { getSessionUser } from "../checkSession";
 import { Location, VehicleEntry } from "../types/types";
 import { generateOTP } from "../otp";
+import { sendLoginOtpEmail } from "../email";
 
 export async function sendOtp(mobile: string) {
 
