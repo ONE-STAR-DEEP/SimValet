@@ -9,6 +9,12 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
+export const viewport = {
+  width: "device-width",
+  initialScale: 1,
+  viewportFit: "cover",
+};
+
 export const metadata: Metadata = {
   title: {
     default: "SimValetPark",
@@ -51,7 +57,10 @@ export const metadata: Metadata = {
     follow: true,
   },
 
-  themeColor: "#101828",
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#101828" },
+    { media: "(prefers-color-scheme: dark)", color: "#101828" }
+  ],
 
   icons: {
     icon: "/assets/images/logo.png",
@@ -68,10 +77,6 @@ export default function RootLayout({
 
   return (
     <html lang="en" className={jetbrainsMono.className}>
-      <head>
-        <meta name="theme-color" content="#101828"></meta>
-        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
-      </head>
       <body className="antialiased">
         <RegisterSW />
         <StandaloneDetector />
