@@ -50,7 +50,7 @@ export const metadata: Metadata = {
     follow: true,
   },
 
-  themeColor: "bg-gray-900",
+  themeColor: "#101828",
 
   icons: {
     icon: "/assets/images/logo.png",
