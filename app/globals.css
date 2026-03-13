@@ -218,10 +218,15 @@ input[type="number"] {
   }
 }
 
-
 @media (display-mode: standalone) {
   body {
     padding-top: env(safe-area-inset-top);
     padding-bottom: env(safe-area-inset-bottom);
+  }
+}
+
+@media (display-mode: standalone) {
+  body {
+    padding-bottom: 16px;
   }
 }
