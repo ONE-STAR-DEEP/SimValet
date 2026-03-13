@@ -79,6 +79,8 @@ export async function sendOtp({ ...payload }: {
 
     } catch (error) {
 
+        console.log(error)
+
         return {
             success: false,
             message: "Failed to send OTP"
