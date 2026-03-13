@@ -29,11 +29,14 @@ export default function CameraCapture({ data, setData }: Props) {
             return
         };
         setMsg("Image Captured")
+        console.log("Image size:", file.size / 1024 / 1024, "MB");
 
         try {
             const formData = new FormData();
             formData.append("upload", file);
             formData.append("regions", "in");
+
+
             setMsg("Sending Image")
             const res = await fetch("https://api.platerecognizer.com/v1/plate-reader/", {
                 method: "POST",
@@ -43,6 +46,7 @@ export default function CameraCapture({ data, setData }: Props) {
                 body: formData,
             });
             console.log(res);
+            setMsg(`Response status: ${res.status}`);
 
             setMsg("Responce Received")
 
