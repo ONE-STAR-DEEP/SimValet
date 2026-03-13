@@ -44,10 +44,10 @@ export default function CameraCapture({ data, setData }: Props) {
 
             if (result.results?.length > 0) {
                 const plate = result.results[0].plate;
-                setData({
-                    ...data,
+                setData(prev => ({
+                    ...prev,
                     vehicleNumber: plate.toUpperCase()
-                })
+                }))
             }
 
         } catch (err) {
