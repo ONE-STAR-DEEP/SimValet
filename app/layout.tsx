@@ -9,17 +9,6 @@ const jetbrainsMono = JetBrains_Mono({
   display: "swap",
 });
 
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  viewportFit: "cover",
-
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#101828" },
-    { media: "(prefers-color-scheme: dark)", color: "#101828" }
-  ],
-};
-
 export const metadata: Metadata = {
   title: {
     default: "SimValetPark",

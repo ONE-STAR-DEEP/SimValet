@@ -6,17 +6,6 @@ export const metadata: Metadata = {
   manifest: "/valet.webmanifest",
 };
 
-export const viewport = {
-  width: "device-width",
-  initialScale: 1,
-  maximumScale: 1,
-  userScalable: false,
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#101828" },
-    { media: "(prefers-color-scheme: dark)", color: "#101828" },
-  ],
-};
-
 export default function Layout({ children }: { children: React.ReactNode }) {
   return <>
     <SplashWrapper>
