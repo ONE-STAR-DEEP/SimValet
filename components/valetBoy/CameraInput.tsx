@@ -42,6 +42,7 @@ export default function CameraCapture({ data, setData }: Props) {
                 },
                 body: formData,
             });
+            console.log(res);
 
             setMsg("Responce Received")
 
