@@ -13,6 +13,11 @@ export const viewport = {
   width: "device-width",
   initialScale: 1,
   viewportFit: "cover",
+
+  themeColor: [
+    { media: "(prefers-color-scheme: light)", color: "#101828" },
+    { media: "(prefers-color-scheme: dark)", color: "#101828" }
+  ],
 };
 
 export const metadata: Metadata = {
@@ -56,11 +61,6 @@ export const metadata: Metadata = {
     index: true,
     follow: true,
   },
-
-  themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#101828" },
-    { media: "(prefers-color-scheme: dark)", color: "#101828" }
-  ],
 
   icons: {
     icon: "/assets/images/logo.png",
