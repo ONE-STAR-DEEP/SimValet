@@ -15,7 +15,6 @@ export default function CameraCapture({ data, setData }: Props) {
 
     const inputRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false)
-    const [msg, setMsg] = useState("")
 
     const openCamera = () => {
         inputRef.current?.click();
@@ -23,7 +22,7 @@ export default function CameraCapture({ data, setData }: Props) {
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoading(true)
-        setMsg("Waiting")
+        
 
         const file = e.target.files?.[0];
 
@@ -38,36 +37,24 @@ export default function CameraCapture({ data, setData }: Props) {
             maxWidthOrHeight: 1600,
         });
 
-        setMsg("Image Captured")
-        
-        console.log("Image size:", compressedFile.size / 1024 / 1024, "MB");
-
         try {
             const formData = new FormData();
             formData.append("upload", compressedFile);
             formData.append("regions", "in");
 
 
-            setMsg(`Image size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`)
-            const res = await fetch("https://api.platerecognizer.com/v1/plate-reader/", {
+           const res = await fetch("https://api.platerecognizer.com/v1/plate-reader/", {
                 method: "POST",
                 headers: {
                     Authorization: `Token ${process.env.NEXT_PUBLIC_SNAPSHOT_API_KEY!}`,
                 },
                 body: formData,
             });
-            console.log(res);
-            setMsg(`Response status: ${res.status}`);
-
-            setMsg("Responce Received")
-
 
             const result: any = await res.json();
 
             if (result.results?.length > 0) {
                 const plate = result.results[0].plate;
-
-                setMsg(plate)
 
                 setData(prev => ({
                     ...prev,
@@ -113,8 +100,6 @@ export default function CameraCapture({ data, setData }: Props) {
                 onChange={handleChange}
                 style={{ display: "none" }}
             />
-
-            <p>{msg}</p>
         </div>
     );
 }
