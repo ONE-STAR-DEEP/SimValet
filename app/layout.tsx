@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { JetBrains_Mono } from "next/font/google";
 import "./globals.css";
 import RegisterSW from "@/components/RegisterSW";
+import StandaloneDetector from "@/components/StandaloneDectator";
 
 const jetbrainsMono = JetBrains_Mono({
   subsets: ["latin"],
@@ -64,10 +65,16 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
+
   return (
     <html lang="en" className={jetbrainsMono.className}>
+      <head>
+        <meta name="theme-color" content="#101828"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+      </head>
       <body className="antialiased">
         <RegisterSW />
+        <StandaloneDetector />
         {children}
       </body>
     </html>
