@@ -44,10 +44,14 @@ export default function CameraCapture({ data, setData }: Props) {
 
             if (result.results?.length > 0) {
                 const plate = result.results[0].plate;
+
                 setData(prev => ({
                     ...prev,
                     vehicleNumber: plate.toUpperCase()
-                }))
+                }));
+
+            } else {
+                alert("No number plate detected");
             }
 
         } catch (err) {
