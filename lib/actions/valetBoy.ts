@@ -72,6 +72,8 @@ export async function sendOtp(mobile: string) {
 
     } catch (error) {
 
+        console.log(error);
+
         return {
             success: false,
             message: "Failed to send OTP"
