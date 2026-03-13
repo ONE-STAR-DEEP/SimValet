@@ -59,7 +59,7 @@ export async function sendOtp({ ...payload }: {
             success: true,
             message: "OTP Sent"
         }
-        await sendLoginOtpEmail(email, otp);
+        // await sendLoginOtpEmail(email, otp);
 
         console.log(sendingOTP)
 
