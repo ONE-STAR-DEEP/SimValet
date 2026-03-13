@@ -1,24 +1,26 @@
 'use client'
 
-import { useRef } from "react";
-import { CameraIcon } from "lucide-react";
+import { useRef, useState } from "react";
+import { CameraIcon, Loader } from "lucide-react";
 import { VehicleEntry } from "@/lib/types/types";
 
 
 type Props = {
-  data: VehicleEntry;
-  setData: React.Dispatch<React.SetStateAction<VehicleEntry>>;
+    data: VehicleEntry;
+    setData: React.Dispatch<React.SetStateAction<VehicleEntry>>;
 };
 
 export default function CameraCapture({ data, setData }: Props) {
 
     const inputRef = useRef<HTMLInputElement>(null);
+    const [loading, setLoading] = useState(false)
 
     const openCamera = () => {
         inputRef.current?.click();
     };
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        setLoading(true)
         const file = e.target.files?.[0];
         if (!file) {
             alert("Failed to Capture Image");
@@ -42,7 +44,6 @@ export default function CameraCapture({ data, setData }: Props) {
 
             if (result.results?.length > 0) {
                 const plate = result.results[0].plate;
-                console.log("Detected plate:", plate.toUpperCase());
                 setData({
                     ...data,
                     vehicleNumber: plate.toUpperCase()
@@ -51,6 +52,8 @@ export default function CameraCapture({ data, setData }: Props) {
 
         } catch (err) {
             console.error("Plate recognition error:", err);
+        } finally {
+            setLoading(false);
         }
     };
 
@@ -58,13 +61,21 @@ export default function CameraCapture({ data, setData }: Props) {
         <div className="flex flex-col gap-4">
 
             {/* Camera Icon */}
-            <button
-                type="button"
-                onClick={openCamera}
-                className="p-2 border border-primary/20 bg-white rounded-lg w-fit"
-            >
-                <CameraIcon className="" size={16} />
-            </button>
+            {loading ?
+                <button
+                    type="button"
+                    className="p-2 border border-primary/20 bg-white rounded-lg w-fit">
+                    <Loader className="text-primary" size={16} />
+                </button>
+                :
+                <button
+                    type="button"
+                    onClick={openCamera}
+                    className="p-2 border border-primary/20 bg-white rounded-lg w-fit"
+                >
+                    <CameraIcon className="" size={16} />
+                </button>
+            }
 
             {/* Hidden camera input */}
             <input
