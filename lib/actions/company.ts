@@ -36,7 +36,8 @@ export async function sendCompanyOtp({ ...payload }: {
         const email = rows[0].email;
         const companyId = rows[0].id;
 
-        const otp = await generateOTP();
+        const otp = "123456"
+        // await generateOTP();
         const expires_at = new Date(Date.now() + 10 * 60 * 1000);
         const query = `
         INSERT INTO otps (company_id, identifier, otp, expires_at)

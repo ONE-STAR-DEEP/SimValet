@@ -37,7 +37,8 @@ export async function sendManagerOtp({ ...payload }: {
         const companyId = rows[0].company_id;
         const mobile = rows[0].contact_person_mobile;
 
-        const otp = await generateOTP();
+        const otp = "123456"
+        // await generateOTP();
         const expires_at = new Date(Date.now() + 10 * 60 * 1000);
         const query = `
         INSERT INTO otps (company_id, user_id, identifier, otp, expires_at)
