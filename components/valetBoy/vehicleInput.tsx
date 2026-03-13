@@ -43,7 +43,7 @@ const VehicleInput = () => {
 
                 <div className='flex gap-2'>
                     <CarIcon />
-                    <p className='text-lg font-bold'>Application Actions</p>
+                    <p className='text-lg font-bold'>Vehicle Entry</p>
                 </div>
 
                 <Field className='px-2 space-y-2'>

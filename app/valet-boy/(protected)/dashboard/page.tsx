@@ -1,4 +1,4 @@
-import { fetchLocationInfo } from '@/lib/actions/valetBoy';
+import { fetchEntryExitInfo, fetchLocationInfo } from '@/lib/actions/valetBoy';
 import { CarFront, CarIcon, Clock } from 'lucide-react';
 import {
   Accordion,
@@ -8,10 +8,12 @@ import {
 } from "@/components/ui/accordion"
 import VehicleInput from '@/components/valetBoy/vehicleInput';
 import { Button } from '@/components/ui/button';
+import EntryForm from '@/components/valetBoy/EntryForm';
 
 const Dashboard = async () => {
 
   const Details = await fetchLocationInfo();
+  const todaysActivity = await fetchEntryExitInfo();
 
   const requests = [
     {
@@ -110,7 +112,7 @@ const Dashboard = async () => {
                   </span>
 
                   <span className="font-bold text-primary">
-                    4
+                    {todaysActivity.entryCount}
                   </span>
                 </div>
 
@@ -121,7 +123,7 @@ const Dashboard = async () => {
                   </span>
 
                   <span className="font-bold text-primary">
-                    4
+                    {todaysActivity.exitCount}
                   </span>
                 </div>
 
@@ -134,7 +136,7 @@ const Dashboard = async () => {
         </Accordion>
       </div>
 
-      <VehicleInput />
+      <EntryForm />
 
       <div className="rounded-xl border-2 border-black/20">
 

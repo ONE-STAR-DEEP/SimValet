@@ -331,3 +331,54 @@ export const exitEntry = async (carNumber: string) => {
         };
     }
 };
+
+export const fetchEntryExitInfo = async () => {
+
+    const session = await getSessionUser();
+    if (!session) throw new Error("Unauthorized");
+
+    const companyId = session.company_id;
+    const userId = session.id;
+
+    try {
+
+        const [rows]: any = await db.execute(
+            `
+            SELECT valet_location_id
+            FROM valet_boy
+            WHERE id = ? AND company_id = ?
+            `,
+            [userId, companyId]
+        );
+
+        if (!rows.length) throw new Error("Valet not found");
+
+        const locationId = rows[0].valet_location_id;
+
+        const [activity]: any = await db.execute(
+            `
+            SELECT
+                SUM(entry_by_valet = ?) AS entry_count,
+                SUM(exit_by_valet = ?) AS exit_count
+            FROM valet_activity
+            WHERE company_id = ?
+            AND valet_location_id = ?
+            AND created_at >= CURDATE()
+            AND created_at < CURDATE() + INTERVAL 1 DAY
+            `,
+            [userId, userId, companyId, locationId]
+        );
+
+        return {
+            success: true,
+            entryCount: activity[0].entry_count || 0,
+            exitCount: activity[0].exit_count || 0
+        };
+
+    } catch (error) {
+        return {
+            success: false,
+            message: error
+        };
+    }
+};
