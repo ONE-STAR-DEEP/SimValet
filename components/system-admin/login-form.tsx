@@ -121,11 +121,11 @@ export function LoginForm({
 
                     {showInput &&
                         <Field>
-                            <FieldLabel htmlFor="email">OTP</FieldLabel>
+                            <FieldLabel htmlFor="otp">OTP</FieldLabel>
                             <Input
                                 id="otp"
                                 type="password"
-                                placeholder="m@example.com"
+                                placeholder="******"
                                 value={otp}
                                 required
                                 maxLength={6}

@@ -50,6 +50,8 @@ export const metadata: Metadata = {
     follow: true,
   },
 
+  themeColor: "bg-gray-900",
+
   icons: {
     icon: "/assets/images/logo.png",
     shortcut: "/assets/images/logo.png",
