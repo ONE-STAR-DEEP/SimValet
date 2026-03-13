@@ -3,6 +3,7 @@
 import { useRef, useState } from "react";
 import { CameraIcon, Loader } from "lucide-react";
 import { VehicleEntry } from "@/lib/types/types";
+import imageCompression from "browser-image-compression";
 
 
 type Props = {
@@ -23,21 +24,31 @@ export default function CameraCapture({ data, setData }: Props) {
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoading(true)
         setMsg("Waiting")
+
         const file = e.target.files?.[0];
+
+        
         if (!file) {
             alert("Failed to Capture Image");
             return
         };
+
+        const compressedFile = await imageCompression(file!, {
+            maxSizeMB: 1,
+            maxWidthOrHeight: 1600,
+        });
+
         setMsg("Image Captured")
-        console.log("Image size:", file.size / 1024 / 1024, "MB");
+        
+        console.log("Image size:", compressedFile.size / 1024 / 1024, "MB");
 
         try {
             const formData = new FormData();
-            formData.append("upload", file);
+            formData.append("upload", compressedFile);
             formData.append("regions", "in");
 
 
-            setMsg(`Image size: ${(file.size / 1024 / 1024).toFixed(2)} MB`)
+            setMsg(`Image size: ${(compressedFile.size / 1024 / 1024).toFixed(2)} MB`)
             const res = await fetch("https://api.platerecognizer.com/v1/plate-reader/", {
                 method: "POST",
                 headers: {
