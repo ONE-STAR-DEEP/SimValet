@@ -78,7 +78,7 @@ const EntryForm = () => {
                                     vehicleNumber: e.target.value
                                 }))}
                                 ></Input>
-                        <CameraCapture/>
+                        <CameraCapture data={data} setData={setData}/>
                                 </div>
                     </Field>
 

@@ -1,53 +1,81 @@
 'use client'
 
-import { useRef, useState } from "react";
-import { Camera, CameraIcon } from "lucide-react";
+import { useRef } from "react";
+import { CameraIcon } from "lucide-react";
+import { VehicleEntry } from "@/lib/types/types";
 
-export default function CameraCapture() {
 
-  const inputRef = useRef<HTMLInputElement>(null);
-  const [image, setImage] = useState<File | null>(null);
+type Props = {
+  data: VehicleEntry;
+  setData: React.Dispatch<React.SetStateAction<VehicleEntry>>;
+};
 
-  const openCamera = () => {
-    inputRef.current?.click();
-  };
+export default function CameraCapture({ data, setData }: Props) {
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const inputRef = useRef<HTMLInputElement>(null);
 
-    setImage(file);
-  };
+    const openCamera = () => {
+        inputRef.current?.click();
+    };
 
-  return (
-    <div className="flex flex-col gap-4">
+    const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+        const file = e.target.files?.[0];
+        if (!file) {
+            alert("Failed to Capture Image");
+            return
+        };
 
-      {/* Camera Icon */}
-      <button
-        type="button"
-        onClick={openCamera}
-        className="p-2 border border-primary/20 bg-white rounded-lg w-fit"
-      >
-        <CameraIcon className="" size={16} />
-      </button>
+        try {
+            const formData = new FormData();
+            formData.append("upload", file);
+            formData.append("regions", "in");
 
-      {/* Hidden camera input */}
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handleChange}
-        style={{ display: "none" }}
-      />
+            const res = await fetch("https://api.platerecognizer.com/v1/plate-reader/", {
+                method: "POST",
+                headers: {
+                    Authorization: `Token ${process.env.NEXT_PUBLIC_SNAPSHOT_API_KEY!}`,
+                },
+                body: formData,
+            });
 
-      {image && (
-        <img
-          src={URL.createObjectURL(image)}
-          className="w-40 rounded"
-        />
-      )}
+            const result: any = await res.json();
 
-    </div>
-  );
+            if (result.results?.length > 0) {
+                const plate = result.results[0].plate;
+                console.log("Detected plate:", plate.toUpperCase());
+                setData({
+                    ...data,
+                    vehicleNumber: plate.toUpperCase()
+                })
+            }
+
+        } catch (err) {
+            console.error("Plate recognition error:", err);
+        }
+    };
+
+    return (
+        <div className="flex flex-col gap-4">
+
+            {/* Camera Icon */}
+            <button
+                type="button"
+                onClick={openCamera}
+                className="p-2 border border-primary/20 bg-white rounded-lg w-fit"
+            >
+                <CameraIcon className="" size={16} />
+            </button>
+
+            {/* Hidden camera input */}
+            <input
+                ref={inputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                onChange={handleChange}
+                style={{ display: "none" }}
+            />
+
+        </div>
+    );
 }
