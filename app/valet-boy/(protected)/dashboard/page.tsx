@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import VehicleInput from '@/components/valetBoy/vehicleInput';
 import { Button } from '@/components/ui/button';
 import EntryForm from '@/components/valetBoy/EntryForm';
 
