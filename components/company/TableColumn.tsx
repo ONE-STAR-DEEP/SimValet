@@ -1,11 +1,11 @@
 "use client"
 
-import { LocationData } from "@/lib/types/types"
+import { LocationData, LocationDetails } from "@/lib/types/types"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 import { Button } from "../ui/button"
 
-export const columns: ColumnDef<LocationData>[] = [
+export const columns: ColumnDef<LocationDetails>[] = [
     {
         id: "serial",
         header: "S No",

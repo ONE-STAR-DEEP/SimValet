@@ -1,14 +1,19 @@
 import AddCompanyPopup from "@/components/system-admin/addCompanyPopup"
 import { DataTable } from "@/components/system-admin/dataTable"
 import { columns } from "@/components/system-admin/tableColumn"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { fetchCompanies } from "@/lib/actions/systemAdmin"
+import SearchComponent from "@/components/SearchComponent"
 
 
-const page = async () => {
+const page = async ({
+    searchParams
+}: {
+    searchParams: Promise<{ search?: string }>
+}) => {
 
-    const companyData = await fetchCompanies()
+    const params = await searchParams
+
+    const companyData = await fetchCompanies(params.search)
 
     return (
         <div>
@@ -20,21 +25,13 @@ const page = async () => {
             </div>
             <header className="flex flex-col space-y-2 md:flex-row md:items-center justify-between mt-4">
                 <div className="flex items-center justify-center gap-2">
-                    <Input
-                        type="text"
-                        placeholder="Search company by name"
-                        className=""
-                    />
-                    <Button
-                        type="button"
-                    >Search
-                    </Button>
+                    <SearchComponent placeholder="Search Company by Name"/>
                 </div>
                 <AddCompanyPopup />
             </header>
 
             <main className="mt-4">
-                <DataTable columns={columns} data={Array.isArray(companyData.data) ? companyData.data : []} />
+                <DataTable columns={columns} data={Array.isArray(companyData?.data) ? companyData.data : []} />
             </main>
 
         </div>

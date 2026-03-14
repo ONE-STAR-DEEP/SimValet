@@ -206,7 +206,7 @@ export const insertValetBoy = async (data: ValetBoyData) => {
     }
 };
 
-export const fetchValetBoyData = async () => {
+export const fetchValetBoyData = async (search?: string) => {
     const conn = await db.getConnection();
 
     try {
@@ -214,16 +214,25 @@ export const fetchValetBoyData = async () => {
         if (!session) throw new Error("Unauthorized");
 
         const company_id = session.company_id;
-        const location_id = session.id
+        const location_id = session.id;
 
-        const [rows]: any = await conn.execute(
-            `
-      SELECT *
-      FROM valet_boy
-      WHERE company_id = ? and valet_location_id = ?
-      ORDER BY id DESC
-      `, [company_id, location_id]
-        );
+        let query = `
+            SELECT *
+            FROM valet_boy
+            WHERE company_id = ?
+            AND valet_location_id = ?
+        `;
+
+        const params: (string | number)[] = [company_id, location_id];
+
+        if (search) {
+            query += ` AND (valet_boy_name LIKE ? OR mobile LIKE ?)`;
+            params.push(`%${search}%`, `%${search}%`);
+        }
+
+        query += ` ORDER BY id DESC`;
+
+        const [rows] = await conn.execute(query, params);
 
         return {
             success: true,
@@ -231,7 +240,7 @@ export const fetchValetBoyData = async () => {
         };
 
     } catch (error: any) {
-        console.error("Fetch Companies Error:", error);
+        console.error("Fetch Valet Boy Error:", error);
 
         return {
             success: false,

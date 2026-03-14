@@ -1,9 +1,11 @@
 "use client"
 
-import { CompanyFormData } from "@/lib/types/types"
+import { Company } from "@/lib/types/types"
 import { ColumnDef } from "@tanstack/react-table"
+import { Button } from "../ui/button"
+import { Ellipsis } from "lucide-react"
 
-export const columns: ColumnDef<CompanyFormData>[] = [
+export const columns: ColumnDef<Company>[] = [
     {
         id: "serial",
         header: "S No",
@@ -16,6 +18,7 @@ export const columns: ColumnDef<CompanyFormData>[] = [
     {
         accessorKey: "email",
         header: "Email",
+        cell: ({ row }) => row.original.email || "-"
     },
     {
         accessorKey: "gst",
@@ -27,7 +30,7 @@ export const columns: ColumnDef<CompanyFormData>[] = [
     },
     {
         accessorKey: "city",
-        header: "Address",
+        header: "City",
     },
     {
         accessorKey: "state",
@@ -53,4 +56,19 @@ export const columns: ColumnDef<CompanyFormData>[] = [
         accessorKey: "contact_person_designation",
         header: "Designation",
     },
+    {
+        id: "actions",
+        header: "Actions",
+        cell: ({ row }) => {
+            const company = row.original
+            console.log(company)
+            return (
+                <div className="flex gap-2 justify-center">
+                    <Ellipsis className="text-primary"/>
+                    {/* <Button size="sm">Edit</Button>
+                    <Button size="sm" variant="destructive">Delete</Button> */}
+                </div>
+            )
+        }
+    }
 ]

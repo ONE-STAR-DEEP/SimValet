@@ -1,14 +1,19 @@
 import AddLocationPopup from "@/components/company/addLocationPopup"
 import { DataTable } from "@/components/system-admin/dataTable"
 import { columns } from "@/components/company/TableColumn"
-import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
 import { fetchLocations } from "@/lib/actions/company"
+import SearchComponent from "@/components/SearchComponent"
 
 
-const Dashboard = async () => {
+const Dashboard = async ({
+    searchParams
+}: {
+    searchParams: Promise<{ search?: string }>
+}) => {
 
-    const locationData = await fetchLocations()
+    const params = await searchParams
+
+    const locationData = await fetchLocations(params.search)
 
     return (
         <div>
@@ -26,21 +31,13 @@ const Dashboard = async () => {
             </div>
             <header className="flex flex-col space-y-2 md:flex-row md:items-center justify-between mt-4">
                 <div className="flex items-center justify-center gap-2">
-                    <Input
-                        type="text"
-                        placeholder="Search company by name"
-                        className=""
-                    />
-                    <Button
-                        type="button"
-                    >Search
-                    </Button>
+                    <SearchComponent placeholder="Search Location by Name" />
                 </div>
                 <AddLocationPopup />
             </header>
 
             <main className="mt-4">
-                <DataTable columns={columns} data={Array.isArray(locationData.data) ? locationData.data : []} />
+                <DataTable columns={columns} data={Array.isArray(locationData?.data) ? locationData.data : []} />
             </main>
 
         </div>

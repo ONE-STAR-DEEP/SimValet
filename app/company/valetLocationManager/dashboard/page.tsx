@@ -5,6 +5,7 @@ import { Input } from '@/components/ui/input'
 import { fetchValetBoyData } from '@/lib/actions/locationManager'
 import AddValetBoyPopup from '@/components/valetLocationManager/AddValetBoyPopup'
 import { fetchLocationInfo } from '@/lib/actions/valetBoy'
+import SearchComponent from '@/components/SearchComponent'
 
 export const locationData = {
   success: true,
@@ -60,9 +61,15 @@ export const locationData = {
   }
 }
 
-const ValetLocationManager = async () => {
+const ValetLocationManager = async ({
+    searchParams
+}: {
+    searchParams: Promise<{ search?: string }>
+}) => {
 
-  const valetBoyData = await fetchValetBoyData();
+    const params = await searchParams
+
+  const valetBoyData = await fetchValetBoyData(params.search);
 
   return (
     <div>
@@ -106,17 +113,10 @@ const ValetLocationManager = async () => {
           </div>
         </div>
       </div>
+      
       <header className="flex flex-col space-y-2 md:flex-row md:items-center justify-between mt-4">
         <div className="flex items-center justify-center gap-2">
-          <Input
-            type="text"
-            placeholder="Search company by name"
-            className=""
-          />
-          <Button
-            type="button"
-          >Search
-          </Button>
+          <SearchComponent placeholder='Enter Name or Mobile...'/>
         </div>
         <AddValetBoyPopup />
       </header>

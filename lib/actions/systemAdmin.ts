@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 import { RowDataPacket } from "mysql2";
 import { sendLoginOtpEmail } from "../email";
 import { getSessionUser } from "../checkSession";
-import { CompanyFormData } from "../types/types";
+import { Company, CompanyFormData } from "../types/types";
 import { ResultSetHeader } from "mysql2";
 import { generateOTP } from "../otp";
 
@@ -155,28 +155,28 @@ export const matchOTP = async (email: string, inputOTP: string) => {
 };
 
 export const insertCompany = async (data: CompanyFormData) => {
-  const conn = await db.getConnection();
+    const conn = await db.getConnection();
 
-  try {
-    const session = await getSessionUser();
-    if (!session) throw new Error("Unauthorized");
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
 
-    const {
-      companyName,
-      gstNo,
-      email,
-      address,
-      country,
-      state,
-      city,
-      pincode,
-      contactPerson,
-      personMobile,
-      personDesignation
-    } = data;
+        const {
+            companyName,
+            gstNo,
+            email,
+            address,
+            country,
+            state,
+            city,
+            pincode,
+            contactPerson,
+            personMobile,
+            personDesignation
+        } = data;
 
-    const [result] = await conn.execute<ResultSetHeader>(
-      `
+        const [result] = await conn.execute<ResultSetHeader>(
+            `
       INSERT INTO company (
         name,
         gst,
@@ -193,71 +193,79 @@ export const insertCompany = async (data: CompanyFormData) => {
       )
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
-      [
-        companyName,
-        gstNo.toUpperCase().trim(),
-        email,
-        address,
-        country,
-        state,
-        city,
-        pincode,
-        contactPerson,
-        personMobile,
-        personDesignation,
-        1 
-      ]
-    );
+            [
+                companyName,
+                gstNo.toUpperCase().trim(),
+                email,
+                address,
+                country,
+                state,
+                city,
+                pincode,
+                contactPerson,
+                personMobile,
+                personDesignation,
+                1
+            ]
+        );
 
-    return {
-      success: true,
-      insertId: result.insertId
-    };
+        return {
+            success: true,
+            insertId: result.insertId
+        };
 
-  } catch (error: any) {
-    console.error("Insert Company Error:", error);
+    } catch (error: any) {
+        console.error("Insert Company Error:", error);
 
-    return {
-      success: false,
-      message: error.message || "Something went wrong"
-    };
+        return {
+            success: false,
+            message: error.message || "Something went wrong"
+        };
 
-  } finally {
-    conn.release();
-  }
+    } finally {
+        conn.release();
+    }
 };
 
-export const fetchCompanies = async () => {
-  const conn = await db.getConnection();
+export const fetchCompanies = async (search?: string) => {
+    const conn = await db.getConnection();
 
-  try {
-    const session = await getSessionUser();
-    if (!session) throw new Error("Unauthorized");
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
 
-    const [rows]: any = await conn.execute(
-      `
-      SELECT *
-      FROM company
-      ORDER BY id DESC
-      `
-    );
+        let query = `
+            SELECT *
+            FROM company
+            `
 
-    return {
-      success: true,
-      data: rows as CompanyFormData 
-    };
+        let params: any[] = []
 
-  } catch (error: any) {
-    console.error("Fetch Companies Error:", error);
+        if (search) {
+            query += `WHERE name LIKE ?`
+            params.push(`%${search}%`)
+        }
 
-    return {
-      success: false,
-      message: error.message || "Something went wrong"
-    };
+        query += ` ORDER BY id DESC`
 
-  } finally {
-    conn.release();
-  }
+        const [rows]: any = await conn.execute(query, params)
+
+        return {
+            success: true,
+            data: rows as Company
+        }
+
+    } catch (error: any) {
+        console.error("Fetch Companies Error:", error);
+
+        return {
+            success: false,
+            message: error.message || "Something went wrong"
+        };
+
+    } finally {
+        conn.release();
+    }
 };
 
 export async function getAllUsers(page = 1, limit = 10) {

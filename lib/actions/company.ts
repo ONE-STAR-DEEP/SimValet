@@ -6,7 +6,7 @@ import db from "../dbPool";
 import { redirect } from "next/navigation";
 import { RowDataPacket } from "mysql2";
 import { getSessionUser } from "../checkSession";
-import { CompanyFormData, LocationData } from "../types/types";
+import { CompanyFormData, LocationData, LocationDetails } from "../types/types";
 import { generateOTP } from "../otp";
 
 
@@ -199,38 +199,46 @@ export const insertLocation = async (data: LocationData) => {
     }
 };
 
-export const fetchLocations = async () => {
-  const conn = await db.getConnection();
+export const fetchLocations = async (search?: string) => {
 
-  try {
-    const session = await getSessionUser();
-    if (!session) throw new Error("Unauthorized");
+    const conn = await db.getConnection();
 
-    const company_id = session.company_id;
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+        const companyId = session.company_id;
 
-    const [rows]: any = await conn.execute(
-      `
-      SELECT *
-      FROM location_manager
-      WHERE company_id = ?
-      ORDER BY id DESC
-      `,[company_id]
-    );
+        let query = `
+            SELECT *
+            FROM location_manager
+            WHERE company_id = ?
+        `
 
-    return {
-      success: true,
-      data: rows as CompanyFormData 
-    };
+        let params: any[] = [companyId]
 
-  } catch (error: any) {
-    console.error("Fetch Companies Error:", error);
+        if (search) {
+            query += ` AND location_name LIKE ?`
+            params.push(`%${search}%`)
+        }
 
-    return {
-      success: false,
-      message: error.message || "Something went wrong"
-    };
+        query += ` ORDER BY id DESC`
 
-  } finally {
-    conn.release();
-  }
+        const [rows] = await conn.execute(query, params)
+
+        return {
+            success: true,
+            data: rows as LocationDetails[]
+        }
+
+    } catch (error: any) {
+        console.error("Fetch Companies Error:", error);
+
+        return {
+            success: false,
+            message: error.message || "Something went wrong"
+        };
+
+    } finally {
+        conn.release();
+    }
 };

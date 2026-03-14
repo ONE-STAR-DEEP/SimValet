@@ -22,11 +22,9 @@ export default function CameraCapture({ data, setData }: Props) {
 
     const handleChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
         setLoading(true)
-        
 
         const file = e.target.files?.[0];
 
-        
         if (!file) {
             alert("Failed to Capture Image");
             return
@@ -42,8 +40,7 @@ export default function CameraCapture({ data, setData }: Props) {
             formData.append("upload", compressedFile);
             formData.append("regions", "in");
 
-
-           const res = await fetch("https://api.platerecognizer.com/v1/plate-reader/", {
+            const res = await fetch("https://api.platerecognizer.com/v1/plate-reader/", {
                 method: "POST",
                 headers: {
                     Authorization: `Token ${process.env.NEXT_PUBLIC_SNAPSHOT_API_KEY!}`,
