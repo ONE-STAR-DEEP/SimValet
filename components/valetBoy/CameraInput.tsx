@@ -2,16 +2,16 @@
 
 import { useRef, useState } from "react";
 import { CameraIcon, Loader } from "lucide-react";
-import { VehicleEntry } from "@/lib/types/types";
+import { VehicleEntry, VehicleExit } from "@/lib/types/types";
 import imageCompression from "browser-image-compression";
 
 
-type Props = {
+type Props<T> = {
     data: VehicleEntry;
-    setData: React.Dispatch<React.SetStateAction<VehicleEntry>>;
+    setData: React.Dispatch<React.SetStateAction<T>>;
 };
 
-export default function CameraCapture({ data, setData }: Props) {
+export default function CameraCapture<T>({ data, setData }: Props<T>) {
 
     const inputRef = useRef<HTMLInputElement>(null);
     const [loading, setLoading] = useState(false)

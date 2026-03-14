@@ -116,7 +116,7 @@ const ValetLocationManager = async ({
       
       <header className="flex flex-col space-y-2 md:flex-row md:items-center justify-between mt-4">
         <div className="flex items-center justify-center gap-2">
-          <SearchComponent placeholder='Enter Name or Mobile...'/>
+          <SearchComponent placeholder='Search Name or Mobile...'/>
         </div>
         <AddValetBoyPopup />
       </header>

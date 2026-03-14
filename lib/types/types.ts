@@ -88,6 +88,13 @@ export type Location = {
 
 export type VehicleEntry = {
   vehicleNumber: string;
+  token: string;
   owner: string; 
   mobile: string;
+}
+
+export type VehicleExit = {
+  vehicleNumber: string;
+  status: string;
+  token: string;
 }

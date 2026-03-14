@@ -34,7 +34,7 @@ export async function sendOtp(mobile: string) {
         const companyId = rows[0].company_id;
         const userId = rows[0].id;
 
-        const otp = "123456" 
+        const otp = "123456"
         // await generateOTP();
         const expires_at = new Date(Date.now() + 10 * 60 * 1000);
         const query = `
@@ -180,10 +180,10 @@ export const fetchLocationInfo = async () => {
         return {
             success: true,
             data: {
-            ...rows[0],
-            ...location[0]
-        }
-    };
+                ...rows[0],
+                ...location[0]
+            }
+        };
 
     } catch (error) {
         return {
@@ -194,7 +194,7 @@ export const fetchLocationInfo = async () => {
     }
 }
 
-export const submitEntry = async ({ data }: { data: VehicleEntry }) => {
+export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) => {
 
     const session = await getSessionUser();
     if (!session) throw new Error("Unauthorized");
@@ -202,7 +202,7 @@ export const submitEntry = async ({ data }: { data: VehicleEntry }) => {
     const companyId = session.company_id;
     const valetId = session.id;
 
-    const carNumber = data.vehicleNumber.toUpperCase();
+    const carNumber = entryData.vehicleNumber.toUpperCase();
 
     try {
         const [entryCheck]: any = await db.execute(
@@ -242,8 +242,8 @@ export const submitEntry = async ({ data }: { data: VehicleEntry }) => {
         const locationId = rows[0].valet_location_id;
 
         const query = `
-            INSERT INTO valet_activity (entry_by_valet, valet_location_id, company_id, car_number, owner_name, owner_mobile)
-            VALUES (?, ?, ?, ?, ?, ?)
+            INSERT INTO valet_activity (entry_by_valet, valet_location_id, company_id, car_number, token, owner_name, owner_mobile)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
 
         const res = await db.execute(query, [
@@ -251,8 +251,9 @@ export const submitEntry = async ({ data }: { data: VehicleEntry }) => {
             locationId,
             companyId,
             carNumber,
-            data.owner,
-            data.mobile
+            `SVPT${entryData.token}`,
+            entryData.owner,
+            entryData.mobile
         ]);
 
         return {
@@ -270,7 +271,7 @@ export const submitEntry = async ({ data }: { data: VehicleEntry }) => {
     }
 }
 
-export const exitEntry = async (carNumber: string) => {
+export const exitEntry = async (carNumber: string, token: string) => {
 
     const session = await getSessionUser();
     if (!session) throw new Error("Unauthorized");
@@ -278,44 +279,59 @@ export const exitEntry = async (carNumber: string) => {
     const companyId = session.company_id;
     const valetId = session.id;
 
-
     try {
 
         const [rows]: any = await db.execute(
-            `
-            SELECT valet_location_id
-            FROM valet_boy
-            WHERE id = ? AND company_id = ?
-            `,
+            `SELECT valet_location_id
+             FROM valet_boy
+             WHERE id = ? AND company_id = ?`,
             [valetId, companyId]
         );
 
+        if (!rows.length) {
+            throw new Error("Valet not found");
+        }
+
         const locationId = rows[0].valet_location_id;
 
-        const query = `
-            UPDATE valet_activity
-            SET exit_time = NOW(), exit_by_valet = ?
+        const [entryRows]: any = await db.execute(
+            `
+            SELECT id, token
+            FROM valet_activity
             WHERE car_number = ?
             AND company_id = ?
             AND valet_location_id = ?
             AND exit_time IS NULL
             ORDER BY entry_time DESC
-            LIMIT 1;
-        `;
+            LIMIT 1
+            `,
+            [carNumber, companyId, locationId]
+        );
 
-        const [result]: any = await db.execute(query, [
-            valetId,
-            carNumber,
-            companyId,
-            locationId
-        ]);
-
-        if (result.affectedRows === 0) {
+        if (!entryRows.length) {
             return {
                 success: false,
-                message: "No active entry found"
+                message: "No active vehicle found"
             };
         }
+
+        const entry = entryRows[0];
+
+        if (entry.token !== `SVPT${token}`) {
+            return {
+                success: false,
+                message: "Invalid token"
+            };
+        }
+
+        await db.execute(
+            `
+            UPDATE valet_activity
+            SET exit_time = NOW(), exit_by_valet = ?
+            WHERE id = ?
+            `,
+            [valetId, entry.id]
+        );
 
         return {
             success: true,

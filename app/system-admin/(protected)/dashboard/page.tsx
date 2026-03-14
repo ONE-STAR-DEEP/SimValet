@@ -4,7 +4,6 @@ import { columns } from "@/components/system-admin/tableColumn"
 import { fetchCompanies } from "@/lib/actions/systemAdmin"
 import SearchComponent from "@/components/SearchComponent"
 
-
 const page = async ({
     searchParams
 }: {
@@ -25,7 +24,7 @@ const page = async ({
             </div>
             <header className="flex flex-col space-y-2 md:flex-row md:items-center justify-between mt-4">
                 <div className="flex items-center justify-center gap-2">
-                    <SearchComponent placeholder="Search Company by Name"/>
+                    <SearchComponent placeholder="Search Company by Name..."/>
                 </div>
                 <AddCompanyPopup />
             </header>
