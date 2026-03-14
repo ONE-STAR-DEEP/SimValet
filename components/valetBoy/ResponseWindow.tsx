@@ -20,7 +20,6 @@ const ResponseWindow = () => {
 
     return (
 
-        <div>
             <div className="rounded-xl border-2 border-black/20">
 
                 {/* Header */}
@@ -58,7 +57,6 @@ const ResponseWindow = () => {
                     ))}
                 </div>
             </div>
-        </div>
     )
 }
 

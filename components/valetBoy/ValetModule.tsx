@@ -7,10 +7,10 @@ import ResponseWindow from "./ResponseWindow";
 export default function ValetModule() {
 
   const [mode, setMode] = useState<"entry" | "exit">("entry");
-  const [response, setResponse] = useState(false);
+  const [response, setResponse] = useState<any>(null);
 
   return (
-    <div className="grid gap-6 md:grid-cols-2">
+    <div className="grid gap-4 md:grid-cols-2">
 
       <EntryExitForm
         mode={mode}
