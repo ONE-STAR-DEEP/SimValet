@@ -98,6 +98,7 @@ const EntryExitForm = ({
 
             if (mode === "exit") {
                 if (exitLoading) return;
+                if(!exitData.mode) alert("Select payment mode")
                 setExitLoading(true)
                 const vehicleNumber = exitData.vehicleNumber.trim().toUpperCase();
                 if (!vehicleNumber) return;
@@ -163,6 +164,7 @@ const EntryExitForm = ({
 
     const handleVerify = async () => {
         if (exitLoading) return;
+        if(!exitData.mode) alert("Select payment mode")
         setExitLoading(true)
         try {
             if (exitData.status === "Drive-Way") {
@@ -351,6 +353,7 @@ const EntryExitForm = ({
 
                                     <Field className='w-full'>
                                         <Select
+                                            required
                                             value={exitData.mode}
                                             onValueChange={(value) => {
                                                 setExitData((prev) => ({
@@ -467,6 +470,7 @@ const EntryExitForm = ({
 
                             <Field className='w-full'>
                                 <Select
+                                    required
                                     value={exitData.mode}
                                     onValueChange={(value) => {
                                         setExitData((prev) => ({
