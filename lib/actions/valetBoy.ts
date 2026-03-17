@@ -271,7 +271,7 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
     }
 }
 
-export const exitEntry = async (vehicleNumber: string, token: string) => {
+export const exitEntry = async (vehicleNumber: string, token: string, mode: string) => {
 
     const session = await getSessionUser();
     if (!session) throw new Error("Unauthorized");
@@ -313,10 +313,11 @@ export const exitEntry = async (vehicleNumber: string, token: string) => {
             UPDATE valet_activity
             SET exit_time = NOW(),
                 exit_by_valet = ?,
-                status = ?
+                status = ?,
+                mode_of_payment = ?
             WHERE id = ?
             `,
-            [valetId, "Delivered",entryId]
+            [valetId, "Delivered", mode, entryId]
         );
 
         return {

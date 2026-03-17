@@ -97,6 +97,7 @@ export type VehicleExit = {
   vehicleNumber: string;
   status: string;
   token: string;
+  mode: string;
 }
 
 export type VehicleData = {

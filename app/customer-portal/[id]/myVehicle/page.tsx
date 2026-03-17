@@ -85,7 +85,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
         </div>
       </div>
 
-      <div className="border border-primary/20 rounded-xl p-5 bg-white shadow-sm">
+      {/* <div className="border border-primary/20 rounded-xl p-5 bg-white shadow-sm">
         <div className="flex flex-col space-y-4">
 
           <div className="flex items-center gap-2">
@@ -152,7 +152,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
           </div>
 
         </div>
-      </div>
+      </div> */}
 
       <RequestButton id={data.data?.id!}/>
 

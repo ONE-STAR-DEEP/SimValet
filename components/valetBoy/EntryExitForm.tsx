@@ -10,6 +10,16 @@ import { CarIcon, Dot } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CameraCapture from './CameraInput';
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
 
 type EntryExitFormProps = {
     mode: "entry" | "exit";
@@ -37,6 +47,7 @@ const EntryExitForm = ({
         vehicleNumber: response?.vehicle_number || "",
         status: "Assigned",
         token: "",
+        mode: ""
     });
 
     const [entryLoading, setEntryLoading] = useState(false);
@@ -49,6 +60,7 @@ const EntryExitForm = ({
             vehicleNumber: response.vehicle_number,
             status: "Assigned",
             token: "",
+            mode: ""
         });
     }, [response]);
 
@@ -89,7 +101,7 @@ const EntryExitForm = ({
                 const vehicleNumber = exitData.vehicleNumber.trim().toUpperCase();
                 if (!vehicleNumber) return;
 
-                const res = await exitEntry(vehicleNumber, exitData.token);
+                const res = await exitEntry(vehicleNumber, exitData.token, exitData.mode);
                 if (!res?.success) {
                     alert(res?.message ?? "Something went wrong");
                     return;
@@ -99,6 +111,7 @@ const EntryExitForm = ({
                     vehicleNumber: "",
                     token: "",
                     status: "Assigned",
+                    mode: ""
                 });
                 setResponse(null)
                 setExitLoading(false)
@@ -143,7 +156,7 @@ const EntryExitForm = ({
                 const vehicleNumber = exitData.vehicleNumber.trim().toUpperCase();
                 if (!vehicleNumber) return;
 
-                const res = await exitEntry(vehicleNumber, exitData.token);
+                const res = await exitEntry(vehicleNumber, exitData.token, exitData.mode);
                 if (!res?.success) {
                     alert(res?.message ?? "Something went wrong");
                     return;
@@ -153,6 +166,7 @@ const EntryExitForm = ({
                     vehicleNumber: "",
                     token: "",
                     status: "Assigned",
+                    mode: ""
                 });
                 setResponse(null);
             }
@@ -317,9 +331,33 @@ const EntryExitForm = ({
                                         </div>
                                     </Field>
 
+                                    <Field className='w-full'>
+                                        <Select
+                                            value={exitData.mode}
+                                            onValueChange={(value) => {
+                                                setExitData((prev) => ({
+                                                    ...prev,
+                                                    mode: value,
+                                                }));
+                                            }}
+                                        >
+                                            <SelectTrigger className="w-full">
+                                                <SelectValue placeholder="Mode of Payment" />
+                                            </SelectTrigger>
+                                            <SelectContent className='w-full'>
+                                                <SelectGroup className='w-full'>
+                                                    <SelectLabel>Modes</SelectLabel>
+                                                    <SelectItem value="upi">UPI</SelectItem>
+                                                    <SelectItem value="cash">Cash</SelectItem>
+                                                </SelectGroup>
+                                            </SelectContent>
+                                        </Select>
+                                    </Field>
+
                                     <Button type='button' onClick={handleVerify} disabled={exitLoading}>
                                         {exitLoading ? "Verifying" : "Verify Token"}
                                     </Button>
+
                                     <Button type='button' variant={'outline'} className='border border-primary'
                                         disabled={exitLoading}
                                         onClick={async () => {
@@ -336,6 +374,7 @@ const EntryExitForm = ({
                                                     vehicleNumber: "",
                                                     status: "Assigned",
                                                     token: "",
+                                                    mode: ""
                                                 })
                                                 setResponse(null)
                                             } catch (error) {
@@ -400,6 +439,29 @@ const EntryExitForm = ({
                                     />
 
                                 </div>
+                            </Field>
+
+                            <Field className='w-full'>
+                                <Select
+                                    value={exitData.mode}
+                                    onValueChange={(value) => {
+                                        setExitData((prev) => ({
+                                            ...prev,
+                                            mode: value,
+                                        }));
+                                    }}
+                                >
+                                    <SelectTrigger className="w-full">
+                                        <SelectValue placeholder="Mode of Payment" />
+                                    </SelectTrigger>
+                                    <SelectContent className='w-full'>
+                                        <SelectGroup className='w-full'>
+                                            <SelectLabel>Modes</SelectLabel>
+                                            <SelectItem value="upi">UPI</SelectItem>
+                                            <SelectItem value="cash">Cash</SelectItem>
+                                        </SelectGroup>
+                                    </SelectContent>
+                                </Select>
                             </Field>
 
                             <Field >
