@@ -7,7 +7,7 @@ import imageCompression from "browser-image-compression";
 
 
 type Props<T> = {
-    data: VehicleEntry;
+    data: T;
     setData: React.Dispatch<React.SetStateAction<T>>;
 };
 

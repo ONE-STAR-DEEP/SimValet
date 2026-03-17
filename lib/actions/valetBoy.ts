@@ -6,7 +6,7 @@ import db from "../dbPool";
 import { redirect } from "next/navigation";
 import { RowDataPacket } from "mysql2";
 import { getSessionUser } from "../checkSession";
-import { Location, VehicleEntry } from "../types/types";
+import { VehicleEntry } from "../types/types";
 import { generateOTP } from "../otp";
 import { sendLoginOtpEmail } from "../email";
 
@@ -209,7 +209,7 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
             `
             SELECT id
             FROM valet_activity
-            WHERE car_number = ? AND company_id = ?
+            WHERE vehicle_number = ? AND company_id = ?
             AND exit_time IS NULL
             LIMIT 1;
             `,
@@ -242,7 +242,7 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
         const locationId = rows[0].valet_location_id;
 
         const query = `
-            INSERT INTO valet_activity (entry_by_valet, valet_location_id, company_id, car_number, token, owner_name, owner_mobile)
+            INSERT INTO valet_activity (entry_by_valet, valet_location_id, company_id, vehicle_number, token, owner_name, owner_mobile)
             VALUES (?, ?, ?, ?, ?, ?, ?)
         `;
 
@@ -251,7 +251,7 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
             locationId,
             companyId,
             carNumber,
-            `SVPT${entryData.token}`,
+            entryData.token,
             entryData.owner,
             entryData.mobile
         ]);
@@ -271,7 +271,7 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
     }
 }
 
-export const exitEntry = async (carNumber: string, token: string) => {
+export const exitEntry = async (vehicleNumber: string, token: string) => {
 
     const session = await getSessionUser();
     if (!session) throw new Error("Unauthorized");
@@ -282,55 +282,41 @@ export const exitEntry = async (carNumber: string, token: string) => {
     try {
 
         const [rows]: any = await db.execute(
-            `SELECT valet_location_id
-             FROM valet_boy
-             WHERE id = ? AND company_id = ?`,
-            [valetId, companyId]
+            `
+            SELECT va.id
+            FROM valet_activity va
+            JOIN valet_boy vb 
+                ON vb.id = ? 
+                AND vb.company_id = ?
+                AND vb.valet_location_id = va.valet_location_id
+            WHERE va.vehicle_number = ?
+            AND va.company_id = ?
+            AND va.exit_time IS NULL
+            AND va.token = ?
+            ORDER BY va.entry_time DESC
+            LIMIT 1
+            `,
+            [valetId, companyId, vehicleNumber.toUpperCase(), companyId, token]
         );
 
         if (!rows.length) {
-            throw new Error("Valet not found");
-        }
-
-        const locationId = rows[0].valet_location_id;
-
-        const [entryRows]: any = await db.execute(
-            `
-            SELECT id, token
-            FROM valet_activity
-            WHERE car_number = ?
-            AND company_id = ?
-            AND valet_location_id = ?
-            AND exit_time IS NULL
-            ORDER BY entry_time DESC
-            LIMIT 1
-            `,
-            [carNumber, companyId, locationId]
-        );
-
-        if (!entryRows.length) {
             return {
                 success: false,
-                message: "No active vehicle found"
+                message: "Invalid token or no active vehicle"
             };
         }
 
-        const entry = entryRows[0];
-
-        if (entry.token !== `SVPT${token}`) {
-            return {
-                success: false,
-                message: "Invalid token"
-            };
-        }
+        const entryId = rows[0].id;
 
         await db.execute(
             `
             UPDATE valet_activity
-            SET exit_time = NOW(), exit_by_valet = ?
+            SET exit_time = NOW(),
+                exit_by_valet = ?,
+                status = ?
             WHERE id = ?
             `,
-            [valetId, entry.id]
+            [valetId, "Delivered",entryId]
         );
 
         return {
@@ -398,3 +384,185 @@ export const fetchEntryExitInfo = async () => {
         };
     }
 };
+
+export const getPendingRequests = async () => {
+    try {
+
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const companyId = session.company_id;
+        const userId = session.id;
+
+        const [location]: any = await db.execute(
+            `
+      SELECT valet_location_id
+      FROM valet_boy
+      WHERE id = ? AND company_id = ?
+      `,
+            [userId, companyId]
+        );
+
+        if (!location.length) {
+            return {
+                success: false,
+                message: "Valet location not found"
+            };
+        }
+
+        const valetLocationId = location[0].valet_location_id;
+
+        const [rows]: any = await db.query(
+            `
+      SELECT 
+        r.id,
+        r.vehicle_number,
+        v.owner_name AS customer_name,
+        r.request_time
+      FROM requests r
+      JOIN valet_activity v
+        ON v.vehicle_number = r.vehicle_number
+        AND v.id = (
+          SELECT MAX(id)
+          FROM valet_activity
+          WHERE vehicle_number = r.vehicle_number
+        )
+      WHERE r.status = 'pending'
+        AND r.company_id = ?
+        AND v.valet_location_id = ?
+        AND r.request_time >= NOW() - INTERVAL 10 MINUTE
+      ORDER BY r.request_time DESC;
+      `,
+            [companyId, valetLocationId]
+        );
+
+        return {
+            success: true,
+            data: rows
+        };
+
+    } catch (error) {
+        console.log(error);
+
+        return {
+            success: false,
+            data: []
+        };
+    }
+};
+
+export const assignValet = async (requestId: number, vehicleNumber: string) => {
+    try {
+
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const companyId = session.company_id;
+        const userId = session.id;
+
+        const conn = await db.getConnection();
+
+        try {
+
+            await conn.beginTransaction();
+
+            // assign valet ONLY if not already assigned
+            const [activityResult]: any = await conn.query(
+                `
+        UPDATE valet_activity
+        SET assigned_valet = ?,
+        status = ?
+        WHERE vehicle_number = ?
+        AND company_id = ?
+        AND assigned_valet IS NULL
+        ORDER BY id DESC
+        LIMIT 1
+        `,
+                [userId, "Valet Assigned", vehicleNumber, companyId]
+            );
+
+            if (activityResult.affectedRows === 0) {
+                await conn.rollback();
+
+                return {
+                    success: false,
+                    message: "Vehicle already assigned"
+                };
+            }
+
+            // delete the request
+            await conn.query(
+                `
+        DELETE FROM requests
+        WHERE id = ?
+        AND company_id = ?
+        `,
+                [requestId, companyId]
+            );
+
+            await conn.commit();
+
+            return {
+                success: true
+            };
+
+        } catch (err) {
+            await conn.rollback();
+            throw err;
+        } finally {
+            conn.release();
+        }
+
+    } catch (error) {
+        console.log(error);
+
+        return {
+            success: false
+        };
+    }
+};
+
+export const updateStatus = async (vehicleNumber: string, status: string) => {
+
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const companyId = session.company_id;
+        const userId = session.id;
+
+        const [result]: any = await db.execute(
+            `
+            UPDATE valet_activity
+            SET status = ?
+            WHERE vehicle_number = ?
+            AND company_id = ?
+            AND assigned_valet = ?
+            AND exit_time IS NULL
+            ORDER BY id DESC
+            LIMIT 1
+            `,
+            [status, vehicleNumber.toUpperCase(), companyId, userId]
+        );
+
+        if (result.affectedRows === 0) {
+            return {
+                success: false,
+                message: "No active vehicle found"
+            };
+        }
+
+        return {
+            success: true,
+            message: "Status updated"
+        };
+
+    } catch (error) {
+        console.log(error)
+
+        return {
+            success: false,
+            message: "Failed to update"
+        }
+    }
+}

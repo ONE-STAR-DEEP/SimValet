@@ -98,3 +98,31 @@ export type VehicleExit = {
   status: string;
   token: string;
 }
+
+export type VehicleData = {
+  id: number;
+  valet_location_id: number;
+  company_id: number;
+  vehicle_number: string;
+  owner_name: string;
+  owner_mobile: string;
+  entry_time: Date;
+  exit_time: Date | null;
+  total_duration_hrs: number | null;
+  created_at: Date;
+  exit_by_valet: number | null;
+  entry_by_valet: number;
+  charge_rate: number | null;
+  token: string;
+  dropped_by: number | null;
+  assigned_valet: number | null;
+  status: string | null;
+  vehicle_requested: string | null;
+};
+
+export type Request = {
+    id: number;
+    vehicle_number: string;
+    customer_name: string;
+    request_time: string;
+};

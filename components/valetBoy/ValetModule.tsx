@@ -3,11 +3,12 @@
 import { useState } from "react";
 import EntryExitForm from "./EntryExitForm";
 import ResponseWindow from "./ResponseWindow";
+import { Request } from "@/lib/types/types";
 
 export default function ValetModule() {
 
   const [mode, setMode] = useState<"entry" | "exit">("entry");
-  const [response, setResponse] = useState<any>(null);
+  const [response, setResponse] = useState<Request | null>(null);
 
   return (
     <div className="grid gap-4 md:grid-cols-2">
@@ -19,7 +20,10 @@ export default function ValetModule() {
         setResponse={setResponse}
       />
 
-      <ResponseWindow />
+      <ResponseWindow
+        setMode={setMode}
+        setResponse={setResponse}
+      />
 
       {/* <ResponseWindow
         response={response}

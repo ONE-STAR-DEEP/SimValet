@@ -4,18 +4,18 @@ import { Button } from '@/components/ui/button';
 import { Field, FieldGroup } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { exitEntry, submitEntry } from '@/lib/actions/valetBoy';
-import { VehicleEntry, VehicleExit } from '@/lib/types/types';
+import { exitEntry, submitEntry, updateStatus } from '@/lib/actions/valetBoy';
+import { Request, VehicleEntry, VehicleExit } from '@/lib/types/types';
 import { CarIcon, Dot } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import CameraCapture from './CameraInput';
 
 type EntryExitFormProps = {
     mode: "entry" | "exit";
-    response: boolean;
+    response?: Request | null;
     setMode: React.Dispatch<React.SetStateAction<"entry" | "exit">>;
-    setResponse: React.Dispatch<React.SetStateAction<any>>;
+    setResponse: React.Dispatch<React.SetStateAction<Request | null>>;
 };
 
 const EntryExitForm = ({
@@ -34,19 +34,31 @@ const EntryExitForm = ({
     });
 
     const [exitData, setExitData] = useState<VehicleExit>({
-        vehicleNumber: "",
+        vehicleNumber: response?.vehicle_number || "",
         status: "Assigned",
         token: "",
     });
 
-    // const [mode, setmode] = useState("entry");
+    const [entryLoading, setEntryLoading] = useState(false);
+    const [exitLoading, setExitLoading] = useState(false)
 
-    const handleEntrySubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    useEffect(() => {
+        if (!response?.vehicle_number) return;
+
+        setExitData({
+            vehicleNumber: response.vehicle_number,
+            status: "Assigned",
+            token: "",
+        });
+    }, [response]);
+
+    const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
-
         try {
-            
+
             if (mode === "entry") {
+                if (entryLoading) return;
+                setEntryLoading(true)
                 const vehicleNumber = entryData.vehicleNumber.trim().toUpperCase();
                 if (!vehicleNumber) return;
 
@@ -67,15 +79,18 @@ const EntryExitForm = ({
                     token: "",
                     owner: "",
                     mobile: "",
-                });   
+                });
+                setEntryLoading(false)
             }
-            
-            if(mode ==="exit"){
+
+            if (mode === "exit") {
+                if (exitLoading) return;
+                setExitLoading(true)
                 const vehicleNumber = exitData.vehicleNumber.trim().toUpperCase();
                 if (!vehicleNumber) return;
 
-                const res =await exitEntry(vehicleNumber, exitData.token);
-                 if (!res?.success) {
+                const res = await exitEntry(vehicleNumber, exitData.token);
+                if (!res?.success) {
                     alert(res?.message ?? "Something went wrong");
                     return;
                 }
@@ -83,19 +98,74 @@ const EntryExitForm = ({
                 setExitData({
                     vehicleNumber: "",
                     token: "",
-                    status: "",
-                });   
-                
+                    status: "Assigned",
+                });
+                setResponse(null)
+                setExitLoading(false)
             }
             router.refresh();
 
         } catch (error) {
             console.error("Submit entry error:", error);
+        } finally {
+            setEntryLoading(false);
+            setExitLoading(false);
         }
     };
 
+    const handleUpdate = async () => {
+        if (exitLoading) return;
+        setExitLoading(true)
+        try {
+            if (exitData.status === "Assigned") {
+                const vehicleNumber = exitData.vehicleNumber.trim().toUpperCase();
+                if (!vehicleNumber) return;
+                const res = await updateStatus(vehicleNumber, "Drive-Way")
+                if (res.success) {
+                    setExitData((prev) => ({
+                        ...prev,
+                        status: "Drive-Way"
+                    }));
+                }
+            }
+        } catch (error) {
+
+        } finally {
+            setExitLoading(false)
+        }
+    }
+
+    const handleVerify = async () => {
+        if (exitLoading) return;
+        setExitLoading(true)
+        try {
+            if (exitData.status === "Drive-Way") {
+                const vehicleNumber = exitData.vehicleNumber.trim().toUpperCase();
+                if (!vehicleNumber) return;
+
+                const res = await exitEntry(vehicleNumber, exitData.token);
+                if (!res?.success) {
+                    alert(res?.message ?? "Something went wrong");
+                    return;
+                }
+
+                setExitData({
+                    vehicleNumber: "",
+                    token: "",
+                    status: "Assigned",
+                });
+                setResponse(null);
+            }
+
+        } catch (error) {
+
+        } finally {
+            setExitLoading(false)
+        }
+    }
+
     return (
-        <form onSubmit={handleEntrySubmit} className='space-y-4'>
+        <form onSubmit={handleSubmit} className='space-y-4'>
             <div className='h-full rounded-xl border border-primary/20 overflow-hidden'>
                 <div className='w-full flex'>
                     <div onClick={() => setMode("entry")}
@@ -187,7 +257,9 @@ const EntryExitForm = ({
 
                         <Field >
                             <div className='w-full flex flex-row gap-2 justify-center'>
-                                <Button type='submit' className='w-full'>Submit</Button>
+                                <Button type='submit' className='w-full' disabled={entryLoading}>
+                                    {entryLoading ? "Loading..." : "Submit"}
+                                </Button>
                             </div>
                         </Field>
                     </FieldGroup>
@@ -208,25 +280,18 @@ const EntryExitForm = ({
                                 <div className='flex gap-2'>
                                     <Input
                                         className='bg-white'
-                                        value={"SS00AA0000"}
+                                        value={exitData.vehicleNumber}
                                         disabled
-                                        onChange={(e) =>
-                                            setEntryData(prev => ({
-                                                ...prev,
-                                                vehicleNumber: e.target.value
-                                            }))}
                                     ></Input>
                                 </div>
                             </Field>
 
                             {exitData.status === "Assigned" &&
-                                <Button type='button' onClick={() => setExitData(prev => ({
-                                    ...prev,
-                                    status: "Drive way"
-                                }))}>Update Status: Drive Way
+                                <Button type='button' onClick={handleUpdate} disabled={exitLoading}>
+                                    {exitLoading ? "Loading..." : "Update Status: Drive Way"}
                                 </Button>}
 
-                            {exitData.status === "Drive way" &&
+                            {exitData.status === "Drive-Way" &&
                                 <>
                                     <Field>
                                         <Label>Token</Label>
@@ -252,23 +317,35 @@ const EntryExitForm = ({
                                         </div>
                                     </Field>
 
-                                    <Button type='button' onClick={() => {
-                                        setMode("entry")
-                                        setExitData(prev => ({
-                                            ...prev,
-                                            status: "Verified & Dropped"
-                                        }))
-                                    }}>
-                                        Verify Token
+                                    <Button type='button' onClick={handleVerify} disabled={exitLoading}>
+                                        {exitLoading ? "Verifying" : "Verify Token"}
                                     </Button>
-                                    <Button type='button' variant={'outline'} className='border border-primary' onClick={() => {
-                                        setMode("entry")
-                                        setExitData(prev => ({
-                                            ...prev,
-                                            status: "Verified & Dropped"
-                                        }))
-                                    }}>
-                                        Drop Vehicle
+                                    <Button type='button' variant={'outline'} className='border border-primary'
+                                        disabled={exitLoading}
+                                        onClick={async () => {
+                                            setExitLoading(true)
+                                            try {
+                                                const vehicleNumber = exitData.vehicleNumber.trim().toUpperCase();
+                                                if (!vehicleNumber) return;
+                                                const res = await updateStatus(vehicleNumber, "Dropped");
+                                                if (!res.success) {
+                                                    alert("Failed")
+                                                    return
+                                                }
+                                                setExitData({
+                                                    vehicleNumber: "",
+                                                    status: "Assigned",
+                                                    token: "",
+                                                })
+                                                setResponse(null)
+                                            } catch (error) {
+
+                                            } finally {
+                                                setExitLoading(false)
+                                            }
+
+                                        }}>
+                                        {exitLoading ? "Loading..." : "Drop Vehicle"}
                                     </Button>
                                 </>
                             }
@@ -295,7 +372,7 @@ const EntryExitForm = ({
                                                 vehicleNumber: e.target.value
                                             }))}
                                     ></Input>
-                                    <CameraCapture<VehicleExit> data={entryData} setData={setExitData} />
+                                    <CameraCapture<VehicleExit> data={exitData} setData={setExitData} />
                                 </div>
                             </Field>
 
@@ -312,11 +389,13 @@ const EntryExitForm = ({
                                         className="border-0 focus-visible:ring-0"
                                         value={exitData.token}
                                         placeholder="token number"
-                                        onChange={(e) =>
+                                        onChange={(e) => {
+                                            const value = e.target.value.replace(/\D/g, "");
                                             setExitData(prev => ({
                                                 ...prev,
-                                                token: e.target.value
+                                                token: value
                                             }))
+                                        }
                                         }
                                     />
 
