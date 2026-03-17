@@ -98,7 +98,10 @@ const EntryExitForm = ({
 
             if (mode === "exit") {
                 if (exitLoading) return;
-                if(!exitData.mode) alert("Select payment mode")
+                if (!exitData.mode) {
+                    alert("Select payment mode")
+                    return
+                }
                 setExitLoading(true)
                 const vehicleNumber = exitData.vehicleNumber.trim().toUpperCase();
                 if (!vehicleNumber) return;
@@ -164,7 +167,10 @@ const EntryExitForm = ({
 
     const handleVerify = async () => {
         if (exitLoading) return;
-        if(!exitData.mode) alert("Select payment mode")
+        if (!exitData.mode) {
+            alert("Select payment mode")
+            return
+        }
         setExitLoading(true)
         try {
             if (exitData.status === "Drive-Way") {
