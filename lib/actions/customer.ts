@@ -13,9 +13,10 @@ export const customerLogin = async (vehicle: string, token: string) => {
       WHERE vehicle_number = ? 
       AND token = ?
       AND exit_time IS NULL
-      LIMIT 1
+      ORDER BY id DESC
+      LIMIT 1;
       `,
-      [vehicle.toUpperCase(), token]
+      [vehicle.toUpperCase(), Number(token)]
     );
 
     const result = rows as any[];
@@ -46,9 +47,24 @@ export const vehicleData = async (id: number) => {
   try {
     const [rows] = await db.execute(
       `
-      SELECT *
-      FROM valet_activity
-      WHERE id = ?
+        SELECT 
+        va.id,
+        va.vehicle_number,
+        va.status,
+        va.entry_time,
+
+        vb.valet_boy_name,
+        lm.location_name
+
+        FROM valet_activity va
+
+        LEFT JOIN valet_boy vb 
+        ON va.entry_by_valet = vb.id
+
+        LEFT JOIN location_manager lm 
+        ON va.valet_location_id = lm.id
+
+        WHERE va.id = ?;
       `,
       [id]
     );

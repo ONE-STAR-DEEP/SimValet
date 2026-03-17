@@ -12,6 +12,8 @@ const Vehicle = async ({ params }: VehicleProps) => {
 
   const data = await vehicleData(id);
 
+  console.log(data)
+
   return (
     <div className='flex flex-col space-y-4'>
 
@@ -58,7 +60,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
               <p className='text-muted-foreground text-sm'>
                 Entry by</p>
             </div>
-            <p className='text-primary text-lg text-md'>Valet Name</p>
+            <p className='text-primary text-lg text-md'>{data.data?.valet_boy_name}</p>
           </div>
 
           <div className='space-y-2'>
@@ -79,7 +81,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
                 Location
               </p>
             </div>
-            <p className='text-primary  text-md'>Location Name</p>
+            <p className='text-primary  text-md'>{data.data?.location_name}</p>
           </div>
 
         </div>

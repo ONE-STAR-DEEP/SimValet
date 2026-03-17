@@ -119,6 +119,8 @@ export type VehicleData = {
   assigned_valet: number | null;
   status: string | null;
   vehicle_requested: string | null;
+  valet_boy_name: string | null;
+  location_name: string | null;
 };
 
 export type Request = {
