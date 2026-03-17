@@ -19,6 +19,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select"
+import socket from '@/lib/socket/socket';
 
 
 type EntryExitFormProps = {
@@ -107,14 +108,22 @@ const EntryExitForm = ({
                     return;
                 }
 
+                socket.emit("update-customer", {
+                    success: true,
+                    vehicle_number: vehicleNumber,
+                });
+
                 setExitData({
                     vehicleNumber: "",
                     token: "",
                     status: "Assigned",
                     mode: ""
                 });
+
+
                 setResponse(null)
                 setExitLoading(false)
+
             }
             router.refresh();
 
@@ -135,6 +144,10 @@ const EntryExitForm = ({
                 if (!vehicleNumber) return;
                 const res = await updateStatus(vehicleNumber, "Drive-Way")
                 if (res.success) {
+                    socket.emit("update-customer", {
+                        success: true,
+                        vehicle_number: vehicleNumber,
+                    });
                     setExitData((prev) => ({
                         ...prev,
                         status: "Drive-Way"
@@ -161,6 +174,11 @@ const EntryExitForm = ({
                     alert(res?.message ?? "Something went wrong");
                     return;
                 }
+
+                socket.emit("update-customer", {
+                    success: true,
+                    vehicle_number: vehicleNumber,
+                });
 
                 setExitData({
                     vehicleNumber: "",
@@ -370,6 +388,12 @@ const EntryExitForm = ({
                                                     alert("Failed")
                                                     return
                                                 }
+
+                                                socket.emit("update-customer", {
+                                                    success: true,
+                                                    vehicle_number: vehicleNumber,
+                                                });
+
                                                 setExitData({
                                                     vehicleNumber: "",
                                                     status: "Assigned",

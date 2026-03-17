@@ -1,13 +1,22 @@
 "use client";
 
-import { io } from "socket.io-client";
+import { io, Socket } from "socket.io-client";
 
-let socket: any;
+declare global {
+  interface Window {
+    socketInstance?: Socket;
+  }
+}
 
-if (!socket) {
-  socket = io("https://simvaletpark.thavertech.com/", {
-    transports: ["websocket"]
-  });
+const socket =
+  typeof window !== "undefined" && window.socketInstance
+    ? window.socketInstance
+    : io("http://localhost:4001", {
+        transports: ["websocket"],
+      });
+
+if (typeof window !== "undefined") {
+  window.socketInstance = socket;
 }
 
 export default socket;

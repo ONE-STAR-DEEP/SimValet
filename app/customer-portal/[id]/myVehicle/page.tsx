@@ -1,5 +1,4 @@
 import RequestButton from '@/components/customer portal/RequestButton';
-import { Button } from '@/components/ui/button';
 import { vehicleData } from '@/lib/actions/customer';
 import { Car, Clock, IndianRupee, Map, MapPin, Phone, Ticket, User } from 'lucide-react';
 
@@ -11,8 +10,6 @@ const Vehicle = async ({ params }: VehicleProps) => {
   const { id } = await params;
 
   const data = await vehicleData(id);
-
-  console.log(data)
 
   return (
     <div className='flex flex-col space-y-4'>
@@ -156,7 +153,12 @@ const Vehicle = async ({ params }: VehicleProps) => {
         </div>
       </div> */}
 
-      <RequestButton id={data.data?.id!}/>
+      {data?.data && (
+        <RequestButton
+          vehicleNumber={data.data.vehicle_number}
+          id={data.data.id}
+        />
+      )}
 
     </div>
   )

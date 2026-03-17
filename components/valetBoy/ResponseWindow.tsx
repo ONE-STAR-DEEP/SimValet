@@ -7,38 +7,45 @@ import { Clock } from 'lucide-react';
 import { useEffect, useState } from "react";
 
 type ResponseWindowProps = {
+    companyId: number;
     setMode: React.Dispatch<React.SetStateAction<"entry" | "exit">>;
     setResponse: React.Dispatch<React.SetStateAction<Request | null>>;
 };
 
-const ResponseWindow = ({ setMode, setResponse }: ResponseWindowProps) => {
+const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps) => {
 
     const [requests, setRequests] = useState<Request[]>([]);
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
 
-        const fetchRequests = async () => {
+        if (!companyId) return;
 
+        const fetchRequests = async () => {
             const requestData = await getPendingRequests();
             if (requestData.success) {
                 setRequests(requestData.data);
             }
-        }
+        };
+
+        // Join company room
+        socket.emit("join-company", companyId);
+
+        // Initial fetch
         fetchRequests();
 
-        socket.on("car-request", (data: {
-            success: boolean
-        }) => {
-            if (data.success) {
-                fetchRequests();
-            }
-        });
+        // Listen for trigger
+        const handleCarRequest = () => {
+            fetchRequests();
+        };
+
+        socket.on("car-request", handleCarRequest);
 
         return () => {
-            socket.off("car-request");
+            socket.off("car-request", handleCarRequest);
         };
-    }, []);
+
+    }, [companyId]);
 
     const acceptRequest = async (req: Request) => {
         setLoading(true)
@@ -47,7 +54,18 @@ const ResponseWindow = ({ setMode, setResponse }: ResponseWindowProps) => {
             if (res.success) {
                 setMode("exit")
                 setResponse(req)
-                socket.emit("car-request", { success: true });
+                
+                socket.emit("car-request", {
+                    companyId,
+                    type: "REMOVE",
+                    vehicle_number: req.vehicle_number
+                });
+
+                socket.emit("update-customer", {
+                    success: true,
+                    vehicle_number: req.vehicle_number,
+                    companyId
+                });
             }
         } catch (error) {
             console.log(error)

@@ -5,7 +5,7 @@ import EntryExitForm from "./EntryExitForm";
 import ResponseWindow from "./ResponseWindow";
 import { Request } from "@/lib/types/types";
 
-export default function ValetModule() {
+export default function ValetModule({ companyId }: { companyId: number }) {
 
   const [mode, setMode] = useState<"entry" | "exit">("entry");
   const [response, setResponse] = useState<Request | null>(null);
@@ -21,6 +21,7 @@ export default function ValetModule() {
       />
 
       <ResponseWindow
+        companyId={companyId}
         setMode={setMode}
         setResponse={setResponse}
       />

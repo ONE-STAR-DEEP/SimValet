@@ -1,7 +1,7 @@
 import Image from "next/image";
 export const dynamic = "force-dynamic";
 
-export default async function SuperAdminLayout({
+export default async function CustomerPortalLayout({
     children,
 }: {
     children: React.ReactNode;

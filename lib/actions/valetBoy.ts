@@ -396,11 +396,11 @@ export const getPendingRequests = async () => {
         const userId = session.id;
 
         const [location]: any = await db.execute(
-            `
-      SELECT valet_location_id
-      FROM valet_boy
-      WHERE id = ? AND company_id = ?
-      `,
+        `
+            SELECT valet_location_id
+            FROM valet_boy
+            WHERE id = ? AND company_id = ?
+        `,
             [userId, companyId]
         );
 

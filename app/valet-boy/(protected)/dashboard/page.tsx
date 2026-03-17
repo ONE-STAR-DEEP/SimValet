@@ -7,13 +7,16 @@ import {
   AccordionTrigger,
 } from "@/components/ui/accordion"
 import { Button } from '@/components/ui/button';
-import EntryExitForm from '@/components/valetBoy/EntryExitForm';
 import ValetModule from '@/components/valetBoy/ValetModule';
+import { getSessionUser } from '@/lib/checkSession';
 
 const Dashboard = async () => {
 
   const Details = await fetchLocationInfo();
   const todaysActivity = await fetchEntryExitInfo();
+  
+  const session = await getSessionUser();
+  const companyId= session.company_id;
 
   return (
     <div className="w-full flex flex-col gap-2">
@@ -121,7 +124,7 @@ const Dashboard = async () => {
         </Accordion>
       </div>
 
-      <ValetModule />
+      <ValetModule companyId={companyId}/>
       {/* <EntryExitForm /> */}
 
     </div>
