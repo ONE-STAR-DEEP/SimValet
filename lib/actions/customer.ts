@@ -98,7 +98,7 @@ export const requestCar = async (id: number) => {
 
     //  Get vehicle details
     const [rows]: any = await db.query(
-      `SELECT id, company_id, vehicle_number, owner_name
+      `SELECT id, company_id, vehicle_number, owner_name, assigned_valet
        FROM valet_activity
        WHERE id = ?`,
       [id]
@@ -113,6 +113,16 @@ export const requestCar = async (id: number) => {
     }
 
     const vehicle = rows[0];
+
+    console.log(vehicle)
+
+    if (vehicle.assigned_valet) {
+      return {
+        success: false,
+        message: "Already Requested",
+        data: null as VehicleData | null
+      }
+    }
 
     //  Insert request
     await db.query(

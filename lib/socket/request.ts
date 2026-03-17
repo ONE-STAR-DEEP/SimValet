@@ -8,26 +8,27 @@ export const handleRequest = async (id: number) => {
     try {
         const res = await requestCar(id);
 
-        console.log(res)
-
         if (res.success) {
             socket.emit("car-request", {
                 success: true,
                 companyId: res.data?.company_id
             });
-    } else {
+        } else {
+            return {
+                success: false,
+                message: res.message
+            }
+        }
+
         return {
-            success: false
+            success: true,
+            message: res.message
+        }
+    } catch (error) {
+        console.log(error)
+        return {
+            success: false,
+            message: error
         }
     }
-
-    return {
-        success: true
-    }
-} catch (error) {
-    console.log(error)
-    return {
-        success: false
-    }
-}
 };

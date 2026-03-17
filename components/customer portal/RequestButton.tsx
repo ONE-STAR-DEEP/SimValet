@@ -38,7 +38,7 @@ const RequestButton = ({ vehicleNumber, id }: { vehicleNumber: string; id: numbe
         try {
             const res = await handleRequest(id);
             if (!res.success) {
-                alert("Failed to request. Try again in a few minutes");
+                alert(res?.message);
                 return;
             }
             setChange(true)

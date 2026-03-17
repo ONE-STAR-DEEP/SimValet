@@ -40,7 +40,6 @@ export function LoginForm({
                 return;
             }
             router.push(`/customer-portal/${res.id}/myVehicle`)
-            console.log(res)
         } catch (err) {
             console.error(err);
         } finally {
