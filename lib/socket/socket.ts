@@ -5,7 +5,7 @@ import { io } from "socket.io-client";
 let socket: any;
 
 if (!socket) {
-  socket = io("http://localhost:4001", {
+  socket = io("https://simvaletpark.thavertech.com/", {
     transports: ["websocket"]
   });
 }

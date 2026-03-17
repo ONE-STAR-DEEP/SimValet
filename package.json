@@ -8,7 +8,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint",
-    "socket": "tsx lib/socket/server.ts"
+    "socket": "node lib/socket/server.ts"
   },
   "dependencies": {
     "@base-ui/react": "^1.2.0",
