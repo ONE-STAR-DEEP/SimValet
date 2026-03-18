@@ -382,7 +382,7 @@ const EntryExitForm = ({
                                     </Field>
 
                                     <Button type='button' onClick={handleVerify} disabled={exitLoading}>
-                                        {exitLoading ? "Verifying" : "Verify Token"}
+                                        {exitLoading ? "Verifying" : "Verify Token & Deliver"}
                                     </Button>
 
                                     <Button type='button' variant={'outline'} className='border border-primary'

@@ -67,7 +67,11 @@ const Vehicle = async ({ params }: VehicleProps) => {
                 Entry time</p>
             </div>
             <p className="text-primary  text-md">
-              {data.data?.entry_time?.toLocaleString()}
+              {new Date(data.data?.entry_time!).toLocaleString("en-IN", {
+                timeZone: "Asia/Kolkata",
+                dateStyle: "medium",
+                timeStyle: "short"
+              })}
             </p>
           </div>
 

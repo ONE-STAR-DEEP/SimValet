@@ -31,8 +31,9 @@ const Dashboard = async ({
 
                 <div className="flex gap-6 mt-4 text-sm text-muted-foreground">
                     <span>• Total Locations: {Array.isArray(locationData?.data) ? locationData.data.length : 0}</span>
-                    <span>• Active: { }</span>
-                    <span>• Inactive: { }</span>
+                    {/* <span>• Active: { }</span>
+                    <span>• Inactive: { }</span> */}
+                    
                 </div>
             </div>
             <header className="flex flex-col space-y-2 md:flex-row md:items-center justify-between mt-4">

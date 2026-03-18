@@ -130,3 +130,16 @@ export type Request = {
     customer_name: string;
     request_time: string;
 };
+
+export type LocationManager = {
+  id: number;
+  company_id: number;
+  location_name: string;
+  location_address: string;
+  valet_count: number;
+  contact_person_name: string;
+  contact_person_mobile: string;
+  is_active: number; // or boolean if you convert it
+  created_at: string; // ISO date string
+  updated_at: string; // ISO date string
+};

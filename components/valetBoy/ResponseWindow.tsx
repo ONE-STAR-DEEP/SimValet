@@ -116,7 +116,7 @@ const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps
                                     Requested {new Date(req.request_time).toLocaleTimeString([], {
                                         hour: "2-digit",
                                         minute: "2-digit",
-                                        hour12: false
+                                        hour12: true
                                     })}
                                 </span>
                             </div>

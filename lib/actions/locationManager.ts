@@ -6,7 +6,7 @@ import db from "../dbPool";
 import { redirect } from "next/navigation";
 import { RowDataPacket } from "mysql2";
 import { generateOTP } from "../otp";
-import { ValetBoyData, ValetBoyDetails } from "../types/types";
+import { LocationManager, ValetBoyData, ValetBoyDetails } from "../types/types";
 import { getSessionUser } from "../checkSession";
 
 
@@ -258,21 +258,19 @@ export const getLocationDetails = async () => {
         const session = await getSessionUser();
         if (!session) throw new Error("Unauthorized");
 
-        const company_id = session.company_id;
         const location_id = session.id
 
         const [rows]: any = await conn.execute(
             `
       SELECT *
       FROM location_manager
-      WHERE company_id = ? and valet_location_id = ?
-      ORDER BY id DESC
-      `, [company_id, location_id]
+      WHERE id = ?
+      `, [location_id]
         );
 
         return {
             success: true,
-            data: rows as ValetBoyDetails[]
+            data: rows[0] as LocationManager
         };
 
     } catch (error: any) {
@@ -289,3 +287,4 @@ export const getLocationDetails = async () => {
 
 
 }
+
