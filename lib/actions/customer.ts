@@ -114,8 +114,6 @@ export const requestCar = async (id: number) => {
 
     const vehicle = rows[0];
 
-    console.log(vehicle)
-
     if (vehicle.assigned_valet) {
       return {
         success: false,

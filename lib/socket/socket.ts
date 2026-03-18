@@ -13,10 +13,12 @@ const socket =
     ? window.socketInstance
     : io("https://simvaletpark.thavertech.com", {
         path: "/socket.io/",
-        transports: ["websocket"],
+        transports: ["websocket", "polling"],
         reconnection: true,
-        reconnectionAttempts: Infinity,
+        reconnectionAttempts: 10,
         reconnectionDelay: 1000,
+        reconnectionDelayMax: 5000,
+        timeout: 20000,
       });
 
 if (typeof window !== "undefined") {
