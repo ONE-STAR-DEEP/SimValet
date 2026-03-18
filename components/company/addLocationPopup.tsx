@@ -19,7 +19,7 @@ import { LocationData } from "@/lib/types/types";
 import { insertLocation } from "@/lib/actions/company";
 
 
-const AddLocationPopup = () => {
+const AddLocationPopup = ( {remainingLocationCount}:{remainingLocationCount: number}) => {
 
     const router = useRouter();
 
@@ -107,13 +107,13 @@ const AddLocationPopup = () => {
                                     <Input
                                         type="number"
                                         min={1}
-                                        max={99}
+                                        max={remainingLocationCount}
                                         value={data.locationCount}
                                         onChange={(e) => {
                                             let value = Number(e.target.value)
 
                                             if (isNaN(value)) value = 1
-                                            value = Math.max(1, Math.min(99, value))
+                                            value = Math.max(1, Math.min(remainingLocationCount, value))
 
                                             setData(prev => ({
                                                 ...prev,
@@ -127,11 +127,11 @@ const AddLocationPopup = () => {
                                         type="button"
                                         variant="outline"
                                         size="icon"
-                                        disabled={data.locationCount >= 99}
+                                        disabled={data.locationCount >= remainingLocationCount}
                                         onClick={() =>
                                             setData(prev => ({
                                                 ...prev,
-                                                locationCount: Math.min(99, prev.locationCount + 1)
+                                                locationCount: Math.min(remainingLocationCount, prev.locationCount + 1)
                                             }))
                                         }
                                     >

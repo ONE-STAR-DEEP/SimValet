@@ -1,7 +1,7 @@
 import AddLocationPopup from "@/components/company/addLocationPopup"
 import { DataTable } from "@/components/system-admin/dataTable"
 import { columns } from "@/components/company/TableColumn"
-import { fetchLocations } from "@/lib/actions/company"
+import { fetchCompanyData, fetchLocations } from "@/lib/actions/company"
 import SearchComponent from "@/components/SearchComponent"
 
 
@@ -13,7 +13,22 @@ const Dashboard = async ({
 
     const params = await searchParams
 
-    const locationData = await fetchLocations(params.search)
+    const [locationData, companyData] = await Promise.all([
+        fetchLocations(params.search),
+        fetchCompanyData()
+    ]);
+
+    if (!companyData.success || !companyData.data) {
+        throw new Error("Failed to fetch company data");
+    }
+
+    if (!locationData.success || !locationData.data) {
+        throw new Error("Failed to fetch location data");
+    }
+
+    const remaining =
+        companyData.data.no_of_locations - locationData.data.length;
+    console.log(companyData);
 
     return (
         <div>
@@ -25,15 +40,17 @@ const Dashboard = async ({
 
                 <div className="flex gap-6 mt-4 text-sm text-muted-foreground">
                     <span>• Total Locations: {Array.isArray(locationData?.data) ? locationData.data.length : 0}</span>
-                    <span>• Active: {}</span>
-                    <span>• Inactive: {}</span>
+                    <span>• Active: { }</span>
+                    <span>• Inactive: { }</span>
                 </div>
             </div>
             <header className="flex flex-col space-y-2 md:flex-row md:items-center justify-between mt-4">
                 <div className="flex items-center justify-center gap-2">
                     <SearchComponent placeholder="Search Location by Name..." />
                 </div>
-                <AddLocationPopup />
+                <AddLocationPopup
+                    remainingLocationCount={remaining}
+                />
             </header>
 
             <main className="mt-4">

@@ -85,14 +85,12 @@ export function LoginForm({
                             href="#"
                             className="flex flex-col items-center gap-2 font-medium"
                         >
-                            <div className="flex size-20 items-center justify-center rounded-full mb-5 bg-[#000000]">
                                 <Image
-                                    src="/assets/images/logo.png"
-                                    height={200}
-                                    width={200}
+                                    src="/assets/images/logo3.png"
+                                    height={150}
+                                    width={150}
                                     alt="Logo"
                                 />
-                            </div>
                             <span className="sr-only">SimValetPark</span>
                         </a>
                         <h1 className="text-xl font-bold">Welcome to SimValetPark</h1>

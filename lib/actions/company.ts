@@ -242,3 +242,32 @@ export const fetchLocations = async (search?: string) => {
         conn.release();
     }
 };
+
+export const fetchCompanyData = async () => {
+  const conn = await db.getConnection();
+
+  try {
+    const session = await getSessionUser();
+    if (!session) throw new Error("Unauthorized");
+
+    const companyId = session.company_id;
+
+    const [rows]: any = await conn.query(
+      `SELECT * FROM company WHERE id = ?`,
+      [companyId]
+    );
+
+    return {
+      success: true,
+      data: rows[0] || null,
+    };
+
+  } catch (error: any) {
+    return {
+      success: false,
+      message: error.message || "Something went wrong",
+    };
+  } finally {
+    conn.release(); 
+  }
+};

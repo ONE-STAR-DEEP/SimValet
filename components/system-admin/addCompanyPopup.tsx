@@ -25,6 +25,7 @@ const AddCompanyPopup = () => {
 
     const [data, setData] = useState({
         companyName: "",
+        noOfLocations: 1,
         email: "",
         gstNo: "",
         address: "",
@@ -90,12 +91,25 @@ const AddCompanyPopup = () => {
                             </FieldLabel>
                             <FieldGroup className="grid grid-cols-1 lg:grid-cols-2 gap-4 mt-4">
                                 <Field>
-                                    <Label htmlFor="CompanyName">Company Name</Label>
-                                    <Input id="companyName" name="CompanyName" placeholder="Company" required
+                                    <Label htmlFor="companyName">Company Name</Label>
+                                    <Input id="companyName" name="companyName" placeholder="Company" required
                                         onChange={(e) =>
                                             setData(prev => ({
                                                 ...prev,
                                                 companyName: e.target.value
+                                            }))
+                                        }
+                                    />
+                                </Field>
+                                <Field>
+                                    <Label htmlFor="noOfLocation">No. of Locations</Label>
+                                    <Input id="noOfLocation" name="noOfLocation" placeholder="value" required
+                                        type="number"
+                                        min={1}
+                                        onChange={(e) =>
+                                            setData(prev => ({
+                                                ...prev,
+                                                noOfLocations: Number(e.target.value)
                                             }))
                                         }
                                     />

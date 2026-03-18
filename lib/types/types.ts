@@ -1,5 +1,6 @@
 export type CompanyFormData = {
   companyName: string
+  noOfLocations: number;
   email: string
   gstNo: string
   address: string

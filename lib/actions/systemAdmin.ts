@@ -163,6 +163,7 @@ export const insertCompany = async (data: CompanyFormData) => {
 
         const {
             companyName,
+            noOfLocations,
             gstNo,
             email,
             address,
@@ -179,6 +180,7 @@ export const insertCompany = async (data: CompanyFormData) => {
             `
       INSERT INTO company (
         name,
+        no_of_locations,
         gst,
         email,
         address,
@@ -191,10 +193,11 @@ export const insertCompany = async (data: CompanyFormData) => {
         contact_person_designation,
         is_active
       )
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
             [
                 companyName,
+                noOfLocations,
                 gstNo.toUpperCase().trim(),
                 email,
                 address,
