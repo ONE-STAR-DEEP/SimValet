@@ -1,3 +1,4 @@
+import SocketReconnect from "@/components/SocketReconnect";
 import Image from "next/image";
 export const dynamic = "force-dynamic";
 
@@ -30,6 +31,7 @@ export default async function CustomerPortalLayout({
             {/* Main Content */}
             <main className="grow bg-gray-100 py-8">
                 <div className="max-w-7xl mx-auto px-4">
+                    <SocketReconnect />
                     {children}
                 </div>
             </main>

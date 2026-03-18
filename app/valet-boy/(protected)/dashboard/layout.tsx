@@ -1,4 +1,5 @@
 import LogoutButton from "@/components/logout-button";
+import SocketReconnect from "@/components/SocketReconnect";
 import { getSessionUser } from "@/lib/checkSession";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -42,6 +43,7 @@ export default async function SuperAdminLayout({
             {/* Main Content */}
             <main className="grow bg-gray-100 py-8">
                 <div className="max-w-7xl mx-auto px-4">
+                    <SocketReconnect/>
                     {children}
                 </div>
             </main>
