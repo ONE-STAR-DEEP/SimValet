@@ -424,7 +424,7 @@ export default function Home() {
               </p>
             </div>
 
-            <p>&copy; 2025 SimValetPark. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} SimValetPark. All rights reserved.</p>
 
           </div>
 
