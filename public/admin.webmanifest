@@ -1,7 +1,7 @@
 {
     "id": "/admin",
     "name": "SimValetPark Admin",
-    "short_name": "SVP Admin",
+    "short_name": "SimValetPark",
     "start_url": "/system-admin",
     "scope": "/system-admin",
     "display": "standalone",

@@ -1,7 +1,7 @@
 {
     "id": "/company",
     "name": "SimValetPark Company",
-    "short_name": "SVP Company",
+    "short_name": "SimValetPark",
     "start_url": "/company",
     "scope": "/company",
     "display": "standalone",

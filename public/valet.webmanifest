@@ -1,7 +1,7 @@
 {
   "id": "valet-boy",
-  "name": "SimValetPark Valet",
-  "short_name": "SVP Valet",
+  "name": "SimValetPark Valet Boy",
+  "short_name": "SimValetPark",
   "description": "Smart parking management for valet staff with real-time vehicle requests.",
   "start_url": "/valet-boy",
   "scope": "/valet-boy",
@@ -14,13 +14,13 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "/assets/images/icons/manifest-icon-192.maskable.png",
+      "src": "/assets/images/icon.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/images/icons/manifest-icon-512.maskable.png",
+      "src": "/assets/images/icon.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
