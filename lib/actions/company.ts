@@ -252,14 +252,26 @@ export const fetchCompanyData = async () => {
 
     const companyId = session.company_id;
 
-    const [rows]: any = await conn.query(
+    // Fetch company
+    const [companyRows]: any = await conn.query(
       `SELECT * FROM company WHERE id = ?`,
+      [companyId]
+    );
+
+    // Fetch location count
+    const [locationCountRows]: any = await conn.query(
+      `SELECT COUNT(*) as locationCount 
+       FROM location_manager 
+       WHERE company_id = ?`,
       [companyId]
     );
 
     return {
       success: true,
-      data: rows[0] || null,
+      data: {
+        ...companyRows[0],
+        locationCount: locationCountRows[0].locationCount,
+      },
     };
 
   } catch (error: any) {
@@ -268,6 +280,6 @@ export const fetchCompanyData = async () => {
       message: error.message || "Something went wrong",
     };
   } finally {
-    conn.release(); 
+    conn.release();
   }
 };

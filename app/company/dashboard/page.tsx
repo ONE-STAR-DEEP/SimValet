@@ -18,16 +18,7 @@ const Dashboard = async ({
         fetchCompanyData()
     ]);
 
-    if (!companyData.success || !companyData.data) {
-        throw new Error("Failed to fetch company data");
-    }
-
-    if (!locationData.success || !locationData.data) {
-        throw new Error("Failed to fetch location data");
-    }
-
-    const remaining =
-        companyData.data.no_of_locations - locationData.data.length;
+    const remaining = companyData.data.no_of_locations - companyData.data.locationCount;
     console.log(companyData);
 
     return (

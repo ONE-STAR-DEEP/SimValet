@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { JetBrains_Mono } from "next/font/google";
+import { JetBrains_Mono, Montserrat } from "next/font/google";
 import "./globals.css";
 import RegisterSW from "@/components/RegisterSW";
 import StandaloneDetector from "@/components/StandaloneDectator";
