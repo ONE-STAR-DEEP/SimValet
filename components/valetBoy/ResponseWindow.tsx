@@ -18,7 +18,6 @@ const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps
     const [loading, setLoading] = useState(false)
 
     useEffect(() => {
-
         if (!companyId) return;
 
         const fetchRequests = async () => {
@@ -28,13 +27,20 @@ const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps
             }
         };
 
-        // Join company room
-        socket.emit("join-company", companyId);
+        const joinRoom = () => {
+            console.log("Joining company:", companyId);
+            socket.emit("join-company", companyId);
+        };
+
+        // Join immediately (first load)
+        joinRoom();
+
+        // Rejoin after every reconnect
+        socket.on("connect", joinRoom);
 
         // Initial fetch
         fetchRequests();
 
-        // Listen for trigger
         const handleCarRequest = () => {
             fetchRequests();
         };
@@ -43,6 +49,7 @@ const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps
 
         return () => {
             socket.off("car-request", handleCarRequest);
+            socket.off("connect", joinRoom); // cleanup
         };
 
     }, [companyId]);
@@ -54,7 +61,7 @@ const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps
             if (res.success) {
                 setMode("exit")
                 setResponse(req)
-                
+
                 socket.emit("car-request", {
                     companyId,
                     type: "REMOVE",

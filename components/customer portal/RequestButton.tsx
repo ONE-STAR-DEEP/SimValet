@@ -14,24 +14,35 @@ const RequestButton = ({ vehicleNumber, id }: { vehicleNumber: string; id: numbe
     useEffect(() => {
         if (!vehicleNumber) return;
 
-        socket.emit("join-vehicle", vehicleNumber.trim().toUpperCase());
+        const vehicle = vehicleNumber.trim().toUpperCase();
 
-    }, [vehicleNumber]);
+        const joinVehicle = () => {
+            console.log("Joining vehicle:", vehicle);
+            socket.emit("join-vehicle", vehicle);
+        };
 
-    // Listen for updates → refresh page
-    useEffect(() => {
         const handleUpdate = () => {
             console.log("Refreshing page...");
             router.refresh();
         };
 
-        socket.off("update-customer"); 
+        // Join on first load
+        if (socket.connected) {
+            joinVehicle();
+        }
+
+        // Rejoin after reconnect (CRITICAL for iOS)
+        socket.on("connect", joinVehicle);
+
+        // Listen for updates
         socket.on("update-customer", handleUpdate);
 
         return () => {
+            socket.off("connect", joinVehicle);
             socket.off("update-customer", handleUpdate);
         };
-    }, []);
+
+    }, [vehicleNumber, router]);
 
     const handleClick = async () => {
 
