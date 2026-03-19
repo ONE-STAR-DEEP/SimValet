@@ -567,3 +567,61 @@ export const updateStatus = async (vehicleNumber: string, status: string) => {
         }
     }
 }
+
+export const fetchValeActivities = async ({
+  limit = 10,
+  offset = 0,
+}: {
+  limit?: number
+  offset?: number
+}) => {
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const companyId = session.company_id;
+        const userId = session.id;
+
+        const [rows]: any = await db.query(
+  `
+  SELECT *
+  FROM (
+    SELECT 
+        vehicle_number,
+        entry_time AS time,
+        'ENTRY' AS type
+    FROM valet_activity
+    WHERE company_id = ?
+      AND entry_by_valet = ?
+
+    UNION ALL
+
+    SELECT 
+        vehicle_number,
+        exit_time AS time,
+        'EXIT' AS type
+    FROM valet_activity
+    WHERE company_id = ?
+      AND exit_by_valet = ?
+      AND exit_time IS NOT NULL
+  ) AS combined
+  ORDER BY time DESC
+  LIMIT ? OFFSET ?
+  `,
+  [companyId, userId, companyId, userId, limit, offset]
+);
+
+        return {
+            success: true,
+            data: rows
+        };
+
+    } catch (error) {
+        console.log(error);
+
+        return {
+            success: false,
+            message: "Failed to fetch"
+        };
+    }
+};

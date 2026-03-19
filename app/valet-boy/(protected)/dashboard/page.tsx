@@ -9,14 +9,15 @@ import {
 import { Button } from '@/components/ui/button';
 import ValetModule from '@/components/valetBoy/ValetModule';
 import { getSessionUser } from '@/lib/checkSession';
+import Link from 'next/link';
 
 const Dashboard = async () => {
 
   const Details = await fetchLocationInfo();
   const todaysActivity = await fetchEntryExitInfo();
-  
+
   const session = await getSessionUser();
-  const companyId= session.company_id;
+  const companyId = session.company_id;
 
   return (
     <div className="w-full flex flex-col gap-2">
@@ -115,7 +116,7 @@ const Dashboard = async () => {
                   </span>
                 </div>
 
-                <Button className="mt-2 w-full">View All Activity</Button>
+                <Link  href="/valet-boy/dashboard/activities" className="mt-2 w-full bg-primary text-white text-center p-1 rounded-lg">View All Activity</Link>
 
               </div>
             </AccordionContent>
@@ -124,7 +125,7 @@ const Dashboard = async () => {
         </Accordion>
       </div>
 
-      <ValetModule companyId={companyId}/>
+      <ValetModule companyId={companyId} />
       {/* <EntryExitForm /> */}
 
     </div>

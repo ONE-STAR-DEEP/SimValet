@@ -3,27 +3,36 @@
 import { assignValet, getPendingRequests } from '@/lib/actions/valetBoy';
 import socket from '@/lib/socket/socket';
 import { Request } from '@/lib/types/types';
-import { Clock } from 'lucide-react';
+import { Clock, RefreshCcw } from 'lucide-react';
 import { useEffect, useState } from "react";
 
 type ResponseWindowProps = {
     companyId: number;
+    response: Request | null;
     setMode: React.Dispatch<React.SetStateAction<"entry" | "exit">>;
     setResponse: React.Dispatch<React.SetStateAction<Request | null>>;
 };
 
-const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps) => {
+const ResponseWindow = ({ companyId, response, setMode, setResponse }: ResponseWindowProps) => {
 
     const [requests, setRequests] = useState<Request[]>([]);
     const [loading, setLoading] = useState(false)
 
-    useEffect(() => {
+    const setupSocket = () => {
         if (!companyId) return;
 
         const fetchRequests = async () => {
-            const requestData = await getPendingRequests();
-            if (requestData.success) {
-                setRequests(requestData.data);
+
+            try {
+                setLoading(true)
+                const requestData = await getPendingRequests();
+                if (requestData.success) {
+                    setRequests(requestData.data);
+                }
+            } catch (error) {
+                console.log(error)
+            } finally {
+                setLoading(false)
             }
         };
 
@@ -32,26 +41,26 @@ const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps
             socket.emit("join-company", companyId);
         };
 
-        // Join immediately (first load)
-        joinRoom();
+        // Prevent duplicate listeners
+        socket.off("connect");
+        socket.off("car-request");
 
-        // Rejoin after every reconnect
+        // Join + listeners
+        joinRoom();
         socket.on("connect", joinRoom);
+        socket.on("car-request", fetchRequests);
 
         // Initial fetch
         fetchRequests();
+    };
 
-        const handleCarRequest = () => {
-            fetchRequests();
-        };
-
-        socket.on("car-request", handleCarRequest);
+    useEffect(() => {
+        setupSocket();
 
         return () => {
-            socket.off("car-request", handleCarRequest);
-            socket.off("connect", joinRoom); // cleanup
+            socket.off("connect");
+            socket.off("car-request");
         };
-
     }, [companyId]);
 
     const acceptRequest = async (req: Request) => {
@@ -76,6 +85,8 @@ const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps
             }
         } catch (error) {
             console.log(error)
+        } finally {
+            setLoading(false)
         }
     }
 
@@ -83,10 +94,17 @@ const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps
 
         <div className="rounded-xl border-2 border-black/20">
 
-            <div className="p-4 flex gap-2 items-center border-b">
-                <Clock size={20} />
-                <h3 className="font-semibold">Customer Requests</h3>
+            <div className="p-4 flex items-center justify-between gap-2 border-b">
+                <div className='flex items-center gap-2'>
+                    <Clock size={20} />
+                    <h3 className="font-semibold">Customer Requests</h3>
+                </div>
+                <RefreshCcw
+                    onClick={!loading ? setupSocket : undefined}
+                    className={`text-primary cursor-pointer ${loading ? "animate-spin" : ""}`}
+                    size={20} />
             </div>
+
 
             <div className="flex flex-col">
 
@@ -122,7 +140,10 @@ const ResponseWindow = ({ companyId, setMode, setResponse }: ResponseWindowProps
                             </div>
 
                             <button type='button'
-                                className="bg-primary text-white px-3 py-1 rounded-md text-sm hover:bg-primary/90"
+                                disabled={!!response}
+                                className="bg-primary text-white px-3 py-1 rounded-md text-sm 
+                                        hover:bg-primary/90 
+                                        disabled:opacity-50 disabled:cursor-not-allowed"
                                 onClick={() => acceptRequest(req)}
                             >
                                 Accept

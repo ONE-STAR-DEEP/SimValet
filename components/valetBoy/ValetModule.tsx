@@ -21,6 +21,7 @@ export default function ValetModule({ companyId }: { companyId: number }) {
       />
 
       <ResponseWindow
+        response={response}
         companyId={companyId}
         setMode={setMode}
         setResponse={setResponse}
