@@ -51,7 +51,7 @@ const LocationActivities = async ({ searchParams }: Props) => {
 
       <section className='grid grid-cols-1 lg:grid-cols-4 gap-4'>
 
-        <div className='border px-4 py-6 space-y-4 rounded-xl shadow-lg'>
+        <div className='border bg-white px-4 py-6 space-y-4 rounded-xl shadow-lg'>
           <div className='flex items-center justify-between'>
             <div className='bg-linear-to-br from-emerald-500 to-teal-500 rounded-xl'>
               <ArrowUpIcon className='m-4 text-white' />
@@ -64,7 +64,7 @@ const LocationActivities = async ({ searchParams }: Props) => {
           </div>
         </div>
 
-        <div className='border px-4 py-6 space-y-4 rounded-xl shadow-lg'>
+        <div className='border bg-white px-4 py-6 space-y-4 rounded-xl shadow-lg'>
           <div className='flex items-center justify-between'>
             <div className='bg-linear-to-br from-orange-500 to-red-500 rounded-xl'>
               <ArrowDownIcon className='m-4 text-white' />
@@ -78,7 +78,7 @@ const LocationActivities = async ({ searchParams }: Props) => {
           </div>
         </div>
 
-        <div className='border px-4 py-6 space-y-4 rounded-xl shadow-lg'>
+        <div className='border bg-white px-4 py-6 space-y-4 rounded-xl shadow-lg'>
           <div className='flex items-center justify-between'>
             <div className='bg-linear-to-br from-blue-500 to-cyan-500 rounded-xl'>
               <TrendingUp className='m-4 text-white' />
@@ -91,7 +91,7 @@ const LocationActivities = async ({ searchParams }: Props) => {
           </div>
         </div>
 
-        <div className='border px-4 py-6 space-y-4 rounded-xl shadow-lg'>
+        <div className='border bg-white px-4 py-6 space-y-4 rounded-xl shadow-lg'>
           <div className='flex items-center justify-between'>
             <div className='bg-linear-to-br from-purple-500 to-pink-500 rounded-xl'>
               <Clock className='m-4 text-white' />
