@@ -13,34 +13,39 @@ import { Input } from "@/components/ui/input"
 
 import { Button } from "../ui/button";
 import { Plus } from "lucide-react";
-import { FormEvent, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { LocationData } from "@/lib/types/types";
 import { insertLocation } from "@/lib/actions/company";
 
 
-const AddLocationPopup = ( {remainingLocationCount}:{remainingLocationCount: number}) => {
+const AddLocationPopup = ({ remainingLocationCount }: { remainingLocationCount: number }) => {
 
     const router = useRouter();
 
     const [data, setData] = useState<LocationData>({
-        locationCount: 1,
+        locationCount: remainingLocationCount,
         locationName: [],
         locationAddress: [],
         contactPerson: [],
         personMobile: [],
     })
 
+    useEffect(() => {
+        setData(prev => ({
+            ...prev,
+            locationCount: remainingLocationCount
+        }))
+    }, [remainingLocationCount])
+
     const [open, setOpen] = useState(false)
 
     const handleSubmit = async (e: FormEvent) => {
         e.preventDefault()
 
-        console.log(data)
-
         const res = await insertLocation(data);
 
-        if(!res.success){
+        if (!res.success) {
             alert("Failed to Insert")
         }
 
@@ -48,6 +53,13 @@ const AddLocationPopup = ( {remainingLocationCount}:{remainingLocationCount: num
         router.refresh();
     }
 
+    if (remainingLocationCount === 0) {
+        return (
+            <Button disabled>
+                Max Locations Reached
+            </Button>
+        )
+    }
     return (
         <div>
             <Button type="button" onClick={() => { setOpen(true) }}>
@@ -95,10 +107,18 @@ const AddLocationPopup = ( {remainingLocationCount}:{remainingLocationCount: num
                                         size="icon"
                                         disabled={data.locationCount <= 1}
                                         onClick={() =>
-                                            setData(prev => ({
-                                                ...prev,
-                                                locationCount: Math.max(1, prev.locationCount - 1)
-                                            }))
+                                            setData(prev => {
+                                                const newCount = Math.max(1, prev.locationCount - 1)
+
+                                                return {
+                                                    ...prev,
+                                                    locationCount: newCount,
+                                                    locationName: prev.locationName.slice(0, newCount),
+                                                    locationAddress: prev.locationAddress.slice(0, newCount),
+                                                    contactPerson: prev.contactPerson.slice(0, newCount),
+                                                    personMobile: prev.personMobile.slice(0, newCount),
+                                                }
+                                            })
                                         }
                                     >
                                         -
@@ -117,9 +137,14 @@ const AddLocationPopup = ( {remainingLocationCount}:{remainingLocationCount: num
 
                                             setData(prev => ({
                                                 ...prev,
-                                                locationCount: value
+                                                locationCount: value,
+                                                locationName: prev.locationName.slice(0, value),
+                                                locationAddress: prev.locationAddress.slice(0, value),
+                                                contactPerson: prev.contactPerson.slice(0, value),
+                                                personMobile: prev.personMobile.slice(0, value),
                                             }))
                                         }}
+
                                         className="w-20 h-9 text-center"
                                     />
 
@@ -129,10 +154,18 @@ const AddLocationPopup = ( {remainingLocationCount}:{remainingLocationCount: num
                                         size="icon"
                                         disabled={data.locationCount >= remainingLocationCount}
                                         onClick={() =>
-                                            setData(prev => ({
-                                                ...prev,
-                                                locationCount: Math.min(remainingLocationCount, prev.locationCount + 1)
-                                            }))
+                                            setData(prev => {
+                                                const newCount = Math.min(remainingLocationCount, prev.locationCount + 1)
+
+                                                return {
+                                                    ...prev,
+                                                    locationCount: newCount,
+                                                    locationName: [...prev.locationName, ""],
+                                                    locationAddress: [...prev.locationAddress, ""],
+                                                    contactPerson: [...prev.contactPerson, ""],
+                                                    personMobile: [...prev.personMobile, ""],
+                                                }
+                                            })
                                         }
                                     >
                                         +
