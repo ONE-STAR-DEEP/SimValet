@@ -375,14 +375,14 @@ export default function Home() {
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
             <Link
-              href="/register"
+              href="https://www.thavertech.com/contact"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-foreground px-8 py-3 font-semibold text-primary transition-all hover:shadow-lg hover:shadow-black/20"
             >
-              Get Started Free
+              Contact Us
               <ArrowRight className="h-5 w-5" />
             </Link>
             <Link
-              href="/signin"
+              href="/company"
               className="inline-flex items-center justify-center gap-2 rounded-lg border-2 border-primary-foreground/30 bg-transparent px-8 py-3 font-semibold text-primary-foreground transition-all hover:border-primary-foreground/60"
             >
               Sign In to Account
