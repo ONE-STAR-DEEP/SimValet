@@ -143,3 +143,20 @@ export type LocationManager = {
   created_at: string; // ISO date string
   updated_at: string; // ISO date string
 };
+
+export type ActivityParams = {
+  page?: number;
+  limit?: number;
+  startDate?: string; // "2026-03-19"
+  endDate?: string;
+};
+
+export type ValetActivity = {
+  id: number;
+  vehicle_number: string;
+  owner_name: string;
+  entry_time: string;          // ISO string
+  exit_time: string | null;    // nullable
+  total_duration: string | null;
+  assigned_valet: number | null;
+};

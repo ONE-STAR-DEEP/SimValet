@@ -6,7 +6,7 @@ import db from "../dbPool";
 import { redirect } from "next/navigation";
 import { RowDataPacket } from "mysql2";
 import { generateOTP } from "../otp";
-import { LocationManager, ValetBoyData, ValetBoyDetails } from "../types/types";
+import { ActivityParams, LocationManager, ValetBoyData, ValetBoyDetails } from "../types/types";
 import { getSessionUser } from "../checkSession";
 
 
@@ -262,10 +262,10 @@ export const getLocationDetails = async () => {
 
         const [rows]: any = await conn.execute(
             `
-      SELECT *
-      FROM location_manager
-      WHERE id = ?
-      `, [location_id]
+            SELECT *
+            FROM location_manager
+            WHERE id = ?
+        `, [location_id]
         );
 
         return {
@@ -284,7 +284,204 @@ export const getLocationDetails = async () => {
     } finally {
         conn.release();
     }
-
-
 }
 
+export const getActivityData = async (params: ActivityParams = {}) => {
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const location_id = session.id;
+        const company_id = session.company_id;
+
+        const page = params.page || 1;
+        const limit = params.limit || 20;
+        const offset = (page - 1) * limit;
+
+        const startDate = params.startDate;
+        const endDate = params.endDate;
+
+        // 🔹 Base filter (important)
+        let filterQuery = `WHERE valet_location_id = ?`;
+        const values: any[] = [location_id];
+
+        // 🔹 Date filter (for DATA only)
+        if (startDate && endDate) {
+            filterQuery += ` AND entry_time BETWEEN ? AND ?`;
+            values.push(startDate, endDate);
+        }
+
+        // =========================
+        // 1. STATS QUERY
+        // =========================
+        const [statsRows]: any = await db.query(`
+  SELECT
+    today_entries,
+    today_exits,
+    yesterday_entries,
+    yesterday_exits,
+    active_vehicles,
+    CONCAT(
+  FLOOR(avg_val), 'h ',
+  FLOOR((avg_val - FLOOR(avg_val)) * 60), 'm'
+) AS avg_duration_today,
+
+    --  ENTRY % CHANGE
+    CASE 
+  WHEN yesterday_entries = 0 AND today_entries > 0 THEN 100
+  WHEN yesterday_entries = 0 AND today_entries = 0 THEN 0
+  ELSE ROUND(((today_entries - yesterday_entries) * 100.0) / yesterday_entries, 2)
+END AS entry_percent_change,
+
+    --  EXIT % CHANGE
+    CASE 
+  WHEN yesterday_exits = 0 AND today_exits > 0 THEN 100
+  WHEN yesterday_exits = 0 AND today_exits = 0 THEN 0
+  ELSE ROUND(((today_exits - yesterday_exits) * 100.0) / yesterday_exits, 2)
+END AS exit_percent_change
+
+  FROM (
+    SELECT 
+      COUNT(CASE 
+        WHEN entry_time >= CURDATE() 
+         AND entry_time < CURDATE() + INTERVAL 1 DAY
+        THEN 1 
+      END) AS today_entries,
+
+      COUNT(CASE 
+        WHEN exit_time >= CURDATE() 
+         AND exit_time < CURDATE() + INTERVAL 1 DAY
+        THEN 1 
+      END) AS today_exits,
+
+      COUNT(CASE 
+        WHEN entry_time >= CURDATE() - INTERVAL 1 DAY
+         AND entry_time < CURDATE()
+        THEN 1 
+      END) AS yesterday_entries,
+
+      COUNT(CASE 
+        WHEN exit_time >= CURDATE() - INTERVAL 1 DAY
+         AND exit_time < CURDATE()
+        THEN 1 
+      END) AS yesterday_exits,
+
+      COUNT(CASE 
+        WHEN exit_time IS NULL THEN 1 
+      END) AS active_vehicles,
+
+      AVG(CASE 
+  WHEN exit_time >= CURDATE() 
+   AND exit_time < CURDATE() + INTERVAL 1 DAY
+  THEN total_duration_hrs * 1.0
+END) AS avg_val
+
+    FROM valet_activity
+    WHERE valet_location_id = ? AND company_id = ?
+  ) AS stats;
+`, [location_id, company_id]);
+
+        // =========================
+        // 2. PAGINATED DATA
+        // =========================
+        const [dataRows]: any = await db.query(`
+  SELECT 
+    id,
+    vehicle_number,
+    owner_name,
+
+    DATE_FORMAT(
+  CONVERT_TZ(entry_time, '+00:00', '+05:30'),
+  '%d %b %Y, %H:%i'
+) AS entry_time,
+
+DATE_FORMAT(
+  CONVERT_TZ(exit_time, '+00:00', '+05:30'),
+  '%d %b %Y, %H:%i'
+) AS exit_time,
+
+    CONCAT(
+  FLOOR(total_duration_hrs / 24), 'd ',
+  GREATEST(1, FLOOR(MOD(total_duration_hrs, 24))), 'h'
+) AS total_duration,
+
+    entry_by_valet,
+    exit_by_valet
+
+  FROM valet_activity
+  ${filterQuery}
+  ORDER BY entry_time DESC
+  LIMIT ? OFFSET ?
+`, [...values, limit, offset]);
+
+        // =========================
+        // 3. TOTAL COUNT (for pagination)
+        // =========================
+        const [countRows]: any = await db.query(`
+      SELECT COUNT(*) as total
+      FROM valet_activity
+      ${filterQuery}
+    `, values);
+
+        return {
+            success: true,
+            data: {
+                stats: statsRows[0],
+                activities: dataRows,
+                pagination: {
+                    total: countRows[0].total,
+                    page,
+                    limit,
+                    totalPages: Math.ceil(countRows[0].total / limit),
+                }
+            }
+        };
+
+    } catch (error) {
+        console.log(error)
+        return {
+            success: false,
+            message: "Failed to fetch activity data",
+        };
+    }
+}; 
+
+export const deleteValetById = async (id: number) => {
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const location_id = session.id;
+        const company_id = session.company_id;
+
+        const [result]: any = await db.query(
+            `
+            DELETE FROM valet_boy
+            WHERE id = ? 
+              AND company_id = ? 
+              AND valet_location_id = ?
+            `,
+            [id, company_id, location_id]
+        );
+
+        if (result.affectedRows === 0) {
+            return {
+                success: false,
+                message: "Valet not found or already deleted",
+            };
+        }
+
+        return {
+            success: true,
+            message: "Valet deleted successfully",
+        };
+
+    } catch (error: any) {
+        console.error("Delete Valet Error:", error);
+
+        return {
+            success: false,
+            message: error.message || "Something went wrong",
+        };
+    }
+};

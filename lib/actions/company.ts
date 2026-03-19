@@ -283,3 +283,41 @@ export const fetchCompanyData = async () => {
     conn.release();
   }
 };
+
+export const deleteLocationById = async (id: number) => {
+    try {
+        const session = await getSessionUser();
+        if (!session) throw new Error("Unauthorized");
+
+        const company_id = session.company_id;
+
+        const [result]: any = await db.query(
+            `
+            DELETE FROM location_manager
+            WHERE id = ? 
+              AND company_id = ? 
+            `,
+            [id, company_id]
+        );
+
+        if (result.affectedRows === 0) {
+            return {
+                success: false,
+                message: "Valet not found or already deleted",
+            };
+        }
+
+        return {
+            success: true,
+            message: "Valet deleted successfully",
+        };
+
+    } catch (error: any) {
+        console.error("Delete Valet Error:", error);
+
+        return {
+            success: false,
+            message: error.message || "Something went wrong",
+        };
+    }
+};

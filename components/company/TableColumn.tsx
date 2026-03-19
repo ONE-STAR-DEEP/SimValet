@@ -4,6 +4,9 @@ import { LocationData, LocationDetails } from "@/lib/types/types"
 import { ColumnDef } from "@tanstack/react-table"
 import { ArrowUpDown } from "lucide-react"
 import { Button } from "../ui/button"
+import { DeleteLocationPopup } from "./DeleteLocationPopup"
+
+const centerClass = "text-center"
 
 export const columns: ColumnDef<LocationDetails>[] = [
     {
@@ -37,5 +40,18 @@ export const columns: ColumnDef<LocationDetails>[] = [
     {
         accessorKey: "contact_person_mobile",
         header: "Mobile",
-    }
+    },
+    {
+            id: "actions",
+            header: () => <div className={centerClass}>Actions</div>,
+            cell: ({ row }) => {
+                const location = row.original
+    
+                return (
+                    <div className="flex justify-center">
+                        <DeleteLocationPopup locationId={location.id} name={location.location_name} />
+                    </div>
+                )
+            },
+        },
 ]
