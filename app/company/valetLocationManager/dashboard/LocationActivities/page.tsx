@@ -109,8 +109,8 @@ const LocationActivities = async ({ searchParams }: Props) => {
       <section className='flex flex-col space-y-4 mt-8'>
         <h2 className='text-2xl font-black'>Activity Record</h2>
 
-        <div className='flex items-center gap-2'>
-          <span className='bg-gray-200 py-2 px-4 rounded-2xl text-sm text-muted-foreground'>
+        <div className='flex flex-col justify-start gap-2 md:flex-row'>
+          <span className='bg-gray-200 py-2 px-4 rounded-2xl text-sm text-muted-foreground text-nowrap'>
             Total  records: {activityData.data?.pagination.total || 0}
           </span>
 

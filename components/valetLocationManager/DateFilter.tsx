@@ -59,72 +59,81 @@ const DateFilter = () => {
                 params.delete("to")
             }
 
-            router.push(`?${params.toString()}`)
+            router.push(`?${params.toString()}`, { scroll: false })
         }, 400)
 
         return () => clearTimeout(timer)
     }, [from, to])
 
     return (
-        <div className="flex items-center gap-2">
+        <div className="flex w-full flex-col gap-2 md:flex-row md:items-center md:justify-end">
 
-            {/* FROM */}
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button
-                        variant="outline"
-                        className={cn(
-                            "w-40 justify-start text-left font-normal",
-                            !from && "text-muted-foreground"
-                        )}
-                    >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {from ? format(from, "dd MMM yyyy") : "From"}
-                    </Button>
-                </PopoverTrigger>
+            {/* Date Filters */}
+            <div className="flex flex-wrap items-center gap-2 justify-end w-full lg:w-auto">
 
-                <PopoverContent className="w-auto p-0">
-                    <Calendar
-                        mode="single"
-                        selected={from}
-                        onSelect={setFrom}
-                        captionLayout="dropdown"
-                        fromYear={2020}
-                        toYear={2030}
-                    />
-                </PopoverContent>
-            </Popover>
+                {/* FROM */}
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant="outline"
+                            className={cn(
+                                "w-auto min-w-28 sm:w-40 justify-start text-left font-normal",
+                                !from && "text-muted-foreground"
+                            )}
+                        >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {from ? format(from, "dd MMM yyyy") : "From"}
+                        </Button>
+                    </PopoverTrigger>
 
-            <span className="text-muted-foreground text-sm">to</span>
+                    <PopoverContent className="w-auto p-0">
+                        <Calendar
+                            mode="single"
+                            selected={from}
+                            onSelect={setFrom}
+                            captionLayout="dropdown"
+                            fromYear={2020}
+                            toYear={2040}
+                        />
+                    </PopoverContent>
+                </Popover>
 
-            {/* TO */}
-            <Popover>
-                <PopoverTrigger asChild>
-                    <Button
-                        variant="outline"
-                        className={cn(
-                            "w-40 justify-start text-left font-normal",
-                            !to && "text-muted-foreground"
-                        )}
-                    >
-                        <CalendarIcon className="mr-2 h-4 w-4" />
-                        {to ? format(to, "dd MMM yyyy") : "To"}
-                    </Button>
-                </PopoverTrigger>
+                <span className="text-muted-foreground text-sm hidden sm:block">to</span>
 
-                <PopoverContent className="w-auto p-0">
-                    <Calendar
-                        mode="single"
-                        selected={to}
-                        onSelect={setTo}
-                        captionLayout="dropdown"
-                        fromYear={2020}
-                        toYear={2030}
-                    />
-                </PopoverContent>
-            </Popover>
+                {/* TO */}
+                <Popover>
+                    <PopoverTrigger asChild>
+                        <Button
+                            variant="outline"
+                            className={cn(
+                                "w-auto min-w-28 sm:w-40 justify-start text-left font-normal",
+                                !to && "text-muted-foreground"
+                            )}
+                        >
+                            <CalendarIcon className="mr-2 h-4 w-4" />
+                            {to ? format(to, "dd MMM yyyy") : "To"}
+                        </Button>
+                    </PopoverTrigger>
 
-            <Button type="button" onClick={handleClear} className='bg-gray-200 flex gap-2 items-center py-2 px-4 rounded-2xl text-sm text-muted-foreground'>
+                    <PopoverContent className="w-auto p-0">
+                        <Calendar
+                            mode="single"
+                            selected={to}
+                            onSelect={setTo}
+                            captionLayout="dropdown"
+                            fromYear={2020}
+                            toYear={2040}
+                        />
+                    </PopoverContent>
+                </Popover>
+            </div>
+
+            {/* Clear Button */}
+            <Button
+                type="button"
+                onClick={handleClear}
+                className="w-auto sm:w-28 bg-gray-200 flex gap-2 items-center justify-center py-2 px-4 rounded-2xl text-sm text-muted-foreground"
+            >
                 Clear
             </Button>
 
