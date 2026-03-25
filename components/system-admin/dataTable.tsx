@@ -43,49 +43,47 @@ export function DataTable<TData, TValue>({
   })
 
   return (
-    <div className="overflow-hidden rounded-md border bg-white shadow-md">
-      <Table>
-        <TableHeader>
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => {
-                return (
-                  <TableHead key={header.id} className="text-primary">
-                    {header.isPlaceholder
-                      ? null
-                      : flexRender(
-                        header.column.columnDef.header,
-                        header.getContext()
-                      )}
-                  </TableHead>
-                )
-              })}
-            </TableRow>
+    <div className="overflow-hidden rounded-md border border-border bg-card shadow-md">
+  <Table>
+    
+    <TableHeader>
+      {table.getHeaderGroups().map((headerGroup) => (
+        <TableRow key={headerGroup.id}>
+          {headerGroup.headers.map((header) => (
+            <TableHead key={header.id} className="text-muted-foreground">
+              {header.isPlaceholder
+                ? null
+                : flexRender(
+                    header.column.columnDef.header,
+                    header.getContext()
+                  )}
+            </TableHead>
           ))}
-        </TableHeader>
-        <TableBody>
-          {table.getRowModel().rows?.length ? (
-            table.getRowModel().rows.map((row) => (
-              <TableRow
-                key={row.id}
-                data-state={row.getIsSelected() && "selected"}
-              >
-                {row.getVisibleCells().map((cell) => (
-                  <TableCell key={cell.id}>
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))
-          ) : (
-            <TableRow>
-              <TableCell colSpan={columns.length} className="h-24 text-center">
-                No results.
+        </TableRow>
+      ))}
+    </TableHeader>
+
+    <TableBody>
+      {table.getRowModel().rows?.length ? (
+        table.getRowModel().rows.map((row) => (
+          <TableRow key={row.id}>
+            {row.getVisibleCells().map((cell) => (
+              <TableCell key={cell.id}>
+                {flexRender(cell.column.columnDef.cell, cell.getContext())}
               </TableCell>
-            </TableRow>
-          )}
-        </TableBody>
-      </Table>
-    </div>
+            ))}
+          </TableRow>
+        ))
+      ) : (
+        <TableRow>
+          <TableCell colSpan={columns.length} className="h-24 text-center">
+            No results.
+          </TableCell>
+        </TableRow>
+      )}
+    </TableBody>
+
+  </Table>
+</div>
   )
 }

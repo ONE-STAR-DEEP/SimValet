@@ -77,7 +77,7 @@ export function LoginForm({
                             placeholder="SS00AA0000"
                             value={vehicle}
                             required
-                            onChange={(e) => { setVehicle(e.target.value) }}
+                            onChange={(e) => { setVehicle(e.target.value.toUpperCase()) }}
                         />
                     </Field>
 

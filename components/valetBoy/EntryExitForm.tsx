@@ -234,7 +234,7 @@ const EntryExitForm = ({
                                     onChange={(e) =>
                                         setEntryData(prev => ({
                                             ...prev,
-                                            vehicleNumber: e.target.value
+                                            vehicleNumber: e.target.value.toUpperCase()
                                         }))}
                                 ></Input>
                                 <CameraCapture<VehicleEntry> data={entryData} setData={setEntryData} />
@@ -441,7 +441,7 @@ const EntryExitForm = ({
                                         onChange={(e) =>
                                             setExitData(prev => ({
                                                 ...prev,
-                                                vehicleNumber: e.target.value
+                                                vehicleNumber: e.target.value.toUpperCase()
                                             }))}
                                     ></Input>
                                     <CameraCapture<VehicleExit> data={exitData} setData={setExitData} />
