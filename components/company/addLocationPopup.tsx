@@ -29,6 +29,8 @@ const AddLocationPopup = ({ remainingLocationCount }: { remainingLocationCount: 
         locationAddress: [],
         contactPerson: [],
         personMobile: [],
+        charges: []
+
     })
 
     useEffect(() => {
@@ -65,7 +67,6 @@ const AddLocationPopup = ({ remainingLocationCount }: { remainingLocationCount: 
             <Button type="button" onClick={() => { setOpen(true) }}>
                 <Plus /> Add Location
             </Button>
-
 
             <Dialog open={open} onOpenChange={setOpen}>
                 <DialogContent
@@ -252,6 +253,24 @@ const AddLocationPopup = ({ remainingLocationCount }: { remainingLocationCount: 
                                                     }}
                                                 />
                                             </Field>
+
+                                            <Field>
+                                                <FieldLabel>Parking Charges (per hour)</FieldLabel>
+                                                <Input placeholder="Enter mobile number"
+                                                    value={data.charges[index] || 0}
+                                                    required
+                                                    onChange={(e) => {
+                                                        const updated = [...data.charges]
+                                                        updated[index] = Number(e.target.value)
+
+                                                        setData(prev => ({
+                                                            ...prev,
+                                                            charges: updated
+                                                        }))
+                                                    }}
+                                                />
+                                            </Field>
+
                                         </div>
                                     </div>
                                 ))}

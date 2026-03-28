@@ -52,6 +52,9 @@ export const vehicleData = async (id: number) => {
         va.vehicle_number,
         va.status,
         va.entry_time,
+        va.payment_status,
+        va.charge_rate,
+        va.token,
 
         vb.valet_boy_name,
         lm.location_name

@@ -38,6 +38,7 @@ export type LocationData = {
     locationAddress: string[]
     contactPerson: string[]
     personMobile: string[]
+    charges: number[]
 }
 
 export type LocationDetails = {
@@ -123,6 +124,7 @@ export type VehicleData = {
   vehicle_requested: string | null;
   valet_boy_name: string | null;
   location_name: string | null;
+  payment_status: string | null;
 };
 
 export type Request = {

@@ -241,9 +241,18 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
 
         const locationId = rows[0].valet_location_id;
 
+        const [charges]: any = await db.execute(
+            `
+            SELECT charge_rate
+            FROM location_manager
+            WHERE id = ? AND company_id = ?
+            `,
+            [locationId, companyId]
+        );
+
         const query = `
-            INSERT INTO valet_activity (entry_by_valet, valet_location_id, company_id, vehicle_number, token, owner_name, owner_mobile)
-            VALUES (?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO valet_activity (entry_by_valet, valet_location_id, company_id, vehicle_number, token, owner_name, owner_mobile, charge_rate)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?)
         `;
 
         const res = await db.execute(query, [
@@ -253,7 +262,8 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
             carNumber,
             entryData.token,
             entryData.owner,
-            entryData.mobile
+            entryData.mobile,
+            charges[0].charge_rate
         ]);
 
         return {

@@ -1,6 +1,8 @@
+import PayButton from '@/components/customer portal/PayButton';
 import RequestButton from '@/components/customer portal/RequestButton';
+import { Button } from '@/components/ui/button';
 import { vehicleData } from '@/lib/actions/customer';
-import { Car, Clock, IndianRupee, Map, MapPin, Phone, Ticket, User } from 'lucide-react';
+import { Car, Clock, IndianRupee, MapPin, Phone, Ticket, User } from 'lucide-react';
 
 type VehicleProps = {
   params: Promise<{ id: number }>
@@ -10,6 +12,30 @@ const Vehicle = async ({ params }: VehicleProps) => {
   const { id } = await params;
 
   const data = await vehicleData(id);
+
+  if (!data.success || !data.data) return;
+
+  const { entry_time, charge_rate } = data.data;
+
+  const currentTime = new Date();
+
+  const entryTime = new Date(
+    new Date(entry_time).toLocaleString("en-US", {
+      timeZone: "Asia/Kolkata",
+    })
+  );
+
+  const diffMs = Math.max(
+    0,
+    currentTime.getTime() - entryTime.getTime()
+  );
+
+  const diffHours = Math.max(
+    1,
+    Math.ceil(diffMs / (1000 * 60 * 60))
+  );
+
+  const payableAmount = diffHours * charge_rate!;
 
   return (
     <div className='flex flex-col space-y-4'>
@@ -88,7 +114,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
         </div>
       </div>
 
-      {/* <div className="border border-primary/20 rounded-xl p-5 bg-white shadow-sm">
+      <div className="border border-primary/20 rounded-xl p-5 bg-white shadow-sm">
         <div className="flex flex-col space-y-4">
 
           <div className="flex items-center gap-2">
@@ -96,7 +122,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
             <h3 className="font-bold text-lg">Additional Information</h3>
           </div>
 
-          <div className='space-y-2'>
+          {/* <div className='space-y-2'>
             <div className='flex items-center gap-2'>
               <User className='text-muted-foreground' size={20}></User>
               <p className='text-muted-foreground text-sm'>
@@ -104,14 +130,14 @@ const Vehicle = async ({ params }: VehicleProps) => {
               </p>
             </div>
             <p className='text-primary text-lg text-md'>Valet Name</p>
-          </div>
+          </div> */}
 
           <div className='space-y-2'>
             <div className='flex gap-2'>
               <User className='text-muted-foreground' size={20} />
               <p className='text-muted-foreground text-sm'>
                 Owner Name
-                </p>
+              </p>
             </div>
             <p className="text-primary text-md">
               {data.data?.owner_name || "Not Given"}
@@ -138,7 +164,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
               </p>
             </div>
             <p className='text-primary text-md'>
-              {data.data?.charge_rate || "520"}
+              {payableAmount}
             </p>
           </div>
 
@@ -155,7 +181,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
           </div>
 
         </div>
-      </div> */}
+      </div>
 
       {data?.data && (
         <RequestButton
@@ -163,6 +189,11 @@ const Vehicle = async ({ params }: VehicleProps) => {
           id={data.data.id}
         />
       )}
+
+      {data.data.payment_status === "PAID" ?
+        <Button>Amount Paid</Button> :
+        <PayButton invoiceId={String(data.data?.id)} />
+      }
 
     </div>
   )

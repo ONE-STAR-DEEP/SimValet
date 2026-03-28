@@ -163,7 +163,8 @@ export const insertLocation = async (data: LocationData) => {
                 data.locationName[i],
                 data.locationAddress[i],
                 data.contactPerson[i],
-                data.personMobile[i]
+                data.personMobile[i],
+                data.charges[i]
             ]);
         }
 
@@ -174,7 +175,8 @@ export const insertLocation = async (data: LocationData) => {
             location_name,
             location_address,
             contact_person_name,
-            contact_person_mobile
+            contact_person_mobile,
+            charge_rate
             )
             VALUES ?
             `,
