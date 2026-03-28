@@ -95,9 +95,10 @@ export async function verifyPayment(data: {
             UPDATE valet_activity set 
             payment_status = "PAID",  
             razorpay_payment_id = ?,
-            paid_at = NOW()
+            paid_at = NOW(),
+            amount = ?
             WHERE id = ? AND payment_status != 'PAID'
-            `, [razorpay_payment_id, invoiceId]
+            `, [razorpay_payment_id, payment.amount, invoiceId]
     );
 
     return { success: true };
