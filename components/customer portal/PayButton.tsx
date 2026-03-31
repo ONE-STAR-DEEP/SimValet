@@ -75,5 +75,5 @@ export default function PayButton({ invoiceId }: { invoiceId: string }) {
         paymentObject.open();
     };
 
-    return <Button variant={'outline'} className="bg-white border border-primary" onClick={handlePayment}>Pay for ID {invoiceId}</Button>;
+    return <Button variant={'outline'} className="bg-white border border-primary" onClick={handlePayment}>Pay Now</Button>;
 }
