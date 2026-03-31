@@ -87,7 +87,7 @@ const EntryExitForm = ({
         return () => {
             socket.off("payment-update");
         };
-    }, []);
+    }, [response?.activity_id]);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
