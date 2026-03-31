@@ -407,7 +407,7 @@ export const getPendingRequests = async () => {
         const userId = session.id;
 
         const [location]: any = await db.execute(
-        `
+            `
             SELECT valet_location_id
             FROM valet_boy
             WHERE id = ? AND company_id = ?
@@ -427,23 +427,24 @@ export const getPendingRequests = async () => {
         const [rows]: any = await db.query(
             `
       SELECT 
-        r.id,
-        r.vehicle_number,
-        v.owner_name AS customer_name,
-        r.request_time
-      FROM requests r
-      JOIN valet_activity v
-        ON v.vehicle_number = r.vehicle_number
-        AND v.id = (
-          SELECT MAX(id)
-          FROM valet_activity
-          WHERE vehicle_number = r.vehicle_number
-        )
-      WHERE r.status = 'pending'
-        AND r.company_id = ?
-        AND v.valet_location_id = ?
-        AND r.request_time >= NOW() - INTERVAL 10 MINUTE
-      ORDER BY r.request_time DESC;
+    r.id,
+    r.vehicle_number,
+    v.id AS activity_id,
+    v.owner_name AS customer_name,
+    r.request_time
+FROM requests r
+JOIN valet_activity v
+    ON v.vehicle_number = r.vehicle_number
+    AND v.id = (
+        SELECT MAX(id)
+        FROM valet_activity
+        WHERE vehicle_number = r.vehicle_number
+    )
+WHERE r.status = 'pending'
+    AND r.company_id = ?
+    AND v.valet_location_id = ?
+    AND r.request_time >= NOW() - INTERVAL 10 MINUTE
+ORDER BY r.request_time DESC;
       `,
             [companyId, valetLocationId]
         );
@@ -580,11 +581,11 @@ export const updateStatus = async (vehicleNumber: string, status: string) => {
 }
 
 export const fetchValeActivities = async ({
-  limit = 10,
-  offset = 0,
+    limit = 10,
+    offset = 0,
 }: {
-  limit?: number
-  offset?: number
+    limit?: number
+    offset?: number
 }) => {
     try {
         const session = await getSessionUser();
@@ -594,7 +595,7 @@ export const fetchValeActivities = async ({
         const userId = session.id;
 
         const [rows]: any = await db.query(
-  `
+            `
   SELECT *
   FROM (
     SELECT 
@@ -619,8 +620,8 @@ export const fetchValeActivities = async ({
   ORDER BY time DESC
   LIMIT ? OFFSET ?
   `,
-  [companyId, userId, companyId, userId, limit, offset]
-);
+            [companyId, userId, companyId, userId, limit, offset]
+        );
 
         return {
             success: true,

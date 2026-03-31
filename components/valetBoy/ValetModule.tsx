@@ -26,12 +26,7 @@ export default function ValetModule({ companyId }: { companyId: number }) {
         setMode={setMode}
         setResponse={setResponse}
       />
-
-      {/* <ResponseWindow
-        response={response}
-        triggerExit={() => setMode("exit")}
-      /> */}
-
+      
     </div>
   );
 }

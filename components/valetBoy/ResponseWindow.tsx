@@ -26,6 +26,7 @@ const ResponseWindow = ({ companyId, response, setMode, setResponse }: ResponseW
             try {
                 setLoading(true)
                 const requestData = await getPendingRequests();
+                console.log("Fetched requests:", requestData);
                 if (requestData.success) {
                     setRequests(requestData.data);
                 }

@@ -33,13 +33,13 @@ export type Company = {
 }
 
 export type LocationData = {
-    locationCount: number;
-    locationName: string[]
-    locationAddress: string[]
-    contactPerson: string[]
-    personMobile: string[]
-    charges: number[]
-    minCharges: number[]
+  locationCount: number;
+  locationName: string[]
+  locationAddress: string[]
+  contactPerson: string[]
+  personMobile: string[]
+  charges: number[]
+  minCharges: number[]
 }
 
 export type LocationDetails = {
@@ -86,14 +86,14 @@ export type ValetBoyDetails = {
 
 export type Location = {
   id: Number;
-  location_name: string 
+  location_name: string
   contact_person_name: string
 }
 
 export type VehicleEntry = {
   vehicleNumber: string;
   token: string;
-  owner: string; 
+  owner: string;
   mobile: string;
 }
 
@@ -130,10 +130,11 @@ export type VehicleData = {
 };
 
 export type Request = {
-    id: number;
-    vehicle_number: string;
-    customer_name: string;
-    request_time: string;
+  id: number;
+  vehicle_number: string;
+  customer_name: string;
+  request_time: string;
+  activity_id: number
 };
 
 export type LocationManager = {

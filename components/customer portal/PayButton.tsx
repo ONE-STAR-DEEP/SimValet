@@ -23,50 +23,49 @@ export default function PayButton({ invoiceId }: { invoiceId: string }) {
 
     const handlePayment = async () => {
 
-        socket.emit("payment-update", {
-            valetId: "8",
-            invoiceId: invoiceId,
-            amount: 100,
-            status: "paid",
-        });
-
+        
         const res = await loadScript();
         if (!res) return alert("Razorpay SDK failed");
-
+        
         const orderRes = await createOrder(invoiceId);
-
+        
         if (!orderRes.success) {
             alert("Something went wrong");
             return;
         }
-
+        
         const options = {
             key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID,
             order_id: orderRes.order.id,
             amount: orderRes.order.amount,
             currency: "INR",
-
+            
             method: {
                 upi: true,
                 card: true,
                 netbanking: true,
                 wallet: true,
             },
-
+            
             prefill: {
                 id: invoiceId,
             },
-
+            
             handler: async (response: any) => {
                 console.log("here")
                 const verifyRes = await verifyPayment({
                     ...response,
                     invoiceId,
                 });
-
+                
                 if (verifyRes.success) {
                     alert("Payment Successful ✅");
                     router.refresh();
+
+                    socket.emit("payment-update", {
+                        invoiceId: invoiceId,
+                    });
+
                 } else {
                     alert("Payment verification failed ❌");
                 }

@@ -54,6 +54,7 @@ const EntryExitForm = ({
 
     const [entryLoading, setEntryLoading] = useState(false);
     const [exitLoading, setExitLoading] = useState(false)
+    const [payment, setPayment] = useState(true);
 
     useEffect(() => {
         if (!response?.vehicle_number) return;
@@ -68,22 +69,13 @@ const EntryExitForm = ({
 
     useEffect(() => {
         const initSocket = async () => {
-            const valet = await getSessionUser();
-            if (!valet?.id) {
-                alert("Unauthorized");
-                return;
-            }
 
-            console.log("Joining valet room:", valet.id);
-            socket.emit("join-valet", valet.id);
+            console.log("Joining valet room:", response?.activity_id);
+            socket.emit("join-valet", response?.activity_id);
 
             socket.on("payment-update", (data) => {
                 console.log("Payment received:", data);
-                alert(`Payment received`);
-
-                // Option 1 (simple)
-                router.refresh();
-
+                setPayment(false)
                 // Option 2 (better UX)
                 // update local state instead
             });
@@ -196,7 +188,7 @@ const EntryExitForm = ({
 
     const handleVerify = async () => {
         if (exitLoading) return;
-        if (!exitData.mode) {
+        if (payment && !exitData.mode) {
             alert("Select payment mode")
             return
         }
@@ -386,29 +378,30 @@ const EntryExitForm = ({
                                         </div>
                                     </Field>
 
-                                    <Field className='w-full'>
-                                        <Select
-                                            required
-                                            value={exitData.mode}
-                                            onValueChange={(value) => {
-                                                setExitData((prev) => ({
-                                                    ...prev,
-                                                    mode: value,
-                                                }));
-                                            }}
-                                        >
-                                            <SelectTrigger className="w-full">
-                                                <SelectValue placeholder="Mode of Payment" />
-                                            </SelectTrigger>
-                                            <SelectContent className='w-full'>
-                                                <SelectGroup className='w-full'>
-                                                    <SelectLabel>Modes</SelectLabel>
-                                                    <SelectItem value="upi">UPI</SelectItem>
-                                                    <SelectItem value="cash">Cash</SelectItem>
-                                                </SelectGroup>
-                                            </SelectContent>
-                                        </Select>
-                                    </Field>
+                                    {payment &&
+                                        <Field className='w-full'>
+                                            <Select
+                                                required
+                                                value={exitData.mode}
+                                                onValueChange={(value) => {
+                                                    setExitData((prev) => ({
+                                                        ...prev,
+                                                        mode: value,
+                                                    }));
+                                                }}
+                                            >
+                                                <SelectTrigger className="w-full">
+                                                    <SelectValue placeholder="Mode of Payment" />
+                                                </SelectTrigger>
+                                                <SelectContent className='w-full'>
+                                                    <SelectGroup className='w-full'>
+                                                        <SelectLabel>Modes</SelectLabel>
+                                                        <SelectItem value="upi">UPI</SelectItem>
+                                                        <SelectItem value="cash">Cash</SelectItem>
+                                                    </SelectGroup>
+                                                </SelectContent>
+                                            </Select>
+                                        </Field>}
 
                                     <Button type='button' onClick={handleVerify} disabled={exitLoading}>
                                         {exitLoading ? "Verifying" : "Verify Token & Deliver"}
