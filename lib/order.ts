@@ -24,7 +24,7 @@ export async function createOrder(
     try {
 
         const [rows]: any = await db.query(
-            `SELECT id, payment_status, razorpay_order_id, entry_time, charge_rate
+            `SELECT id, payment_status, razorpay_order_id, entry_time, charge_rate, min_charges
             FROM valet_activity
             WHERE id = ?`,
             [invoiceId]
@@ -40,6 +40,12 @@ export async function createOrder(
 
         if (!vehicle.charge_rate || vehicle.charge_rate <= 0) {
             return { success: false };
+        }
+
+        if (vehicle.payment_status?.toUpperCase() === "PAID") {
+            return {
+                success: false,
+            }
         }
 
         const currentTime = new Date();
@@ -62,14 +68,10 @@ export async function createOrder(
 
         const payableAmount = diffHours * vehicle.charge_rate;
 
-        if (vehicle.payment_status?.toUpperCase() === "PAID") {
-            return {
-                success: false,
-            }
-        }
+        const finalAmount = vehicle.min_charges!  > payableAmount ? vehicle.min_charges : payableAmount;
 
         const order = await razorpay.orders.create({
-            amount: Math.round(payableAmount * 100),
+            amount: Math.round(finalAmount * 100),
             currency: "INR",
             receipt: `invoice_${invoiceId}_${Date.now()}`,
         });

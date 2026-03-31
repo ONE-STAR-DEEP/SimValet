@@ -23,22 +23,29 @@ const AddLocationPopup = ({ remainingLocationCount }: { remainingLocationCount: 
 
     const router = useRouter();
 
-    const [data, setData] = useState<LocationData>({
+    const initialState: LocationData = {
         locationCount: remainingLocationCount,
         locationName: [],
         locationAddress: [],
         contactPerson: [],
         personMobile: [],
-        charges: []
+        charges: [],
+        minCharges: [],
+    };
 
-    })
+    const [data, setData] = useState<LocationData>(initialState);
 
     useEffect(() => {
-        setData(prev => ({
-            ...prev,
-            locationCount: remainingLocationCount
-        }))
-    }, [remainingLocationCount])
+        setData({
+            locationCount: remainingLocationCount,
+            locationName: [],
+            locationAddress: [],
+            contactPerson: [],
+            personMobile: [],
+            charges: [],
+            minCharges: [],
+        });
+    }, [remainingLocationCount]);
 
     const [open, setOpen] = useState(false)
 
@@ -51,8 +58,9 @@ const AddLocationPopup = ({ remainingLocationCount }: { remainingLocationCount: 
             alert("Failed to Insert")
         }
 
-        setOpen(false);
         router.refresh();
+        setOpen(false);
+
     }
 
     if (remainingLocationCount === 0) {
@@ -266,6 +274,23 @@ const AddLocationPopup = ({ remainingLocationCount }: { remainingLocationCount: 
                                                         setData(prev => ({
                                                             ...prev,
                                                             charges: updated
+                                                        }))
+                                                    }}
+                                                />
+                                            </Field>
+
+                                            <Field>
+                                                <FieldLabel>Minimum Charges</FieldLabel>
+                                                <Input placeholder="Enter mobile number"
+                                                    value={data.minCharges[index] || 0}
+                                                    required
+                                                    onChange={(e) => {
+                                                        const updated = [...data.minCharges]
+                                                        updated[index] = Number(e.target.value)
+
+                                                        setData(prev => ({
+                                                            ...prev,
+                                                            minCharges: updated
                                                         }))
                                                     }}
                                                 />

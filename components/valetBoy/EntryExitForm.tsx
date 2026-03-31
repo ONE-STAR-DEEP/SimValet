@@ -20,6 +20,7 @@ import {
     SelectValue,
 } from "@/components/ui/select"
 import socket from '@/lib/socket/socket';
+import { getSessionUser } from '@/lib/checkSession';
 
 
 type EntryExitFormProps = {
@@ -64,6 +65,36 @@ const EntryExitForm = ({
             mode: ""
         });
     }, [response]);
+
+    useEffect(() => {
+        const initSocket = async () => {
+            const valet = await getSessionUser();
+            if (!valet?.id) {
+                alert("Unauthorized");
+                return;
+            }
+
+            console.log("Joining valet room:", valet.id);
+            socket.emit("join-valet", valet.id);
+
+            socket.on("payment-update", (data) => {
+                console.log("Payment received:", data);
+                alert(`Payment received`);
+
+                // Option 1 (simple)
+                router.refresh();
+
+                // Option 2 (better UX)
+                // update local state instead
+            });
+        };
+
+        initSocket();
+
+        return () => {
+            socket.off("payment-update");
+        };
+    }, []);
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -124,10 +155,8 @@ const EntryExitForm = ({
                     mode: ""
                 });
 
-
                 setResponse(null)
                 setExitLoading(false)
-
             }
             router.refresh();
 

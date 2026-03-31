@@ -39,6 +39,7 @@ export type LocationData = {
     contactPerson: string[]
     personMobile: string[]
     charges: number[]
+    minCharges: number[]
 }
 
 export type LocationDetails = {
@@ -117,6 +118,7 @@ export type VehicleData = {
   exit_by_valet: number | null;
   entry_by_valet: number;
   charge_rate: number | null;
+  min_charges: number | null;
   token: string;
   dropped_by: number | null;
   assigned_valet: number | null;

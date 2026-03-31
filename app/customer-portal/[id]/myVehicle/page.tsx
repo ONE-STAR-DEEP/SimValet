@@ -37,6 +37,8 @@ const Vehicle = async ({ params }: VehicleProps) => {
 
   const payableAmount = diffHours * charge_rate!;
 
+  const finalAmount = data.data.min_charges!  > payableAmount ? data.data.min_charges : payableAmount;
+
   return (
     <div className='flex flex-col space-y-4'>
 
@@ -164,7 +166,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
               </p>
             </div>
             <p className='text-primary text-md'>
-              {payableAmount}
+              {finalAmount} (for {diffHours} {diffHours > 1 ? "hours" : "hour"})
             </p>
           </div>
 

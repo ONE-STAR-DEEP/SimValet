@@ -4,6 +4,7 @@ import { createOrder } from "@/lib/order";
 import { verifyPayment } from "@/lib/actions/payment";
 import { useRouter } from "next/navigation";
 import { Button } from "../ui/button";
+import socket from "@/lib/socket/socket";
 
 export default function PayButton({ invoiceId }: { invoiceId: string }) {
     const router = useRouter();
@@ -21,6 +22,14 @@ export default function PayButton({ invoiceId }: { invoiceId: string }) {
     };
 
     const handlePayment = async () => {
+
+        socket.emit("payment-update", {
+            valetId: "8",
+            invoiceId: invoiceId,
+            amount: 100,
+            status: "paid",
+        });
+
         const res = await loadScript();
         if (!res) return alert("Razorpay SDK failed");
 

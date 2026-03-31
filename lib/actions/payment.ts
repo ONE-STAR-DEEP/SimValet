@@ -93,7 +93,8 @@ export async function verifyPayment(data: {
     await db.query(
         `
             UPDATE valet_activity set 
-            payment_status = "PAID",  
+            payment_status = "PAID",
+            mode_of_payment = "online", 
             razorpay_payment_id = ?,
             paid_at = NOW(),
             amount = ?
