@@ -23,10 +23,6 @@ export default function PayButton({ invoiceId }: { invoiceId: string }) {
 
     const handlePayment = async () => {
 
-        socket.emit("payment-update", {
-            invoiceId: invoiceId,
-        });
-
         const res = await loadScript();
         if (!res) return alert("Razorpay SDK failed");
 
