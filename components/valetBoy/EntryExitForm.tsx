@@ -75,6 +75,7 @@ const EntryExitForm = ({
 
             socket.on("payment-update", (data) => {
                 console.log("Payment received:", data);
+                alert("Payment received for this vehicle. You can now verify and deliver the car.");
                 setPayment(false)
                 // Option 2 (better UX)
                 // update local state instead
