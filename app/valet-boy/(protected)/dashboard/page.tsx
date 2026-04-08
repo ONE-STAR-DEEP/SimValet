@@ -22,6 +22,7 @@ const Dashboard = async () => {
   return (
     <div className="w-full flex flex-col gap-2">
 
+      <ValetModule companyId={companyId} />
 
       <div className="w-full border border-primary/20 rounded-xl  px-4">
         <Accordion type="single" collapsible>
@@ -116,7 +117,7 @@ const Dashboard = async () => {
                   </span>
                 </div>
 
-                <Link  href="/valet-boy/dashboard/activities" className="mt-2 w-full bg-primary text-white text-center p-1 rounded-lg">View All Activity</Link>
+                <Link href="/valet-boy/dashboard/activities" className="mt-2 w-full bg-primary text-white text-center p-1 rounded-lg">View All Activity</Link>
 
               </div>
             </AccordionContent>
@@ -125,7 +126,6 @@ const Dashboard = async () => {
         </Accordion>
       </div>
 
-      <ValetModule companyId={companyId} />
       {/* <EntryExitForm /> */}
 
     </div>

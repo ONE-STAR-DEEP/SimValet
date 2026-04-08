@@ -276,9 +276,8 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
         console.log(error)
         return {
             success: false,
-            message: error
+            message: error as string
         }
-
     }
 }
 
@@ -637,3 +636,55 @@ export const fetchValeActivities = async ({
         };
     }
 };
+
+export const checkVehicle = async (vehicleNumber: string) => {
+
+    const session = await getSessionUser();
+    if (!session) throw new Error("Unauthorized");
+
+    const companyId = session.company_id;
+    const valetId = session.id;
+
+    try {
+
+        const [rows]: any = await db.execute(
+            `
+            SELECT va.id
+            FROM valet_activity va
+            JOIN valet_boy vb 
+                ON vb.id = ? 
+                AND vb.company_id = ?
+                AND vb.valet_location_id = va.valet_location_id
+            WHERE va.vehicle_number = ?
+            AND va.company_id = ?
+            AND va.exit_time IS NULL
+            ORDER BY va.entry_time DESC
+            LIMIT 1
+            `,
+            [valetId, companyId, vehicleNumber.toUpperCase(), companyId]
+        );
+
+        if (!rows.length) {
+            return {
+                success: false,
+                message: "No active vehicle found"
+            };
+        }
+
+        const entryId = rows[0].id;
+
+        return {
+            success: true,
+            message: `Activity ID: ${rows[0].id}`
+
+        }
+
+
+    } catch (err) {
+        console.error(err);
+        return {
+            success: false,
+            message: "Something went wrong",
+        };
+    }
+}

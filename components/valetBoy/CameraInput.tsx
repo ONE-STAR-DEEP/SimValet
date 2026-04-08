@@ -2,7 +2,6 @@
 
 import { useRef, useState } from "react";
 import { CameraIcon, Loader } from "lucide-react";
-import { VehicleEntry, VehicleExit } from "@/lib/types/types";
 import imageCompression from "browser-image-compression";
 
 
@@ -27,6 +26,7 @@ export default function CameraCapture<T>({ data, setData }: Props<T>) {
 
         if (!file) {
             alert("Failed to Capture Image");
+            setLoading(false);
             return
         };
 
@@ -57,6 +57,8 @@ export default function CameraCapture<T>({ data, setData }: Props<T>) {
                     ...prev,
                     vehicleNumber: plate.toUpperCase()
                 }));
+                
+                e.target.value = "";
 
             } else {
                 alert("No number plate detected");

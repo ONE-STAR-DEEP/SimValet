@@ -17,7 +17,7 @@ export default async function SuperAdminLayout({
     }
 
     return (
-        <div className="flex flex-col min-h-screen">
+        <div className="flex flex-col min-h-screen h-screen">
 
             {/* Top Navbar */}
             <nav className="sticky top-0 z-50 bg-gray-900 text-white shadow-md">
@@ -41,8 +41,8 @@ export default async function SuperAdminLayout({
             </nav>
 
             {/* Main Content */}
-            <main className="grow bg-gray-100 py-8">
-                <div className="max-w-7xl mx-auto px-4">
+            <main className="grow bg-gray-100 py-8 h-full">
+                <div className="max-w-7xl mx-auto px-4 h-full">
                     <SocketReconnect/>
                     {children}
                 </div>
@@ -54,8 +54,6 @@ export default async function SuperAdminLayout({
                     © {new Date().getFullYear()} SimValetPark
                 </small>
             </footer>
-
-
         </div>
     );
 }
