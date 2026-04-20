@@ -30,18 +30,18 @@ const Vehicle = async ({ searchParams }: PageProps) => {
   if (!res.success && res.message === "No active log") {
 
     return (
-      <div>
-        <Image
-          src="/assets/images/delivered.png"
-          alt='delivered'
-          height={1000}
-          width={1000}
+      <div className='w-full h-full'>
+        <div className='flex flex-col items-center  my-auto'>
+          <Image
+            src="/assets/images/deal.png"
+            alt='delivered'
+            height={1000}
+            width={1000}
           />
-          <p>This vehicle has already been delivered</p>
-
+          <p>This vehicle has been delivered successfully</p>
+        </div>
       </div>
     )
-
   }
 
   const id = res.id;
