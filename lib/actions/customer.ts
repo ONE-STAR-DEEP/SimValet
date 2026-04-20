@@ -22,8 +22,25 @@ export const customerLogin = async (vehicle: string, token: string) => {
     const result = rows as any[];
 
     if (result.length === 0) {
+
+      const [rows]: any = await db.execute(
+        `
+        SELECT id,
+        vehicle_number,
+        status,
+        exit_time
+        FROM valet_activity
+        WHERE vehicle_number = ? 
+        AND token = ?
+        ORDER BY id DESC
+        LIMIT 1;
+        `,
+        [vehicle.toUpperCase(), Number(token)]
+      );
+
       return {
         success: false,
+        data: rows[0],
         message: "No active log"
       };
     }

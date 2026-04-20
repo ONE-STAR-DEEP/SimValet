@@ -4,6 +4,12 @@ import { customerLogin, vehicleData } from '@/lib/actions/customer';
 import { Car, Clock, MapPin, Phone, Ticket, User } from 'lucide-react';
 import jwt from "jsonwebtoken";
 import Image from 'next/image';
+import { Montserrat } from 'next/font/google'
+
+const montserrat = Montserrat({
+    subsets: ["latin"],
+    display: "swap",
+});
 
 type Payload = {
   vehicle: string;
@@ -31,17 +37,49 @@ const Vehicle = async ({ searchParams }: PageProps) => {
 
     return (
       <div className='w-full h-full'>
-        <div className='flex flex-col h-full items-center  my-auto'>
-          <Image
-            src="/assets/images/deal.png"
-            alt='delivered'
-            height={1000}
-            width={1000}
-            className='max-w-[50vh] max-h-[50vh]'
-          />
-          <p>This vehicle has been delivered successfully</p>
+            <div className='flex flex-col h-full items-center justify-evenly py-20 text-center space-y-5'>
+                <div className="flex items-center">
+                    <Image
+                        src="/assets/images/logo3.png"
+                        alt="logo"
+                        height={60}
+                        width={60}
+                    />
+                    <p className={`${montserrat.className} font-bold text-2xl`}>
+                        SimValet<span className='text-primary'>Park</span>
+                    </p>
+                </div>
+                <div className="h-50 w-50 rounded-full flex items-center justify-center border bg-linear-to-br from-teal-600 to-[#005f85]">
+                    <Image
+                        src="/assets/images/protection.png"
+                        alt='delivered'
+                        height={120}
+                        width={120}
+                        className='max-w-40 max-h-40 invert'
+                    />
+                </div>
+                <div>
+                    <h3 className="text-3xl font-bold">Vehicle Delivered</h3>
+                    <p className="text-muted-foreground text-lg">This vehicle has been delivered successfully</p>
+                </div>
+                {/* <div className="space-y-6 text-left w-[90%] rounded-xl border p-6 ">
+                    <div>
+                        <p className="text-sm font-semibold text-muted-foreground mb-2">VEHICLE NUMBER</p>
+                        <p className="text-lg font-semibold text-foreground">kl54od0978</p>
+                    </div>
+
+                    <div>
+                        <p className="text-sm font-semibold text-muted-foreground mb-2">DELIVERY TIME</p>
+                        <div className="flex gap-3">
+                            <div>
+                                <p className="text-lg font-semibold text-foreground">2:45 PM</p>
+                                <p className="text-sm text-muted-foreground">April 20, 2024</p>
+                            </div>
+                        </div>
+                    </div>
+                </div> */}
+            </div>
         </div>
-      </div>
     )
   }
 
