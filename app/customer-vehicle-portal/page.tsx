@@ -31,12 +31,13 @@ const Vehicle = async ({ searchParams }: PageProps) => {
 
     return (
       <div className='w-full h-full'>
-        <div className='flex flex-col items-center  my-auto'>
+        <div className='flex flex-col h-full items-center  my-auto'>
           <Image
             src="/assets/images/deal.png"
             alt='delivered'
             height={1000}
             width={1000}
+            className='max-w-[50vh] max-h-[50vh]'
           />
           <p>This vehicle has been delivered successfully</p>
         </div>
