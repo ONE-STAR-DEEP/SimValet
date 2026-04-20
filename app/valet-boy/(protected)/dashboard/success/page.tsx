@@ -59,7 +59,7 @@ const SuccessPage = async ({ searchParams }: Props) => {
 
                             <section className="flex flex-col items-center">
                                 <div className="border-b border-dashed border-gray-400 w-[60%]"></div>
-                                <QRComponent />
+                                {/* <QRComponent /> */}
                                 <p className="text-xs text-nowrap tracking-tighter">Scan for a Seamless Car Retrieval Experience</p>
                                 <div className="border-b border-dashed border-gray-400 w-[60%] my-2"></div>
                                 <p className={`${montserrat.className} text-xs`}>TOKEN</p>
