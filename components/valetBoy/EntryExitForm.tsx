@@ -43,10 +43,10 @@ type EntryExitFormProps = {
 };
 
 async function generateToken() {
-  const length = Math.floor(Math.random() * 5) + 1; // 1 to 5 digits
-  const min = Math.pow(10, length - 1);
-  const max = Math.pow(10, length) - 1;
-  return Math.floor(min + Math.random() * (max - min + 1));
+    const length = Math.floor(Math.random() * 5) + 1; // 1 to 5 digits
+    const min = Math.pow(10, length - 1);
+    const max = Math.pow(10, length) - 1;
+    return Math.floor(min + Math.random() * (max - min + 1));
 }
 
 const EntryExitForm = ({
@@ -117,18 +117,21 @@ const EntryExitForm = ({
                 const vehicleNumber = entryData.vehicleNumber.trim().toUpperCase();
                 if (!vehicleNumber) return;
 
-                if(entryData.token.length === 0) {
-                    const token = await generateToken()
-                    setEntryData((prev)=>({
+                let finalToken = entryData.token;
+
+                if (entryData.token.length === 0) {
+                    finalToken = String(await generateToken());
+                    setEntryData((prev) => ({
                         ...prev,
-                        token: String(token)
+                        token: finalToken
                     }))
                 }
 
                 const res = await submitEntry({
                     entryData: {
                         ...entryData,
-                        vehicleNumber
+                        vehicleNumber,
+                        token: finalToken
                     }
                 });
 
