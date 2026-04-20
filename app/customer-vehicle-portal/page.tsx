@@ -1,9 +1,9 @@
-import PayButton from '@/components/customer portal/PayButton';
+
 import RequestButton from '@/components/customer portal/RequestButton';
-import { Button } from '@/components/ui/button';
 import { customerLogin, vehicleData } from '@/lib/actions/customer';
-import { Car, Clock, IndianRupee, MapPin, Phone, Ticket, User } from 'lucide-react';
+import { Car, Clock, MapPin, Phone, Ticket, User } from 'lucide-react';
 import jwt from "jsonwebtoken";
+import Image from 'next/image';
 
 type Payload = {
   vehicle: string;
@@ -26,6 +26,23 @@ const Vehicle = async ({ searchParams }: PageProps) => {
   ) as Payload;
 
   const res = await customerLogin(decoded.vehicle, decoded.token);
+
+  if (!res.success && res.message === "No active log") {
+
+    return (
+      <div>
+        <Image
+          src="/assets/images/delivered.png"
+          alt='delivered'
+          height={1000}
+          width={1000}
+          />
+          <p>This vehicle has already been delivered</p>
+
+      </div>
+    )
+
+  }
 
   const id = res.id;
 

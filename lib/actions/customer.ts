@@ -24,7 +24,7 @@ export const customerLogin = async (vehicle: string, token: string) => {
     if (result.length === 0) {
       return {
         success: false,
-        message: "No active log found"
+        message: "No active log"
       };
     }
 
