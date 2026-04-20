@@ -12,18 +12,18 @@ type Payload = {
 
 type PageProps = {
   searchParams: Promise<{
-    token?: string;
+    token: string;
   }>;
 };
 
-const Vehicle = async ({ searchParams }) => {
-  const token = searchParams.token;
+const Vehicle = async ({ searchParams }: PageProps) => {
+  const params = await searchParams;
+  const token = params.token;
 
   const decoded = jwt.verify(
     token,
     process.env.JWT_SECRET!
   ) as Payload;
-
 
   const res = await customerLogin(decoded.vehicle, decoded.token);
 
@@ -176,7 +176,7 @@ const Vehicle = async ({ searchParams }) => {
             </p>
           </div>
 
-          <div className='space-y-2'>
+          {/* <div className='space-y-2'>
             <div className='flex gap-2'>
               <IndianRupee className='text-muted-foreground' size={20} />
               <p className='text-muted-foreground text-sm'>
@@ -186,7 +186,7 @@ const Vehicle = async ({ searchParams }) => {
             <p className='text-primary text-md'>
               {finalAmount} (for {diffHours} {diffHours > 1 ? "hours" : "hour"})
             </p>
-          </div>
+          </div> */}
 
           <div className='space-y-2'>
             <div className='flex gap-2'>
@@ -209,11 +209,6 @@ const Vehicle = async ({ searchParams }) => {
           id={data.data.id}
         />
       )}
-
-      {data.data.payment_status === "PAID" ?
-        <Button>Amount Paid</Button> :
-        <PayButton invoiceId={String(data.data?.id)} />
-      }
 
     </div>
   )
