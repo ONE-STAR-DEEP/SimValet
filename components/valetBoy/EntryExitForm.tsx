@@ -22,15 +22,10 @@ import {
 import socket from '@/lib/socket/socket';
 import {
     Dialog,
-    DialogClose,
     DialogContent,
-    DialogDescription,
     DialogFooter,
-    DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
-import ActionButtons from '../valetBoyScreen-2/ActionButtons';
 import QRComponent from '../valetBoyScreen-2/QR';
 import Image from 'next/image';
 import { Montserrat } from 'next/font/google';
@@ -46,6 +41,13 @@ type EntryExitFormProps = {
     setMode: React.Dispatch<React.SetStateAction<"entry" | "exit">>;
     setResponse: React.Dispatch<React.SetStateAction<Request | null>>;
 };
+
+async function generateToken() {
+  const length = Math.floor(Math.random() * 5) + 1; // 1 to 5 digits
+  const min = Math.pow(10, length - 1);
+  const max = Math.pow(10, length) - 1;
+  return Math.floor(min + Math.random() * (max - min + 1));
+}
 
 const EntryExitForm = ({
     mode,
@@ -114,6 +116,14 @@ const EntryExitForm = ({
                 setEntryLoading(true)
                 const vehicleNumber = entryData.vehicleNumber.trim().toUpperCase();
                 if (!vehicleNumber) return;
+
+                if(entryData.token.length === 0) {
+                    const token = await generateToken()
+                    setEntryData((prev)=>({
+                        ...prev,
+                        token: String(token)
+                    }))
+                }
 
                 const res = await submitEntry({
                     entryData: {
@@ -265,6 +275,8 @@ const EntryExitForm = ({
                                         className='bg-white'
                                         value={entryData.vehicleNumber}
                                         placeholder='SS00AA0000'
+                                        minLength={5}
+                                        required
                                         onChange={(e) =>
                                             setEntryData(prev => ({
                                                 ...prev,
@@ -288,6 +300,7 @@ const EntryExitForm = ({
                                         className="border-0 focus-visible:ring-0"
                                         value={entryData.token}
                                         placeholder="token number"
+                                        maxLength={5}
                                         onChange={(e) =>
                                             setEntryData(prev => ({
                                                 ...prev,
@@ -380,6 +393,7 @@ const EntryExitForm = ({
                                                     className="border-0 focus-visible:ring-0"
                                                     value={exitData.token}
                                                     placeholder="token number"
+                                                    maxLength={5}
                                                     onChange={(e) =>
                                                         setExitData(prev => ({
                                                             ...prev,
@@ -472,6 +486,7 @@ const EntryExitForm = ({
                                     <div className='flex gap-2'>
                                         <Input
                                             className='bg-white'
+                                            required
                                             value={exitData.vehicleNumber}
                                             placeholder='SS00AA0000'
                                             onChange={(e) =>
@@ -486,9 +501,7 @@ const EntryExitForm = ({
 
                                 <Field>
                                     <Label>Token</Label>
-
                                     <div className="flex items-center border rounded-md bg-white">
-
                                         <span className="px-3 text-sm text-muted-foreground border-r">
                                             SVPT
                                         </span>
@@ -496,6 +509,7 @@ const EntryExitForm = ({
                                         <Input
                                             className="border-0 focus-visible:ring-0"
                                             value={exitData.token}
+                                            maxLength={5}
                                             placeholder="token number"
                                             onChange={(e) => {
                                                 const value = e.target.value.replace(/\D/g, "");
@@ -506,7 +520,6 @@ const EntryExitForm = ({
                                             }
                                             }
                                         />
-
                                     </div>
                                 </Field>
 
@@ -584,7 +597,7 @@ const EntryExitForm = ({
 
                             <section className="flex flex-col items-center">
                                 <div className="border-b border-dashed border-gray-400 w-[60%]"></div>
-                                <QRComponent />
+                                <QRComponent vehicle={entryData.vehicleNumber} token={entryData.token} />
                                 <p className="text-xs text-nowrap tracking-tighter">Scan for a Seamless Car Retrieval Experience</p>
                                 <div className="border-b border-dashed border-gray-400 w-[60%] my-2"></div>
                                 <p className={`${montserrat.className} text-xs`}>TOKEN</p>
@@ -598,8 +611,6 @@ const EntryExitForm = ({
                             </section>
                         </div>
 
-                        {/* <ActionButtons /> */}
-
                     </div>
 
                     <DialogFooter className="p-2 mt-0 pb-4 pt-0 border-t">
@@ -612,7 +623,6 @@ const EntryExitForm = ({
                                 mobile: ""
                             });
                             setOpen(false)
-
                         }}>Confirm</Button>
 
                     </DialogFooter>

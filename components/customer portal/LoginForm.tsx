@@ -10,7 +10,6 @@ import {
 } from "@/components/ui/field"
 import { Input } from "@/components/ui/input"
 import { FormEvent, useState } from "react"
-import { matchOTP, sendOtp } from "@/lib/actions/valetBoy"
 import Image from "next/image"
 import { customerLogin } from "@/lib/actions/customer"
 import { useRouter } from "next/navigation"

@@ -2,13 +2,21 @@
 
 import { useEffect, useState } from "react";
 import QRCode from "qrcode";
+import { generateToken } from "@/lib/generateToken";
 
-export default function QRComponent() {
+export default function QRComponent({ vehicle, token }: {
+  vehicle: string
+  token: string
+}) {
   const [qrSVG, setQrSVG] = useState("");
 
   useEffect(() => {
+
     const generateQR = async () => {
-      const url = "https://simvaletpark.thavertech.com/customer-portal";
+
+      const signedToken = await generateToken({ vehicle, token })
+
+      const url = `https://simvaletpark.thavertech.com/customer-vehicle-portal?token=${encodeURIComponent(signedToken)}`;
 
       const svg = await QRCode.toString(url, {
         type: "svg",
