@@ -100,7 +100,7 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
 
   return (
     <div>
-      <Button className="w-full" onClick={() => setOpen(true)}>
+      <Button className="w-full" type="button" onClick={() => setOpen(true)}>
         Scan QR Code
       </Button>
 
