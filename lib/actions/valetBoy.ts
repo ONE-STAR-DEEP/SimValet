@@ -314,7 +314,7 @@ export const exitEntry = async (vehicleNumber: string, token: string, mode: stri
         if (!rows.length) {
             return {
                 success: false,
-                message: "Invalid token or no active vehicle"
+                message: "Invalid token or no active vehicle-1"
             };
         }
 
