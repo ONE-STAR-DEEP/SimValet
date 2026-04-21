@@ -18,6 +18,7 @@ export async function verifyTokenAction(token: string): Promise<{
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET!);
 
+    console.log(decoded)
     if (
       typeof decoded === "object" &&
       decoded !== null &&
