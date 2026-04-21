@@ -30,6 +30,7 @@ import {
 import QRComponent from '../valetBoyScreen-2/QR';
 import Image from 'next/image';
 import { Montserrat } from 'next/font/google';
+import QrScanner from './QRScanner';
 
 const montserrat = Montserrat({
     subsets: ["latin"],
@@ -50,47 +51,6 @@ const EntryExitForm = ({
     setResponse
 }: EntryExitFormProps) => {
     const router = useRouter();
-
-    useEffect(() => {
-        if (mode !== "entry") return; // only run when visible
-
-        const scanner = new Html5QrcodeScanner(
-            "reader",
-            { fps: 10, qrbox: 250 },
-            false
-        );
-
-        scanner.render(
-            (decodedText) => {
-                console.log("Raw QR data:", decodedText);
-
-                let token;
-                try {
-                    const url = new URL(decodedText);
-                    token = url.searchParams.get("token");
-                } catch {
-                    token = decodedText;
-                }
-
-                console.log("Extracted token:", token);
-
-                // autofill token in your form
-                setExitData((prev) => ({
-                    ...prev,
-                    token: token || ""
-                }));
-
-                scanner.clear(); // stop after scan
-            },
-            (error) => {
-                console.log(error);
-            }
-        );
-
-        return () => {
-            scanner.clear().catch(() => { });
-        };
-    }, [mode]);
 
     async function generateToken() {
         const length = Math.floor(Math.random() * 5) + 1; // 1 to 5 digits
@@ -395,10 +355,7 @@ const EntryExitForm = ({
                                 </div>
                             </Field>
 
-                            <div>
-                                <h2>Scan QR</h2>
-                                <div id="reader" style={{ width: "300px" }}></div>
-                            </div>
+                            <QrScanner />
                         </FieldGroup>
                     }
 
