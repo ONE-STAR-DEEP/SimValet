@@ -32,7 +32,6 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
         }
     };
 
-
     useEffect(() => {
         if (!open) return;
 
@@ -94,7 +93,6 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
             }
         };
 
-        // wait one frame for DOM mount (better than timeout guess)
         requestAnimationFrame(init);
 
         return () => {

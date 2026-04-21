@@ -286,6 +286,8 @@ export const exitEntry = async (vehicleNumber: string, token: string, mode: stri
     const session = await getSessionUser();
     if (!session) throw new Error("Unauthorized");
 
+    console.log(vehicleNumber, token, mode)
+
     const companyId = session.company_id;
     const valetId = session.id;
 
