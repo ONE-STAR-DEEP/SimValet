@@ -18,12 +18,14 @@ type QrScannerProps = {
 };
 
 window.addEventListener("error", (e) => {
-  console.log("GLOBAL ERROR:", e.error);
+    console.log("GLOBAL ERROR:", e.error);
 });
 
 export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
     const [open, setOpen] = useState(false);
+    const [token, setToken] = useState("");
     const qrRef = useRef<Html5Qrcode | null>(null);
+
 
     useEffect(() => {
         if (!open) return;
@@ -46,7 +48,6 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
 
                 const cameraId = backCamera?.id || devices[0].id;
 
-                console.log(111)
                 qr.start(
                     cameraId,
                     { fps: 5, qrbox: { width: 250, height: 250 } },
@@ -58,44 +59,25 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                             console.log("Scanned:", decodedText);
 
                             await qr.stop().catch(() => { });
-                            setOpen(false);
 
-                            // 🔥 wait for dialog to close & DOM to stabilize
-                            await new Promise(resolve => setTimeout(resolve, 100));
+                            let extractedToken = "";
 
-                            let token;
                             try {
                                 const url = new URL(decodedText);
-                                token = url.searchParams.get("token");
+                                extractedToken = url.searchParams.get("token") || "";
                             } catch {
-                                token = decodedText;
+                                extractedToken = decodedText;
                             }
 
-                            if (!token) return;
+                            if (!extractedToken) return;
 
-                            let res;
-                            try {
-                                res = await verifyTokenAction(token);
-                            } catch (err) {
-                                console.error("Server action failed:", err);
-                                return;
-                            }
+                            // ✅ ONLY THIS
+                            setToken(extractedToken);
 
-                            if (!res?.success || !res?.data) return;
-
-                            const payload = res.data;
-
-                            setExitData(prev => ({
-                                ...prev,
-                                vehicleNumber: payload.vehicle,
-                                token: payload.token,
-                            }));
-
-                            setMode("exit");
                             navigator.vibrate?.(200);
 
                         } catch (err) {
-                            console.error("SCAN CRASH:", err);
+                            console.error("SCAN ERROR:", err);
                         }
                     },
                     (err) => {
@@ -113,7 +95,7 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                 qrRef.current = null;
             }
         };
-    }, [open, setExitData, setMode]);
+    }, [open]);
 
     return (
         <div>
