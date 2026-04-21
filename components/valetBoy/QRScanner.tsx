@@ -36,6 +36,7 @@ export default function QrScanner() {
                 cameraId,
                 { fps: 10, qrbox: { width: 250, height: 250 } },
                 (decodedText) => {
+                    setOpen(false)
                     console.log("Scanned:", decodedText);
 
                     let token;
