@@ -17,6 +17,10 @@ type QrScannerProps = {
     setMode: React.Dispatch<React.SetStateAction<"entry" | "exit">>;
 };
 
+window.addEventListener("error", (e) => {
+  console.log("GLOBAL ERROR:", e.error);
+});
+
 export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
     const [open, setOpen] = useState(false);
     const qrRef = useRef<Html5Qrcode | null>(null);
@@ -81,7 +85,6 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
 
                             const payload = res.data;
 
-                            // 🔥 NOW safe to update state
                             setExitData(prev => ({
                                 ...prev,
                                 vehicleNumber: payload.vehicle,
