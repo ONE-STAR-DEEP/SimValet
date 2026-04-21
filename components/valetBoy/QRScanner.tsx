@@ -42,9 +42,10 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
 
                 const cameraId = backCamera?.id || devices[0].id;
 
+                console.log(111)
                 qr.start(
                     cameraId,
-                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    { fps: 5, qrbox: { width: 250, height: 250 } },
                     async (decodedText) => {
                         if (scanned) return;
                         scanned = true;
@@ -52,7 +53,6 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                         try {
                             console.log("Scanned:", decodedText);
 
-                            // 🔥 STOP FIRST
                             await qr.stop().catch(() => { });
                             setOpen(false);
 
@@ -69,7 +69,6 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                                 return;
                             }
 
-                            // 🔥 SAFE SERVER ACTION CALL
                             let res;
                             try {
                                 res = await verifyTokenAction(token);
@@ -85,7 +84,6 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
 
                             const payload = res.data;
 
-                            // 🔥 EXTRA SAFETY
                             if (!payload.vehicle || !payload.token) {
                                 console.log("Malformed payload:", payload);
                                 return;
