@@ -56,6 +56,9 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                             await qr.stop().catch(() => { });
                             setOpen(false);
 
+                            // 🔥 wait for dialog to close & DOM to stabilize
+                            await new Promise(resolve => setTimeout(resolve, 100));
+
                             let token;
                             try {
                                 const url = new URL(decodedText);
@@ -64,10 +67,7 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                                 token = decodedText;
                             }
 
-                            if (!token) {
-                                console.log("No token found");
-                                return;
-                            }
+                            if (!token) return;
 
                             let res;
                             try {
@@ -77,18 +77,11 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                                 return;
                             }
 
-                            if (!res?.success || !res?.data) {
-                                console.log("Invalid token response:", res);
-                                return;
-                            }
+                            if (!res?.success || !res?.data) return;
 
                             const payload = res.data;
 
-                            if (!payload.vehicle || !payload.token) {
-                                console.log("Malformed payload:", payload);
-                                return;
-                            }
-
+                            // 🔥 NOW safe to update state
                             setExitData(prev => ({
                                 ...prev,
                                 vehicleNumber: payload.vehicle,
@@ -96,7 +89,6 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                             }));
 
                             setMode("exit");
-
                             navigator.vibrate?.(200);
 
                         } catch (err) {
