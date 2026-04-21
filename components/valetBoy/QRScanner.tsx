@@ -1,21 +1,16 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { Button } from "../ui/button";
-import jwt from "jsonwebtoken";
 import {
-    Dialog,
-    DialogContent,
-    DialogHeader,
-    DialogTitle,
-} from "@/components/ui/dialog"
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { VehicleExit } from "@/lib/types/types";
-
-type Payload = {
-    vehicle: string;
-    token: string;
-};
+import { verifyTokenAction } from "@/lib/verifyToken";
 
 type QrScannerProps = {
   setExitData: React.Dispatch<React.SetStateAction<VehicleExit>>;
@@ -23,108 +18,104 @@ type QrScannerProps = {
 };
 
 export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
+  const [open, setOpen] = useState(false);
+  const qrRef = useRef<Html5Qrcode | null>(null);
 
-    const [open, setOpen] = useState(false);
+  useEffect(() => {
+    if (!open) return;
 
-    useEffect(() => {
-        if (!open) return;
+    const timeout = setTimeout(() => {
+      const readerElement = document.getElementById("reader");
+      if (!readerElement) return;
 
-        const timeout = setTimeout(() => {
-            const readerElement = document.getElementById("reader");
+      const qr = new Html5Qrcode("reader");
+      qrRef.current = qr;
 
-            if (!readerElement) {
-                console.log("reader not mounted yet");
-                return;
+      let scanned = false;
+
+      Html5Qrcode.getCameras().then((devices) => {
+        if (!devices.length) return;
+
+        const backCamera = devices.find(d =>
+          d.label.toLowerCase().includes("back")
+        );
+
+        const cameraId = backCamera?.id || devices[0].id;
+
+        qr.start(
+          cameraId,
+          { fps: 10, qrbox: { width: 250, height: 250 } },
+          async (decodedText) => {
+            if (scanned) return;
+            scanned = true;
+
+            console.log("Scanned:", decodedText);
+
+            let token;
+            try {
+              const url = new URL(decodedText);
+              token = url.searchParams.get("token");
+            } catch {
+              token = decodedText;
             }
 
-            const qr = new Html5Qrcode("reader");
+            const res = await verifyTokenAction(token || "");
 
-            Html5Qrcode.getCameras().then((devices) => {
-                if (!devices.length) return;
+            if (!res.success || !res.data) {
+              console.log("Invalid token");
+              return;
+            }
 
-                const backCamera = devices.find(d =>
-                    d.label.toLowerCase().includes("back")
-                );
+            const payload = res.data;
 
-                const cameraId = backCamera?.id || devices[0].id;
+            setExitData(prev => ({
+              ...prev,
+              vehicleNumber: payload.vehicle,
+              token: payload.token,
+            }));
 
-                qr.start(
-                    cameraId,
-                    { fps: 10, qrbox: { width: 250, height: 250 } },
-                    (decodedText) => {
-                        console.log("Scanned:", decodedText);
+            setMode("exit");
 
-                        let token;
-                        try {
-                            const url = new URL(decodedText);
-                            token = url.searchParams.get("token");
-                        } catch {
-                            token = decodedText;
-                        }
+            navigator.vibrate?.(200);
 
-                        console.log("Token:", token);
+            await qr.stop();
+            setOpen(false);
+          },
+          (err) => {
+            console.log("QR Error:", err);
+          }
+        );
+      });
+    }, 300);
 
-                        const decoded = jwt.verify(token || "", process.env.JWT_SECRET!);
+    return () => {
+      clearTimeout(timeout);
 
-                        if (
-                            typeof decoded === "object" &&
-                            decoded !== null &&
-                            "vehicle" in decoded &&
-                            "token" in decoded
-                        ) {
-                            const payload = decoded as Payload;
+      if (qrRef.current) {
+        qrRef.current.stop().catch(() => {});
+        qrRef.current = null;
+      }
+    };
+  }, [open, setExitData, setMode]);
 
-                            console.log(payload.vehicle, payload.token);
+  return (
+    <div>
+      <Button className="w-full" onClick={() => setOpen(true)}>
+        Scan QR Code
+      </Button>
 
-                            setExitData((prev)=>({
-                                ...prev,
-                                vehicleNumber: payload.vehicle,
-                                token: payload.token
-                            }))
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-h-[90vh] sm:max-w-sm">
+          <DialogHeader>
+            <DialogTitle>Scan Customer Slip</DialogTitle>
+          </DialogHeader>
 
-                            setMode("exit");
-                        } else {
-                            throw new Error("Invalid token payload");
-                        }
-
-                        qr.stop();
-                        setOpen(false);
-                    },
-                    (errorMessage) => {
-                        console.log("QR Error:", errorMessage);
-                    }
-                );
-            });
-
-        }, 300);
-
-        return () => {
-            clearTimeout(timeout);
-        };
-    }, [open]);
-
-
-    return (
-        <div>
-
-            <Button type="button" className="w-full" onClick={() => { setOpen(true) }}>Scan QR Code</Button>
-
-            <Dialog open={open} onOpenChange={setOpen}>
-
-                <DialogContent className="
-                max-h-[90vh]
-                sm:max-w-sm
-                ">
-                    <DialogHeader>
-                        <DialogTitle>Scan Customer Slip</DialogTitle>
-
-                    </DialogHeader>
-                    <div className="relative w-full h-[70vh] bg-black rounded-xl" >
-                        {/* Camera */}
-                        < div id="reader" className="absolute inset-0 z-0" />
-                    </div>
-                </DialogContent>
-            </Dialog>
-        </div>
-    );
+          <div className="relative w-full h-[70vh] bg-black rounded-xl">
+            {/* Camera */}
+            <div id="reader" className="absolute inset-0 z-0" />
+          </div>
+        </DialogContent>
+      </Dialog>
+    </div>
+  );
 }
