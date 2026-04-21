@@ -10,6 +10,7 @@ import { CarIcon, Check, Dot } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CameraCapture from './CameraInput';
+import { Html5QrcodeScanner } from "html5-qrcode";
 import {
     Select,
     SelectContent,
@@ -42,13 +43,6 @@ type EntryExitFormProps = {
     setResponse: React.Dispatch<React.SetStateAction<Request | null>>;
 };
 
-async function generateToken() {
-    const length = Math.floor(Math.random() * 5) + 1; // 1 to 5 digits
-    const min = Math.pow(10, length - 1);
-    const max = Math.pow(10, length) - 1;
-    return Math.floor(min + Math.random() * (max - min + 1));
-}
-
 const EntryExitForm = ({
     mode,
     response,
@@ -56,6 +50,54 @@ const EntryExitForm = ({
     setResponse
 }: EntryExitFormProps) => {
     const router = useRouter();
+
+    useEffect(() => {
+        if (mode !== "entry") return; // only run when visible
+
+        const scanner = new Html5QrcodeScanner(
+            "reader",
+            { fps: 10, qrbox: 250 },
+            false
+        );
+
+        scanner.render(
+            (decodedText) => {
+                console.log("Raw QR data:", decodedText);
+
+                let token;
+                try {
+                    const url = new URL(decodedText);
+                    token = url.searchParams.get("token");
+                } catch {
+                    token = decodedText;
+                }
+
+                console.log("Extracted token:", token);
+
+                // autofill token in your form
+                setExitData((prev) => ({
+                    ...prev,
+                    token: token || ""
+                }));
+
+                scanner.clear(); // stop after scan
+            },
+            (error) => {
+                console.log(error);
+            }
+        );
+
+        return () => {
+            scanner.clear().catch(() => { });
+        };
+    }, [mode]);
+
+    async function generateToken() {
+        const length = Math.floor(Math.random() * 5) + 1; // 1 to 5 digits
+        const min = Math.pow(10, length - 1);
+        const max = Math.pow(10, length) - 1;
+        return Math.floor(min + Math.random() * (max - min + 1));
+    }
 
     const [entryData, setEntryData] = useState<VehicleEntry>({
         vehicleNumber: "",
@@ -352,6 +394,11 @@ const EntryExitForm = ({
                                     </Button>
                                 </div>
                             </Field>
+
+                            <div>
+                                <h2>Scan QR</h2>
+                                <div id="reader" style={{ width: "300px" }}></div>
+                            </div>
                         </FieldGroup>
                     }
 
