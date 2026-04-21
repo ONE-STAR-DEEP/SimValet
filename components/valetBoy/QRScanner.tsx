@@ -32,112 +32,75 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
         }
     };
 
-    const startScanner = () => {
-        if (!videoRef.current || scannerRef.current) return;
-
-        const scanner = new QrScanner(
-            videoRef.current,
-            async (result) => {
-                const raw = result.data;
-
-                let token = "";
-                try {
-                    const url = new URL(raw);
-                    token = url.searchParams.get("token") || "";
-                } catch {
-                    token = raw;
-                }
-
-                if (!token) return;
-
-                try {
-                    const res = await verifyTokenAction(token);
-                    if (!res?.success || !res?.data) return;
-
-                    const payload = res.data;
-
-                    setExitData((prev) => ({
-                        ...prev,
-                        vehicleNumber: payload.vehicle,
-                        token: payload.token,
-                    }));
-
-                    setMode("exit");
-                } catch (err) {
-                    console.error("Verify failed:", err);
-                    return;
-                }
-
-                stopScanner();
-                setOpen(false);
-                navigator.vibrate?.(200);
-            },
-            {
-                preferredCamera: "environment",
-                highlightScanRegion: true,
-            }
-        );
-
-        scannerRef.current = scanner;
-
-        scanner.start().catch((e) => {
-            console.error("Camera start failed:", e);
-        });
-    };
 
     useEffect(() => {
-        if (!open || !videoRef.current) return;
+        if (!open) return;
 
-        const scanner = new QrScanner(
-            videoRef.current,
-            async (result) => {
-                const raw = result.data;
-
-                let token = "";
-                try {
-                    const url = new URL(raw);
-                    token = url.searchParams.get("token") || "";
-                } catch {
-                    token = raw;
-                }
-
-                if (!token) return;
-
-                try {
-                    const res = await verifyTokenAction(token);
-                    if (!res?.success || !res?.data) return;
-
-                    const payload = res.data;
-
-                    setExitData((prev) => ({
-                        ...prev,
-                        vehicleNumber: payload.vehicle,
-                        token: payload.token,
-                    }));
-
-                    setMode("exit");
-                } catch (err) {
-                    console.error("Verify failed:", err);
-                    return;
-                }
-
-                stopScanner();     // ✅ clean stop
-                setOpen(false);    // ✅ close dialog
-                navigator.vibrate?.(200);
-            },
-            {
-                preferredCamera: "environment",
-                highlightScanRegion: true,
+        const init = async () => {
+            if (!videoRef.current) {
+                console.log("Video not mounted yet");
+                return;
             }
-        );
 
-        scannerRef.current = scanner;
-        scanner.start();
+            const scanner = new QrScanner(
+                videoRef.current,
+                async (result) => {
+                    const raw = result.data;
+
+                    let token = "";
+                    try {
+                        const url = new URL(raw);
+                        token = url.searchParams.get("token") || "";
+                    } catch {
+                        token = raw;
+                    }
+
+                    if (!token) return;
+
+                    try {
+                        const res = await verifyTokenAction(token);
+                        if (!res?.success || !res?.data) return;
+
+                        const payload = res.data;
+
+                        setExitData((prev) => ({
+                            ...prev,
+                            vehicleNumber: payload.vehicle,
+                            token: payload.token,
+                        }));
+
+                        setMode("exit");
+                    } catch (err) {
+                        console.error("Verify failed:", err);
+                        return;
+                    }
+
+                    stopScanner();
+                    setOpen(false);
+                    navigator.vibrate?.(200);
+                },
+                {
+                    preferredCamera: "environment",
+                }
+            );
+
+            scannerRef.current = scanner;
+
+            try {
+                await scanner.start();
+                console.log("Camera started");
+            } catch (e) {
+                console.error("Camera failed:", e);
+            }
+        };
+
+        // wait one frame for DOM mount (better than timeout guess)
+        requestAnimationFrame(init);
 
         return () => {
             stopScanner();
         };
-    }, [open, setExitData, setMode]);
+    }, [open]);
 
     return (
         <div>
@@ -161,6 +124,8 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
                         <video
                             ref={videoRef}
                             className="absolute inset-0 w-full h-full object-cover"
+                            playsInline
+                            muted
                         />
 
                         {/* optional overlay */}
