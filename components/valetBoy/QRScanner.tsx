@@ -18,50 +18,61 @@ export default function QrScanner() {
 
     const [open, setOpen] = useState(false);
 
-    useEffect(() => {
 
+    useEffect(() => {
         if (!open) return;
 
-        const qr = new Html5Qrcode("reader");
+        const timeout = setTimeout(() => {
+            const readerElement = document.getElementById("reader");
 
-        Html5Qrcode.getCameras().then((devices) => {
-            if (!devices.length) return;
+            if (!readerElement) {
+                console.log("reader not mounted yet");
+                return;
+            }
 
-            const backCamera = devices.find(d =>
-                d.label.toLowerCase().includes("back")
-            );
-            const cameraId = backCamera?.id || devices[0].id;
+            const qr = new Html5Qrcode("reader");
 
-            qr.start(
-                cameraId,
-                { fps: 10, qrbox: { width: 250, height: 250 } },
-                (decodedText) => {
-                    setOpen(false)
-                    console.log("Scanned:", decodedText);
+            Html5Qrcode.getCameras().then((devices) => {
+                if (!devices.length) return;
 
-                    let token;
-                    try {
-                        const url = new URL(decodedText);
-                        token = url.searchParams.get("token");
-                    } catch {
-                        token = decodedText;
+                const backCamera = devices.find(d =>
+                    d.label.toLowerCase().includes("back")
+                );
+
+                const cameraId = backCamera?.id || devices[0].id;
+
+                qr.start(
+                    cameraId,
+                    { fps: 10, qrbox: { width: 250, height: 250 } },
+                    (decodedText) => {
+                        console.log("Scanned:", decodedText);
+
+                        let token;
+                        try {
+                            const url = new URL(decodedText);
+                            token = url.searchParams.get("token");
+                        } catch {
+                            token = decodedText;
+                        }
+
+                        console.log("Token:", token);
+
+                        qr.stop();
+                        setOpen(false);
+                    },
+                    (errorMessage) => {
+                        console.log("QR Error:", errorMessage);
                     }
+                );
+            });
 
-                    console.log("Token:", token);
-
-                    qr.stop();
-                },
-                (errorMessage) => {
-                    // REQUIRED 4th argument
-                    console.log("QR Error:", errorMessage);
-                }
-            );
-        });
+        }, 300); // 🔥 wait for dialog to render
 
         return () => {
-            qr.stop().catch(() => { });
+            clearTimeout(timeout);
         };
     }, [open]);
+
 
     return (
         <div>
@@ -92,8 +103,6 @@ export default function QrScanner() {
                             </div>
                         </div>
                     </div>
-                    <DialogFooter>
-                    </DialogFooter>
                 </DialogContent>
             </Dialog>
 
