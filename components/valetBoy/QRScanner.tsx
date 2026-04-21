@@ -20,6 +20,8 @@ type QrScannerProps = {
 
 export default function QrScannerComponent({ setExitData, setMode }: QrScannerProps) {
     const [open, setOpen] = useState(false);
+    const [torchOn, setTorchOn] = useState(false);
+    const [hasTorch, setHasTorch] = useState(false);
 
     const videoRef = useRef<HTMLVideoElement | null>(null);
     const scannerRef = useRef<QrScanner | null>(null);
@@ -29,6 +31,17 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
             scannerRef.current.stop();
             scannerRef.current.destroy();
             scannerRef.current = null;
+        }
+    };
+
+    const toggleTorch = async () => {
+        if (!scannerRef.current) return;
+
+        try {
+            await scannerRef.current.toggleFlash();
+            setTorchOn(prev => !prev);
+        } catch (e) {
+            console.log("Torch error:", e);
         }
     };
 
@@ -88,6 +101,10 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
             try {
                 await scanner.start();
                 console.log("Camera started");
+
+                const supported = await scanner.hasFlash();
+                setHasTorch(supported);
+
             } catch (e) {
                 console.error("Camera failed:", e);
             }
@@ -113,12 +130,13 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
                     setOpen(val);
                 }}
             >
-                <DialogContent className="max-h-[90vh] sm:max-w-sm">
-                    <DialogHeader>
-                        <DialogTitle>Scan Customer Slip</DialogTitle>
+                <DialogContent className="max-h-[95vh] sm:max-w-sm p-0 overflow-hidden">
+                    <DialogHeader className="hidden">
+                        <DialogTitle></DialogTitle>
                     </DialogHeader>
+                    <div className="relative w-full h-[75vh] bg-black">
 
-                    <div className="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
+                        {/* 🔴 Camera */}
                         <video
                             ref={videoRef}
                             className="absolute inset-0 w-full h-full object-cover"
@@ -126,8 +144,52 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
                             muted
                         />
 
-                        {/* optional overlay */}
-                        <div className="absolute inset-0 border-4 border-white/40 rounded-xl pointer-events-none" />
+                        {/* 🌑 Dark overlay with cutout */}
+                        <div className="absolute inset-0 bg-black/60" />
+
+                        {/* 🎯 Scan box */}
+                        <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="w-64 h-64 border-2 border-white rounded-xl relative">
+
+                                {/* ✨ Corner accents */}
+                                <div className="absolute top-0 left-0 w-6 h-6 border-t-4 border-l-4 border-green-400 rounded-tl-lg" />
+                                <div className="absolute top-0 right-0 w-6 h-6 border-t-4 border-r-4 border-green-400 rounded-tr-lg" />
+                                <div className="absolute bottom-0 left-0 w-6 h-6 border-b-4 border-l-4 border-green-400 rounded-bl-lg" />
+                                <div className="absolute bottom-0 right-0 w-6 h-6 border-b-4 border-r-4 border-green-400 rounded-br-lg" />
+
+                                {/* 🔄 scanning line animation */}
+                                <div className="absolute inset-0 overflow-hidden rounded-xl">
+                                    <div className="w-full h-1 bg-green-400 animate-[scan_2s_linear_infinite]" />
+                                </div>
+                            </div>
+                        </div>
+
+                        {/* 📝 Top text */}
+                        <div className="absolute top-4 left-0 w-full text-center text-white font-medium">
+                            Scan Customer Slip
+                        </div>
+
+                        {hasTorch && (
+                            <button
+                                onClick={toggleTorch}
+                                className="absolute bottom-20 right-4 bg-black/60 backdrop-blur text-white px-4 py-2 rounded-full text-sm"
+                            >
+                                {torchOn ? "🔦 Off" : "🔦 On"}
+                            </button>
+                        )}
+
+                        {/* ℹ️ Bottom hint */}
+                        <div className="absolute bottom-6 left-0 w-full text-center text-white/80 text-sm px-4">
+                            Align the QR code within the frame
+                        </div>
+
+                        {/* ❌ Close button */}
+                        <button
+                            onClick={() => setOpen(false)}
+                            className="absolute top-4 right-4 text-white bg-black/50 rounded-full p-2"
+                        >
+                            ✕
+                        </button>
                     </div>
                 </DialogContent>
             </Dialog>
