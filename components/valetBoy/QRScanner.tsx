@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { Html5Qrcode } from "html5-qrcode";
+import QrScanner from "qr-scanner";
 import { Button } from "../ui/button";
 import {
     Dialog,
@@ -17,102 +17,73 @@ type QrScannerProps = {
     setMode: React.Dispatch<React.SetStateAction<"entry" | "exit">>;
 };
 
-
-
-export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
+export default function QrScannerComponent({ setExitData, setMode }: QrScannerProps) {
     const [open, setOpen] = useState(false);
-    const [token, setToken] = useState("");
-    const qrRef = useRef<Html5Qrcode | null>(null);
 
-    const qr = new Html5Qrcode("reader");
-    qrRef.current = qr;
+    const videoRef = useRef<HTMLVideoElement | null>(null);
+    const scannerRef = useRef<QrScanner | null>(null);
 
-    const stopScanner = async () => {
-        if (qrRef.current) {
-            try {
-                await qrRef.current.stop();
-                await qrRef.current.clear();
-            } catch (e) {
-                console.log("Stop error:", e);
-            }
-            qrRef.current = null;
+    const stopScanner = () => {
+        if (scannerRef.current) {
+            scannerRef.current.stop();
+            scannerRef.current.destroy();
+            scannerRef.current = null;
         }
     };
 
     useEffect(() => {
-        if (!open) return;
+        if (!open || !videoRef.current) return;
 
+        const scanner = new QrScanner(
+            videoRef.current,
+            async (result) => {
+                const raw = result.data;
 
-        const timeout = setTimeout(() => {
-            const readerElement = document.getElementById("reader");
-            if (!readerElement) return;
+                let token = "";
+                try {
+                    const url = new URL(raw);
+                    token = url.searchParams.get("token") || "";
+                } catch {
+                    token = raw;
+                }
 
-            let scanned = false;
+                if (!token) return;
 
-            Html5Qrcode.getCameras().then((devices) => {
-                if (!devices.length) return;
+                try {
+                    const res = await verifyTokenAction(token);
+                    if (!res?.success || !res?.data) return;
 
-                const backCamera = devices.find(d =>
-                    d.label.toLowerCase().includes("back")
-                );
+                    const payload = res.data;
 
-                const cameraId = backCamera?.id || devices[0].id;
+                    setExitData((prev) => ({
+                        ...prev,
+                        vehicleNumber: payload.vehicle,
+                        token: payload.token,
+                    }));
 
-                qr.start(
-                    cameraId,
-                    { fps: 5, qrbox: { width: 250, height: 250 } },
-                    async (decodedText) => {
-                        if (scanned) return;
-                        scanned = true;
+                    setMode("exit");
+                } catch (err) {
+                    console.error("Verify failed:", err);
+                    return;
+                }
 
-                        try {
-                            console.log("Scanned:", decodedText);
+                stopScanner();     // ✅ clean stop
+                setOpen(false);    // ✅ close dialog
+                navigator.vibrate?.(200);
+            },
+            {
+                preferredCamera: "environment",
+                highlightScanRegion: true,
+            }
+        );
 
-                            await qr.stop().catch(() => { });
-
-                            let extractedToken = "";
-
-                            try {
-                                const url = new URL(decodedText);
-                                extractedToken = url.searchParams.get("token") || "";
-                            } catch {
-                                extractedToken = decodedText;
-                            }
-
-                            if (!extractedToken) return;
-
-                            setToken(extractedToken);
-
-                            navigator.vibrate?.(200);
-
-                        } catch (err) {
-                            console.error("SCAN ERROR:", err);
-                        }
-                    },
-                    (err) => {
-                        console.log("QR Error:", err);
-                    }
-                );
-            });
-        }, 300);
+        scannerRef.current = scanner;
+        scanner.start();
 
         return () => {
-            clearTimeout(timeout);
-
-            if (qrRef.current) {
-                qrRef.current.stop()
-                    .then(() => qrRef.current?.clear())
-                    .catch(() => { });
-                qrRef.current = null;
-            }
+            stopScanner();
         };
-    }, [open]);
-
-    useEffect(() => {
-        if (token.length > 0) {
-            alert(token)
-        }
-    }, [token])
+    }, [open, setExitData, setMode]);
 
     return (
         <div>
@@ -122,10 +93,8 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
 
             <Dialog
                 open={open}
-                onOpenChange={async (val) => {
-                    if (!val) {
-                        await stopScanner()
-                    }
+                onOpenChange={(val) => {
+                    if (!val) stopScanner();
                     setOpen(val);
                 }}
             >
@@ -134,9 +103,15 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                         <DialogTitle>Scan Customer Slip</DialogTitle>
                     </DialogHeader>
 
-                    <div className="relative w-full h-[70vh] bg-black rounded-xl">
-                        {/* Camera */}
-                        <div id="reader" className="absolute inset-0 z-0" />
+                    <div className="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
+                        {/* ✅ Camera feed */}
+                        <video
+                            ref={videoRef}
+                            className="absolute inset-0 w-full h-full object-cover"
+                        />
+
+                        {/* optional overlay */}
+                        <div className="absolute inset-0 border-4 border-white/40 rounded-xl pointer-events-none" />
                     </div>
                 </DialogContent>
             </Dialog>
