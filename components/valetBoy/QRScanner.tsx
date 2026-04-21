@@ -17,6 +17,7 @@ type QrScannerProps = {
     setMode: React.Dispatch<React.SetStateAction<"entry" | "exit">>;
 };
 
+
 export default function QrScannerComponent({ setExitData, setMode }: QrScannerProps) {
     const [open, setOpen] = useState(false);
 
@@ -29,6 +30,59 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
             scannerRef.current.destroy();
             scannerRef.current = null;
         }
+    };
+
+    const startScanner = () => {
+        if (!videoRef.current || scannerRef.current) return;
+
+        const scanner = new QrScanner(
+            videoRef.current,
+            async (result) => {
+                const raw = result.data;
+
+                let token = "";
+                try {
+                    const url = new URL(raw);
+                    token = url.searchParams.get("token") || "";
+                } catch {
+                    token = raw;
+                }
+
+                if (!token) return;
+
+                try {
+                    const res = await verifyTokenAction(token);
+                    if (!res?.success || !res?.data) return;
+
+                    const payload = res.data;
+
+                    setExitData((prev) => ({
+                        ...prev,
+                        vehicleNumber: payload.vehicle,
+                        token: payload.token,
+                    }));
+
+                    setMode("exit");
+                } catch (err) {
+                    console.error("Verify failed:", err);
+                    return;
+                }
+
+                stopScanner();
+                setOpen(false);
+                navigator.vibrate?.(200);
+            },
+            {
+                preferredCamera: "environment",
+                highlightScanRegion: true,
+            }
+        );
+
+        scannerRef.current = scanner;
+
+        scanner.start().catch((e) => {
+            console.error("Camera start failed:", e);
+        });
     };
 
     useEffect(() => {
@@ -104,7 +158,6 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
                     </DialogHeader>
 
                     <div className="relative w-full h-[70vh] bg-black rounded-xl overflow-hidden">
-                        {/* ✅ Camera feed */}
                         <video
                             ref={videoRef}
                             className="absolute inset-0 w-full h-full object-cover"
