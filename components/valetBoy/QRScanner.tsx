@@ -3,21 +3,28 @@
 import { useEffect, useState } from "react";
 import { Html5Qrcode } from "html5-qrcode";
 import { Button } from "../ui/button";
+import jwt from "jsonwebtoken";
 import {
     Dialog,
-    DialogClose,
     DialogContent,
-    DialogDescription,
-    DialogFooter,
     DialogHeader,
     DialogTitle,
-    DialogTrigger,
 } from "@/components/ui/dialog"
+import { VehicleExit } from "@/lib/types/types";
 
-export default function QrScanner() {
+type Payload = {
+    vehicle: string;
+    token: string;
+};
+
+type QrScannerProps = {
+  setExitData: React.Dispatch<React.SetStateAction<VehicleExit>>;
+  setMode: React.Dispatch<React.SetStateAction<"entry" | "exit">>;
+};
+
+export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
 
     const [open, setOpen] = useState(false);
-
 
     useEffect(() => {
         if (!open) return;
@@ -57,6 +64,29 @@ export default function QrScanner() {
 
                         console.log("Token:", token);
 
+                        const decoded = jwt.verify(token || "", process.env.JWT_SECRET!);
+
+                        if (
+                            typeof decoded === "object" &&
+                            decoded !== null &&
+                            "vehicle" in decoded &&
+                            "token" in decoded
+                        ) {
+                            const payload = decoded as Payload;
+
+                            console.log(payload.vehicle, payload.token);
+
+                            setExitData((prev)=>({
+                                ...prev,
+                                vehicleNumber: payload.vehicle,
+                                token: payload.token
+                            }))
+
+                            setMode("exit");
+                        } else {
+                            throw new Error("Invalid token payload");
+                        }
+
                         qr.stop();
                         setOpen(false);
                     },
@@ -66,7 +96,7 @@ export default function QrScanner() {
                 );
             });
 
-        }, 300); // 🔥 wait for dialog to render
+        }, 300);
 
         return () => {
             clearTimeout(timeout);
@@ -77,7 +107,7 @@ export default function QrScanner() {
     return (
         <div>
 
-            <Button type="button" onClick={() => { setOpen(true) }}>Scan QR Code</Button>
+            <Button type="button" className="w-full" onClick={() => { setOpen(true) }}>Scan QR Code</Button>
 
             <Dialog open={open} onOpenChange={setOpen}>
 
@@ -92,14 +122,9 @@ export default function QrScanner() {
                     <div className="relative w-full h-[70vh] bg-black rounded-xl" >
                         {/* Camera */}
                         < div id="reader" className="absolute inset-0 z-0" />
-
-                        {/* Overlay */}
-                        
                     </div>
                 </DialogContent>
             </Dialog>
-
-
         </div>
     );
 }

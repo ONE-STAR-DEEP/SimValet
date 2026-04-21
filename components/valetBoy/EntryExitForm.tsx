@@ -355,7 +355,7 @@ const EntryExitForm = ({
                                 </div>
                             </Field>
 
-                            <QrScanner />
+                            <QrScanner setExitData={setExitData} setMode={setMode}/>
                         </FieldGroup>
                     }
 
