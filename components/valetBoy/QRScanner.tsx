@@ -71,7 +71,6 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
 
                             if (!extractedToken) return;
 
-                            // ✅ ONLY THIS
                             setToken(extractedToken);
 
                             navigator.vibrate?.(200);
@@ -96,6 +95,12 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
             }
         };
     }, [open]);
+
+    useEffect(()=>{
+        if(token.length>0){
+            alert(token)
+        }
+    },[])
 
     return (
         <div>
