@@ -49,38 +49,61 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                         if (scanned) return;
                         scanned = true;
 
-                        console.log("Scanned:", decodedText);
-
-                        await qr.stop().catch(() => { });
-
-                        let token;
                         try {
-                            const url = new URL(decodedText);
-                            token = url.searchParams.get("token");
-                        } catch {
-                            token = decodedText;
+                            console.log("Scanned:", decodedText);
+
+                            // 🔥 STOP FIRST
+                            await qr.stop().catch(() => { });
+                            setOpen(false);
+
+                            let token;
+                            try {
+                                const url = new URL(decodedText);
+                                token = url.searchParams.get("token");
+                            } catch {
+                                token = decodedText;
+                            }
+
+                            if (!token) {
+                                console.log("No token found");
+                                return;
+                            }
+
+                            // 🔥 SAFE SERVER ACTION CALL
+                            let res;
+                            try {
+                                res = await verifyTokenAction(token);
+                            } catch (err) {
+                                console.error("Server action failed:", err);
+                                return;
+                            }
+
+                            if (!res?.success || !res?.data) {
+                                console.log("Invalid token response:", res);
+                                return;
+                            }
+
+                            const payload = res.data;
+
+                            // 🔥 EXTRA SAFETY
+                            if (!payload.vehicle || !payload.token) {
+                                console.log("Malformed payload:", payload);
+                                return;
+                            }
+
+                            setExitData(prev => ({
+                                ...prev,
+                                vehicleNumber: payload.vehicle,
+                                token: payload.token,
+                            }));
+
+                            setMode("exit");
+
+                            navigator.vibrate?.(200);
+
+                        } catch (err) {
+                            console.error("SCAN CRASH:", err);
                         }
-
-                        const res = await verifyTokenAction(token || "");
-
-                        if (!res.success || !res.data) {
-                            console.log("Invalid token");
-                            return;
-                        }
-
-                        const payload = res.data;
-
-                        setExitData(prev => ({
-                            ...prev,
-                            vehicleNumber: payload.vehicle,
-                            token: payload.token,
-                        }));
-
-                        setMode("exit");
-
-                        navigator.vibrate?.(200);
-
-                        setOpen(false);
                     },
                     (err) => {
                         console.log("QR Error:", err);
