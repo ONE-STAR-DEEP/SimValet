@@ -94,14 +94,7 @@ export default function QrScanner() {
                         < div id="reader" className="absolute inset-0 z-0" />
 
                         {/* Overlay */}
-                        < div className="absolute inset-0 z-10 flex items-center justify-center" >
-                            <div className="relative w-65 h-65 border-2 border-white rounded-xl" >
-
-                                {/* Animated scan line */}
-                                < div className="absolute top-0 left-0 w-full h-1 bg-green-400 animate-scan" />
-
-                            </div>
-                        </div>
+                        
                     </div>
                 </DialogContent>
             </Dialog>
