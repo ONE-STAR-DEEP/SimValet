@@ -17,9 +17,6 @@ type QrScannerProps = {
     setMode: React.Dispatch<React.SetStateAction<"entry" | "exit">>;
 };
 
-window.addEventListener("error", (e) => {
-    console.log("GLOBAL ERROR:", e.error);
-});
 
 export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
     const [open, setOpen] = useState(false);
@@ -100,7 +97,7 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
         if(token.length>0){
             alert(token)
         }
-    },[])
+    },[token])
 
     return (
         <div>
