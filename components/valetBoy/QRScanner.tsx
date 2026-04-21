@@ -61,7 +61,7 @@ export default function QrScanner() {
         return () => {
             qr.stop().catch(() => { });
         };
-    }, []);
+    }, [open]);
 
     return (
         <div>
