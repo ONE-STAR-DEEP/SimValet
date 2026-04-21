@@ -18,21 +18,34 @@ type QrScannerProps = {
 };
 
 
+
 export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
     const [open, setOpen] = useState(false);
     const [token, setToken] = useState("");
     const qrRef = useRef<Html5Qrcode | null>(null);
 
+    const qr = new Html5Qrcode("reader");
+    qrRef.current = qr;
+
+    const stopScanner = async () => {
+        if (qrRef.current) {
+            try {
+                await qrRef.current.stop();
+                await qrRef.current.clear();
+            } catch (e) {
+                console.log("Stop error:", e);
+            }
+            qrRef.current = null;
+        }
+    };
 
     useEffect(() => {
         if (!open) return;
 
+
         const timeout = setTimeout(() => {
             const readerElement = document.getElementById("reader");
             if (!readerElement) return;
-
-            const qr = new Html5Qrcode("reader");
-            qrRef.current = qr;
 
             let scanned = false;
 
@@ -87,17 +100,19 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
             clearTimeout(timeout);
 
             if (qrRef.current) {
-                qrRef.current.stop().catch(() => { });
+                qrRef.current.stop()
+                    .then(() => qrRef.current?.clear())
+                    .catch(() => { });
                 qrRef.current = null;
             }
         };
     }, [open]);
 
-    useEffect(()=>{
-        if(token.length>0){
+    useEffect(() => {
+        if (token.length > 0) {
             alert(token)
         }
-    },[token])
+    }, [token])
 
     return (
         <div>
@@ -105,7 +120,15 @@ export default function QrScanner({ setExitData, setMode }: QrScannerProps) {
                 Scan QR Code
             </Button>
 
-            <Dialog open={open} onOpenChange={setOpen}>
+            <Dialog
+                open={open}
+                onOpenChange={async (val) => {
+                    if (!val) {
+                        await stopScanner()
+                    }
+                    setOpen(val);
+                }}
+            >
                 <DialogContent className="max-h-[90vh] sm:max-w-sm">
                     <DialogHeader>
                         <DialogTitle>Scan Customer Slip</DialogTitle>
