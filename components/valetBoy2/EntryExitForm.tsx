@@ -10,7 +10,6 @@ import { CarIcon, Check, Dot } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CameraCapture from './CameraInput';
-import { Html5QrcodeScanner } from "html5-qrcode";
 import {
     Select,
     SelectContent,
@@ -355,7 +354,7 @@ const EntryExitForm = ({
                                 </div>
                             </Field>
 
-                            {/* <QrScanner setExitData={setExitData} setMode={setMode}/> */}
+                            <QrScanner setExitData={setExitData} setMode={setMode}/>
                         </FieldGroup>
                     }
 
