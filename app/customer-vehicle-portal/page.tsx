@@ -1,14 +1,16 @@
 
 import RequestButton from '@/components/customer portal/RequestButton';
 import { customerLogin, vehicleData } from '@/lib/actions/customer';
-import { Car, Clock, MapPin, Phone, Ticket, User } from 'lucide-react';
+import { Car, Clock, IndianRupee, MapPin, Phone, Ticket, User } from 'lucide-react';
 import jwt from "jsonwebtoken";
 import Image from 'next/image';
 import { Montserrat } from 'next/font/google'
+import { Button } from '@/components/ui/button';
+import PayButton from '@/components/customer portal/PayButton';
 
 const montserrat = Montserrat({
-    subsets: ["latin"],
-    display: "swap",
+  subsets: ["latin"],
+  display: "swap",
 });
 
 type Payload = {
@@ -37,32 +39,32 @@ const Vehicle = async ({ searchParams }: PageProps) => {
 
     return (
       <div className='w-full h-full'>
-            <div className='flex flex-col h-full items-center justify-evenly py-20 text-center space-y-5'>
-                <div className="flex items-center">
-                    <Image
-                        src="/assets/images/logo3.png"
-                        alt="logo"
-                        height={60}
-                        width={60}
-                    />
-                    <p className={`${montserrat.className} font-bold text-2xl`}>
-                        SimValet<span className='text-primary'>Park</span>
-                    </p>
-                </div>
-                <div className="h-50 w-50 rounded-full flex items-center justify-center border bg-linear-to-br from-teal-600 to-[#005f85]">
-                    <Image
-                        src="/assets/images/protection.png"
-                        alt='delivered'
-                        height={120}
-                        width={120}
-                        className='max-w-40 max-h-40 invert'
-                    />
-                </div>
-                <div>
-                    <h3 className="text-3xl font-bold">Vehicle Delivered</h3>
-                    <p className="text-muted-foreground text-lg">This vehicle has been delivered successfully</p>
-                </div>
-                {/* <div className="space-y-6 text-left w-[90%] rounded-xl border p-6 ">
+        <div className='flex flex-col h-full items-center justify-evenly py-20 text-center space-y-5'>
+          <div className="flex items-center">
+            <Image
+              src="/assets/images/logo3.png"
+              alt="logo"
+              height={60}
+              width={60}
+            />
+            <p className={`${montserrat.className} font-bold text-2xl`}>
+              SimValet<span className='text-primary'>Park</span>
+            </p>
+          </div>
+          <div className="h-50 w-50 rounded-full flex items-center justify-center border bg-linear-to-br from-teal-600 to-[#005f85]">
+            <Image
+              src="/assets/images/protection.png"
+              alt='delivered'
+              height={120}
+              width={120}
+              className='max-w-40 max-h-40 invert'
+            />
+          </div>
+          <div>
+            <h3 className="text-3xl font-bold">Vehicle Delivered</h3>
+            <p className="text-muted-foreground text-lg">This vehicle has been delivered successfully</p>
+          </div>
+          {/* <div className="space-y-6 text-left w-[90%] rounded-xl border p-6 ">
                     <div>
                         <p className="text-sm font-semibold text-muted-foreground mb-2">VEHICLE NUMBER</p>
                         <p className="text-lg font-semibold text-foreground">kl54od0978</p>
@@ -78,8 +80,8 @@ const Vehicle = async ({ searchParams }: PageProps) => {
                         </div>
                     </div>
                 </div> */}
-            </div>
         </div>
+      </div>
     )
   }
 
@@ -232,7 +234,7 @@ const Vehicle = async ({ searchParams }: PageProps) => {
             </p>
           </div>
 
-          {/* <div className='space-y-2'>
+          <div className='space-y-2'>
             <div className='flex gap-2'>
               <IndianRupee className='text-muted-foreground' size={20} />
               <p className='text-muted-foreground text-sm'>
@@ -242,7 +244,7 @@ const Vehicle = async ({ searchParams }: PageProps) => {
             <p className='text-primary text-md'>
               {finalAmount} (for {diffHours} {diffHours > 1 ? "hours" : "hour"})
             </p>
-          </div> */}
+          </div>
 
           <div className='space-y-2'>
             <div className='flex gap-2'>
@@ -265,6 +267,11 @@ const Vehicle = async ({ searchParams }: PageProps) => {
           id={data.data.id}
         />
       )}
+
+      {data.data.payment_status === "PAID" ?
+        <Button>Amount Paid</Button> :
+        <PayButton invoiceId={String(data.data?.id)} />
+      }
 
     </div>
   )
