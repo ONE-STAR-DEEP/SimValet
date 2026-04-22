@@ -10,7 +10,6 @@ import { CarIcon, Check, Dot } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CameraCapture from './CameraInput';
-import { Html5QrcodeScanner } from "html5-qrcode";
 import {
     Select,
     SelectContent,
@@ -30,7 +29,6 @@ import {
 import QRComponent from '../valetBoyScreen-2/QR';
 import Image from 'next/image';
 import { Montserrat } from 'next/font/google';
-import QrScanner from './QRScanner';
 
 const montserrat = Montserrat({
     subsets: ["latin"],
@@ -355,7 +353,6 @@ const EntryExitForm = ({
                                 </div>
                             </Field>
 
-                            {/* <QrScanner setExitData={setExitData} setMode={setMode}/> */}
                         </FieldGroup>
                     }
 
