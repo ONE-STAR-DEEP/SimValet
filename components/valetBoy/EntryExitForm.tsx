@@ -50,13 +50,6 @@ const EntryExitForm = ({
 }: EntryExitFormProps) => {
     const router = useRouter();
 
-    async function generateToken() {
-        const length = Math.floor(Math.random() * 5) + 1; // 1 to 5 digits
-        const min = Math.pow(10, length - 1);
-        const max = Math.pow(10, length) - 1;
-        return Math.floor(min + Math.random() * (max - min + 1));
-    }
-
     const [entryData, setEntryData] = useState<VehicleEntry>({
         vehicleNumber: "",
         token: "",
@@ -117,21 +110,10 @@ const EntryExitForm = ({
                 const vehicleNumber = entryData.vehicleNumber.trim().toUpperCase();
                 if (!vehicleNumber) return;
 
-                let finalToken = entryData.token;
-
-                if (entryData.token.length === 0) {
-                    finalToken = String(await generateToken());
-                    setEntryData((prev) => ({
-                        ...prev,
-                        token: finalToken
-                    }))
-                }
-
                 const res = await submitEntry({
                     entryData: {
                         ...entryData,
                         vehicleNumber,
-                        token: finalToken
                     }
                 });
 
@@ -303,7 +285,7 @@ const EntryExitForm = ({
                                         className="border-0 focus-visible:ring-0"
                                         value={entryData.token}
                                         placeholder="token number"
-                                        maxLength={5}
+                                        required
                                         onChange={(e) =>
                                             setEntryData(prev => ({
                                                 ...prev,
