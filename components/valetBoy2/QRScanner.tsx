@@ -11,6 +11,7 @@ import {
 } from "@/components/ui/dialog";
 import { VehicleExit } from "@/lib/types/types";
 import { verifyTokenAction } from "@/lib/verifyToken";
+import { Flashlight } from "lucide-react";
 
 type QrScannerProps = {
     setExitData: React.Dispatch<React.SetStateAction<VehicleExit>>;
@@ -145,7 +146,21 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
                         />
 
                         {/* 🌑 Dark overlay with cutout */}
-                        <div className="absolute inset-0 bg-black/60" />
+                        <div className="absolute inset-0 pointer-events-none">
+
+                            {/* Top */}
+                            <div className="absolute top-0 left-0 w-full h-[calc(50%-140px)] bg-black/70" />
+
+                            {/* Bottom */}
+                            <div className="absolute bottom-0 left-0 w-full h-[calc(50%-140px)] bg-black/70" />
+
+                            {/* Left */}
+                            <div className="absolute top-[calc(50%-140px)] left-0 w-[calc(50%-150px)] h-70 bg-black/70" />
+
+                            {/* Right */}
+                            <div className="absolute top-[calc(50%-140px)] right-0 w-[calc(50%-150px)] h-70 bg-black/70" />
+
+                        </div>
 
                         {/* 🎯 Scan box */}
                         <div className="absolute inset-0 flex items-center justify-center">
@@ -169,12 +184,12 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
                             Scan Customer Slip
                         </div>
 
-                        {hasTorch && (
+                        {!hasTorch && (
                             <button
                                 onClick={toggleTorch}
                                 className="absolute bottom-20 right-4 bg-black/60 backdrop-blur text-white px-4 py-2 rounded-full text-sm"
                             >
-                                {torchOn ? "🔦 Off" : "🔦 On"}
+                                <Flashlight/>
                             </button>
                         )}
 
