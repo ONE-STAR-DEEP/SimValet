@@ -205,23 +205,6 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
     const carNumber = entryData.vehicleNumber.toUpperCase();
 
     try {
-        const [entryCheck]: any = await db.execute(
-            `
-            SELECT id
-            FROM valet_activity
-            WHERE vehicle_number = ? AND company_id = ?
-            AND exit_time IS NULL
-            LIMIT 1;
-            `,
-            [carNumber, companyId]
-        );
-
-        if (entryCheck.length > 0) {
-            return {
-                success: false,
-                message: "Failed to Insert! Entry Exist"
-            }
-        }
 
         const [rows]: any = await db.execute(
             `
@@ -240,6 +223,25 @@ export const submitEntry = async ({ entryData }: { entryData: VehicleEntry }) =>
         }
 
         const locationId = rows[0].valet_location_id;
+
+
+        const [entryCheck]: any = await db.execute(
+            `
+            SELECT id
+            FROM valet_activity
+            WHERE vehicle_number = ? AND company_id = ? AND valet_location_id = ?
+            AND exit_time IS NULL
+            LIMIT 1;
+            `,
+            [carNumber, companyId, locationId]
+        );
+
+        if (entryCheck.length > 0) {
+            return {
+                success: false,
+                message: "Failed to Insert! Entry Exist"
+            }
+        }
 
         const [charges]: any = await db.execute(
             `

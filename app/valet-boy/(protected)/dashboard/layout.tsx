@@ -1,5 +1,6 @@
 import LogoutButton from "@/components/logout-button";
 import SocketReconnect from "@/components/SocketReconnect";
+import ValetBoyMenu from "@/components/ValetBoyMenu";
 import { getSessionUser } from "@/lib/checkSession";
 import Image from "next/image";
 import { redirect } from "next/navigation";
@@ -34,16 +35,17 @@ export default async function SuperAdminLayout({
                         </h1>
                     </div>
 
-                    <div className="bg-white text-black px-3 py-1 rounded-md shadow-sm">
+                    <ValetBoyMenu />
+                    {/* <div className="bg-white text-black px-3 py-1 rounded-md shadow-sm">
                         <LogoutButton />
-                    </div>
+                    </div> */}
                 </div>
             </nav>
 
             {/* Main Content */}
             <main className="grow bg-gray-100 py-8 h-full">
                 <div className="max-w-7xl mx-auto px-4 h-full">
-                    <SocketReconnect/>
+                    <SocketReconnect />
                     {children}
                 </div>
             </main>

@@ -76,6 +76,7 @@ const EntryExitForm = ({
     const [exitLoading, setExitLoading] = useState(false)
     const [payment, setPayment] = useState(true);
     const [open, setOpen] = useState(false)
+    const [exitSuccess, setExitSuccess] = useState(false)
 
     useEffect(() => {
         if (!response?.vehicle_number) return;
@@ -175,6 +176,7 @@ const EntryExitForm = ({
 
                 setResponse(null)
                 setExitLoading(false)
+                setExitSuccess(true);
             }
             router.refresh();
 
@@ -242,6 +244,7 @@ const EntryExitForm = ({
                     mode: ""
                 });
                 setResponse(null);
+                setExitSuccess(true)
             }
 
         } catch (error) {
@@ -353,8 +356,6 @@ const EntryExitForm = ({
                                     </Button>
                                 </div>
                             </Field>
-
-                            <QrScanner setExitData={setExitData} setMode={setMode}/>
                         </FieldGroup>
                     }
 
@@ -559,22 +560,24 @@ const EntryExitForm = ({
                                         <Button type='submit' className='w-full'>Verify Token & Deliver</Button>
                                     </div>
                                 </Field>
+
+                                <QrScanner setExitData={setExitData} setMode={setMode} />
                             </FieldGroup>
                         </>
                     }
                 </div>
             </form >
 
-            <Dialog open={open} >
-                <DialogContent className="sm:max-w-sm gap-0 space-y-0 h-[70vh]">
+            <Dialog open={open} onOpenChange={setOpen}>
+                <DialogContent className="sm:max-w-sm gap-0 space-y-0 py-10">
 
                     <DialogTitle className='h-0'></DialogTitle>
 
                     <div className='h-full flex flex-col justify-evenly items-center text-center'>
-                        <div className="flex flex-col items-center space-y-2">
+                        {/* <div className="flex flex-col items-center space-y-2">
                             <p className="font-bold text-green-600 text-2xl flex items-center"><Check size={30} className="bg-green-100 mr-2 border border-green-500 rounded-lg" /> SUCCESS</p>
                             <h3 className="font-semibold print:hidden print:h-0">Vehicle Entry Recipt</h3>
-                        </div>
+                        </div> */}
 
                         <div className="border-2 border-black px-2 py-4 w-full space-y-2">
                             <header className={`${montserrat.className} flex items-center justify-center`}>
@@ -619,7 +622,7 @@ const EntryExitForm = ({
 
                     </div>
 
-                    <DialogFooter className="p-2 mt-0 pb-4 pt-0 border-t">
+                    <DialogFooter className="p-2 mt-4 pt-0 border-t">
 
                         <Button onClick={() => {
                             setEntryData({
@@ -631,6 +634,73 @@ const EntryExitForm = ({
                             setOpen(false)
                         }}>Confirm</Button>
 
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
+
+            <Dialog open={exitSuccess} onOpenChange={setExitSuccess}>
+                <DialogContent className="sm:max-w-sm gap-0 space-y-0 h-[50vh] p-6 flex flex-col justify-between bg-linear-to-b from-green-50 to-white">
+
+                    {/* Hidden title for accessibility */}
+                    <DialogTitle className="sr-only">Delivery Success</DialogTitle>
+
+                    {/* Main Content */}
+                    <div className="flex flex-col items-center justify-center flex-1 gap-6">
+                        {/* Success Icon */}
+                        <div className="relative w-20 h-20">
+                            <div className="absolute inset-0 bg-green-100 rounded-full animate-pulse" />
+                            <div className="absolute inset-0 flex items-center justify-center bg-primary rounded-full">
+                                <svg
+                                    className="w-10 h-10 text-white"
+                                    fill="none"
+                                    viewBox="0 0 24 24"
+                                    stroke="currentColor"
+                                    strokeWidth={3}
+                                >
+                                    <path
+                                        strokeLinecap="round"
+                                        strokeLinejoin="round"
+                                        d="M5 13l4 4L19 7"
+                                    />
+                                </svg>
+                            </div>
+                        </div>
+
+                        {/* Success Message */}
+                        <div className="text-center space-y-2">
+                            <h2 className="text-2xl font-bold text-gray-900">
+                                Delivery Successful!
+                            </h2>
+                            <p className="text-gray-600">
+                                Vehicle has been safely delivered
+                            </p>
+                        </div>
+
+                        {/* Details */}
+                        {/* <div className="w-full bg-white rounded-lg border border-green-200 p-4 space-y-3 text-sm">
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-600">Vehicle</span>
+                                <span className="font-semibold text-gray-900">2024 BMW X5</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-600">Location</span>
+                                <span className="font-semibold text-gray-900">Main Entrance</span>
+                            </div>
+                            <div className="flex justify-between items-center">
+                                <span className="text-gray-600">Time</span>
+                                <span className="font-semibold text-gray-900">2:45 PM</span>
+                            </div>
+                        </div> */}
+                    </div>
+
+                    {/* Footer */}
+                    <DialogFooter className="p-0 border-t border-gray-200 pt-4">
+                        <Button
+                            onClick={() => setExitSuccess(false)}
+                            className="w-full bg-primary hover:bg-primary/70 text-white"
+                        >
+                            Done
+                        </Button>
                     </DialogFooter>
                 </DialogContent>
             </Dialog>
