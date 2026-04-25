@@ -155,10 +155,10 @@ export default function QrScannerComponent({ setExitData, setMode }: QrScannerPr
                             <div className="absolute bottom-0 left-0 w-full h-[calc(50%-140px)] bg-black/70" />
 
                             {/* Left */}
-                            <div className="absolute top-[calc(50%-140px)] left-0 w-[calc(50%-150px)] h-70 bg-black/70" />
+                            <div className="absolute top-[calc(50%-140px)] left-0 w-[calc(50%-140px)] h-70 bg-black/70" />
 
                             {/* Right */}
-                            <div className="absolute top-[calc(50%-140px)] right-0 w-[calc(50%-150px)] h-70 bg-black/70" />
+                            <div className="absolute top-[calc(50%-140px)] right-0 w-[calc(50%-140px)] h-70 bg-black/70" />
 
                         </div>
 
