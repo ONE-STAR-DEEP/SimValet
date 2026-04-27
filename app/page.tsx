@@ -407,7 +407,7 @@ export default function Home() {
                 width={70}
               />
               <p className={`${montserrat.className} font-bold text-2xl text-primary`}>
-                SimValet
+                Sim<span className='text-primary'>Valet</span>
               </p>
             </div>
 
