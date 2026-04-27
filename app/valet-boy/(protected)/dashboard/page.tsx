@@ -6,7 +6,6 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion"
-import { Button } from '@/components/ui/button';
 import ValetModule from '@/components/valetBoy/ValetModule';
 import { getSessionUser } from '@/lib/checkSession';
 import Link from 'next/link';

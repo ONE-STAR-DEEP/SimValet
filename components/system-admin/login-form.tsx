@@ -92,17 +92,15 @@ export function LoginForm({
                             href="#"
                             className="flex flex-col items-center gap-2 font-medium"
                         >
-                            <div className="flex size-20 items-center justify-center rounded-full mb-5 bg-[#000000]">
-                                <Image
-                                    src="/assets/images/logo.png"
-                                    height={200}
-                                    width={200}
-                                    alt="Logo"
-                                />
-                            </div>
-                            <span className="sr-only">SimValetPark</span>
+                            <Image
+                                src="/assets/images/logo3.png"
+                                height={150}
+                                width={150}
+                                alt="Logo"
+                            />
+                            <span className="sr-only">SimValet</span>
                         </a>
-                        <h1 className="text-xl font-bold">Welcome to SimValetPark</h1>
+                        <h1 className="text-xl font-bold">Welcome to SimValet</h1>
                         <FieldDescription>
                             Login to access the System Control Dashboard
                         </FieldDescription>
@@ -115,7 +113,7 @@ export function LoginForm({
                             placeholder="m@example.com"
                             value={identifier}
                             required
-                            onChange={(e)=>{setIdentifier(e.target.value)}}
+                            onChange={(e) => { setIdentifier(e.target.value) }}
                         />
                     </Field>
 
@@ -129,7 +127,7 @@ export function LoginForm({
                                 value={otp}
                                 required
                                 maxLength={6}
-                                onChange={(e)=>{setOtp(e.target.value)}}
+                                onChange={(e) => { setOtp(e.target.value) }}
                             />
                         </Field>
                     }

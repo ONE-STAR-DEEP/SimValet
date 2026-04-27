@@ -15,6 +15,7 @@ import {
     DropdownMenuSubTrigger,
     DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import { clearSessionCookie } from "@/lib/logout"
 import { Menu } from "lucide-react"
 import Link from "next/link"
 
@@ -42,7 +43,7 @@ const ValetBoyMenu = () => {
                 </DropdownMenuGroup>
                 <DropdownMenuSeparator />
                 <DropdownMenuGroup>
-                    <DropdownMenuItem>
+                    <DropdownMenuItem onClick={clearSessionCookie}>
                         Log out
                     </DropdownMenuItem>
                 </DropdownMenuGroup>

@@ -21,8 +21,8 @@ export default function Home() {
               height={60}
               width={60}
             />
-            <p className={`${montserrat.className} font-bold text-2xl`}>
-              SimValet<span className='text-primary'>Park</span>
+            <p className={`${montserrat.className} font-bold text-2xl text-primary`}>
+              SimValet
             </p>
           </div>
 
@@ -109,11 +109,11 @@ export default function Home() {
 
           <div className="mb-16 text-center">
             <h2 className="mb-6 text-3xl font-bold text-foreground md:text-4xl">
-              What is SimValetPark and why does it exist?
+              What is SimValet and why does it exist?
             </h2>
 
             <p className="mx-auto max-w-3xl text-lg text-muted-foreground leading-relaxed">
-              SimValetPark is a modern, fully digital valet parking system designed to eliminate waiting time and streamline operations across high-traffic locations.
+              SimValet is a modern, fully digital valet parking system designed to eliminate waiting time and streamline operations across high-traffic locations.
             </p>
           </div>
 
@@ -138,7 +138,7 @@ export default function Home() {
                 The Solution
               </h3>
               <p className="leading-relaxed">
-                SimValetPark replaces outdated processes with a real-time, connected platform
+                SimValet replaces outdated processes with a real-time, connected platform
                 that ensures faster, smoother, and more reliable vehicle handling.
               </p>
             </div>
@@ -159,7 +159,7 @@ export default function Home() {
                 Smart & Real-Time
               </h3>
               <p className="leading-relaxed">
-                Powered by number plate recognition, QR-based requests, and instant notifications, SimValetPark delivers a zero-wait, transparent, and premium valet experience.
+                Powered by number plate recognition, QR-based requests, and instant notifications, SimValet delivers a zero-wait, transparent, and premium valet experience.
               </p>
             </div>
 
@@ -406,8 +406,8 @@ export default function Home() {
                 height={70}
                 width={70}
               />
-              <p className={`${montserrat.className} font-bold text-2xl`}>
-                SimValet<span className="text-primary">Park</span>
+              <p className={`${montserrat.className} font-bold text-2xl text-primary`}>
+                SimValet
               </p>
             </div>
 
@@ -424,7 +424,7 @@ export default function Home() {
               </p>
             </div>
 
-            <p>&copy; {new Date().getFullYear()} SimValetPark. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} SimValet. All rights reserved.</p>
 
           </div>
 

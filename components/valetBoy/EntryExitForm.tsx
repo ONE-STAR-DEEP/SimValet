@@ -577,7 +577,7 @@ const EntryExitForm = ({
                             </header>
 
                             <section className="flex flex-col items-center">
-                                <h3 className="font-bold text-lg">Welcome to SimValetPark</h3>
+                                <h3 className="font-bold text-lg">Welcome to SimValet</h3>
                                 <p className="text-xs">Smart and Secure Parking</p>
                             </section>
 

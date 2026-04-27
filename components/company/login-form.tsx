@@ -131,9 +131,9 @@ export function LoginForm({
                                 width={150}
                                 alt="Logo"
                             />
-                            <span className="sr-only">SimValetPark</span>
+                            <span className="sr-only">SimValet</span>
                         </a>
-                        <h1 className="text-xl font-bold">Welcome to SimValetPark</h1>
+                        <h1 className="text-xl font-bold">Welcome to SimValet</h1>
                         <FieldDescription>
                             Login to access the System Control Dashboard
                         </FieldDescription>

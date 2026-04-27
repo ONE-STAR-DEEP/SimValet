@@ -11,15 +11,15 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "SimValetPark",
-    template: "%s | SimValetPark",
+    default: "SimValet",
+    template: "%s | SimValet",
   },
 
   description:
-    "SimValetPark is a smart valet parking management system that allows customers to request their vehicles instantly while valets receive real-time notifications.",
+    "SimValet is a smart valet parking management system that allows customers to request their vehicles instantly while valets receive real-time notifications.",
 
   keywords: [
-    "SimValetPark",
+    "SimValet",
     "valet parking",
     "smart parking system",
     "valet management",
@@ -27,22 +27,22 @@ export const metadata: Metadata = {
     "parking automation",
   ],
 
-  applicationName: "SimValetPark",
+  applicationName: "SimValet",
 
   authors: [
     {
-      name: "SimValetPark",
+      name: "SimValet",
     },
   ],
 
-  creator: "SimValetPark",
+  creator: "SimValet",
 
   openGraph: {
-    title: "SimValetPark",
+    title: "SimValet",
     description:
       "Smart valet parking system for seamless vehicle requests and valet coordination.",
     url: "https://your-domain.com",
-    siteName: "SimValetPark",
+    siteName: "SimValet",
     type: "website",
   },
 

@@ -53,7 +53,7 @@ export default async function SuperAdminLayout({
             {/* Footer */}
             <footer className="bg-gray-900 text-white text-center py-4">
                 <small className="text-sm">
-                    © {new Date().getFullYear()} SimValetPark
+                    © {new Date().getFullYear()} SimValet
                 </small>
             </footer>
         </div>
