@@ -11,7 +11,7 @@ declare global {
 const socket =
   typeof window !== "undefined" && window.socketInstance
     ? window.socketInstance
-    : io("https://simvaletpark.thavertech.com", {
+    : io("https://simvalet.thavertech.com", {
         path: "/socket.io/",
         transports: ["websocket", "polling"],
         reconnection: true,
