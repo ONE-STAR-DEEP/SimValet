@@ -21,8 +21,8 @@ export default function Home() {
               height={60}
               width={60}
             />
-            <p className={`${montserrat.className} font-bold text-2xl text-primary`}>
-              SimValet
+            <p className={`${montserrat.className} font-bold text-2xl`}>
+              Sim<span className='text-primary'>Valet</span>
             </p>
           </div>
 
@@ -406,7 +406,7 @@ export default function Home() {
                 height={70}
                 width={70}
               />
-              <p className={`${montserrat.className} font-bold text-2xl text-primary`}>
+              <p className={`${montserrat.className} font-bold text-2xl`}>
                 Sim<span className='text-primary'>Valet</span>
               </p>
             </div>
