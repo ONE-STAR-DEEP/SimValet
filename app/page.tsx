@@ -159,7 +159,7 @@ export default function Home() {
                 Smart & Real-Time
               </h3>
               <p className="leading-relaxed">
-                Powered by number plate recognition, QR-based requests, and instant notifications, SimValet delivers a zero-wait, transparent, and premium valet experience.
+                Powered by Automatic Number plate recognization (ANPR), QR-based requests, and instant notifications, SimValet delivers a zero-wait, transparent, and premium valet experience.
               </p>
             </div>
 
