@@ -24,7 +24,7 @@ export default function SplashWrapper({
                     </div>
 
                     <p className="font-semibold text-xl tracking-wide">
-                        <span>Sim</span>Valet
+                        <span className="text-black">Sim</span>Valet
                     </p>
                 </div>
 
