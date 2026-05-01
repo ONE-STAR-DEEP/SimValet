@@ -414,13 +414,11 @@ export default function Home() {
             {/* Company */}
             <div className="flex flex-col gap-2 text-lg">
               <p className="text-muted-foreground">A product by&nbsp; 
-                <Link
-                  href="https://www.thavertech.com/"
-                  target="_blank"
+                <span
                   className="font-semibold text-primary hover:underline"
                 >
-                   Thaver Tech
-                </Link>
+                   SimValet Pvt. Ltd.
+                </span>
               </p>
             </div>
 
