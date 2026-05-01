@@ -178,7 +178,7 @@ const Vehicle = async ({ params }: VehicleProps) => {
               </p>
             </div>
             <p className='text-primary text-md'>
-              SVPT{data.data?.token}
+              SVT{data.data?.token}
             </p>
           </div>
 

@@ -86,7 +86,7 @@ export function LoginForm({
                         <div className="flex items-center border rounded-md bg-white">
 
                             <span className="px-3 text-sm text-muted-foreground border-r">
-                                SVPT
+                                SVT
                             </span>
 
                             <Input

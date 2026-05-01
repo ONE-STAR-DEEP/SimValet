@@ -300,7 +300,7 @@ const EntryExitForm = ({
                                 <div className="flex items-center border rounded-md bg-white">
 
                                     <span className="px-3 text-sm text-muted-foreground border-r">
-                                        SVPT
+                                        SVT
                                     </span>
 
                                     <Input
@@ -393,7 +393,7 @@ const EntryExitForm = ({
                                             <div className="flex items-center border rounded-md bg-white">
 
                                                 <span className="px-3 text-sm text-muted-foreground border-r">
-                                                    SVPT
+                                                    SVT
                                                 </span>
 
                                                 <Input
@@ -510,7 +510,7 @@ const EntryExitForm = ({
                                     <Label>Token</Label>
                                     <div className="flex items-center border rounded-md bg-white">
                                         <span className="px-3 text-sm text-muted-foreground border-r">
-                                            SVPT
+                                            SVT
                                         </span>
 
                                         <Input
@@ -610,7 +610,7 @@ const EntryExitForm = ({
                                 <p className="text-xs text-nowrap tracking-tighter">Scan for a Seamless Car Retrieval Experience</p>
                                 <div className="border-b border-dashed border-gray-400 w-[60%] my-2"></div>
                                 <p className={`${montserrat.className} text-xs`}>TOKEN</p>
-                                <p className="font-bold text-2xl">{`SVPT${entryData.token}`}</p>
+                                <p className="font-bold text-2xl">{`SVT${entryData.token}`}</p>
                                 <p className="">Thank you for Parking with Us</p>
                                 <div className="flex items-center justify-center">
                                     <div className="left-taper-line scale-150" />

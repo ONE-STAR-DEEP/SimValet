@@ -246,7 +246,7 @@ const Vehicle = async ({ searchParams }: PageProps) => {
               </p>
             </div>
             <p className='text-primary text-md'>
-              {finalAmount} (for {diffHours} {diffHours > 1 ? "hours" : "hour"})
+              {finalAmount}
             </p>
           </div>
 
@@ -258,7 +258,7 @@ const Vehicle = async ({ searchParams }: PageProps) => {
               </p>
             </div>
             <p className='text-primary text-md'>
-              SVPT{data.data?.token}
+              SVT{data.data?.token}
             </p>
           </div>
 
