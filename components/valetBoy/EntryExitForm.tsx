@@ -26,7 +26,7 @@ import {
     DialogFooter,
     DialogTitle,
 } from "@/components/ui/dialog"
-import QRComponent from '../valetBoyScreen-2/QR';
+import QRComponent from '../QR';
 import Image from 'next/image';
 import { Montserrat } from 'next/font/google';
 

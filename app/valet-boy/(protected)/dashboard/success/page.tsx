@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { Montserrat } from 'next/font/google'
-import QRComponent from "@/components/valetBoyScreen-2/QR";
+import QRComponent from "@/components/QR";
 import ActionButtons from "@/components/valetBoyScreen-2/ActionButtons";
 import { Check } from "lucide-react";
 

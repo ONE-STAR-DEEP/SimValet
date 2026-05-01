@@ -6,7 +6,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { exitEntry, submitEntry, updateStatus } from '@/lib/actions/valetBoy';
 import { Request, VehicleEntry, VehicleExit } from '@/lib/types/types';
-import { CarIcon, Check, Dot } from 'lucide-react';
+import { CarIcon,  Dot } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import CameraCapture from './CameraInput';
@@ -26,7 +26,7 @@ import {
     DialogFooter,
     DialogTitle,
 } from "@/components/ui/dialog"
-import QRComponent from '../valetBoyScreen-2/QR';
+import QRComponent from '../QR';
 import Image from 'next/image';
 import { Montserrat } from 'next/font/google';
 import QrScanner from './QRScanner';
@@ -589,7 +589,7 @@ const EntryExitForm = ({
                                 />
                                 <div className="flex flex-col items-center">
                                     <p className="font-bold text-3xl">
-                                        SimValet<span className='text-primary'>Park</span>
+                                        Sim<span className='text-primary'>Valet</span>
                                     </p>
                                     <div className="flex items-center justify-center">
                                         <div className="left-taper-line" />
@@ -600,7 +600,7 @@ const EntryExitForm = ({
                             </header>
 
                             <section className="flex flex-col items-center">
-                                <h3 className="font-bold text-lg">Welcome to SimValetPark</h3>
+                                <h3 className="font-bold text-lg">Welcome to SimValet</h3>
                                 <p className="text-xs">Smart and Secure Parking</p>
                             </section>
 
