@@ -16,7 +16,7 @@ export default function QRComponent({ vehicle, token }: {
 
       const signedToken = await generateToken({ vehicle, token })
 
-      const url = `https://simvaletpark.thavertech.com/customer-vehicle-portal?token=${encodeURIComponent(signedToken)}`;
+      const url = `https://simvalet.com/customer-vehicle-portal?token=${encodeURIComponent(signedToken)}`;
 
       const svg = await QRCode.toString(url, {
         type: "svg",
