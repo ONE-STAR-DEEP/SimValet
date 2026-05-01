@@ -422,7 +422,7 @@ export default function Home() {
               </p>
             </div>
 
-            <p>&copy; {new Date().getFullYear()} SimValet. All rights reserved.</p>
+            <p>&copy; {new Date().getFullYear()} SimValet Pvt. Ltd. All rights reserved.</p>
 
           </div>
 
