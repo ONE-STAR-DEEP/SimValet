@@ -65,7 +65,6 @@ const Vehicle = async ({ searchParams }: PageProps) => {
           <div>
             <h3 className="text-3xl font-bold">Vehicle Delivered</h3>
             <p className="text-muted-foreground text-lg">{decoded.vehicle}</p>
-            <p className="text-muted-foreground text-lg">{decoded.token}</p>
             <p className="text-muted-foreground text-lg">This vehicle has been delivered successfully</p>
           </div>
           {/* <div className="space-y-6 text-left w-[90%] rounded-xl border p-6 ">
