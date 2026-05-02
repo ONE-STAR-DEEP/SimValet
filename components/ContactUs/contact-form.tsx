@@ -54,7 +54,7 @@ export function ContactForm() {
         subject: "",
         message: "",
         website: "",
-        idea: "", 
+        idea: "",
       })
       setOpen(true)
     } catch (error) {
@@ -75,8 +75,11 @@ export function ContactForm() {
       </div>
       <form onSubmit={handleSubmit} className="space-y-6">
         <div className="grid gap-6 sm:grid-cols-2">
-          <div className="space-y-2">
-            <Label htmlFor="firstName">First Name</Label>
+          <div>
+            <div className="flex">
+              <Label htmlFor="firstName">First Name</Label>
+              <span className="text-primary">*</span>
+            </div>
             <Input
               id="firstName"
               name="firstName"
@@ -90,8 +93,13 @@ export function ContactForm() {
               required
             />
           </div>
-          <div className="space-y-2">
-            <Label htmlFor="lastName">Last Name</Label>
+
+          <div>
+            <div className="flex">
+              <Label htmlFor="lastName">Last Name
+              </Label>
+              <span className="text-primary">*</span>
+            </div>
             <Input
               id="lastName"
               name="lastName"
@@ -106,8 +114,13 @@ export function ContactForm() {
             />
           </div>
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
+
+        <div>
+          <div className="flex">
+            <Label htmlFor="email">Email</Label>
+
+            <span className="text-primary">*</span>
+          </div>
           <Input
             id="email"
             name="email"
@@ -122,8 +135,13 @@ export function ContactForm() {
             required
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="phone">Phone Number</Label>
+
+        <div>
+          <div className="flex">
+            <Label htmlFor="phone">Phone Number</Label>
+
+            <span className="text-primary">*</span>
+          </div>
           <Input
             id="phone"
             name="phone"
@@ -137,8 +155,13 @@ export function ContactForm() {
             placeholder="+91-XXXXX-XXXXX"
           />
         </div>
-        <div className="space-y-2">
-          <Label htmlFor="subject">Subject</Label>
+
+        <div>
+          <div className="flex">
+            <Label htmlFor="subject">Subject</Label>
+
+            <span className="text-primary">*</span>
+          </div>
           <Input
             id="subject"
             name="subject"
@@ -183,8 +206,12 @@ export function ContactForm() {
           />
         </div>
 
-        <div className="space-y-2">
-          <Label htmlFor="message">Message</Label>
+        <div>
+          <div className="flex">
+            <Label htmlFor="message">Message</Label>
+
+            <span className="text-primary">*</span>
+          </div>
           <Textarea
             id="message"
             name="message"
