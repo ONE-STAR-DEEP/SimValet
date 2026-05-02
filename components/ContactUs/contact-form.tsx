@@ -44,7 +44,18 @@ export function ContactForm() {
 
       if (data.website.length > 0 || data.idea.length > 0 || tooFast) return
       const res = await submitContactForm(data, formStart);
+
       if (!res.success) { return }
+      setData({
+        firstName: "",
+        lastName: "",
+        email: "",
+        phone: "",
+        subject: "",
+        message: "",
+        website: "",
+        idea: "", 
+      })
       setOpen(true)
     } catch (error) {
       console.log(error)
@@ -205,7 +216,7 @@ export function ContactForm() {
           <DialogHeader>
             <DialogTitle></DialogTitle>
             <DialogDescription>
-              
+
             </DialogDescription>
           </DialogHeader>
           <div className="flex flex-col items-center justify-center bg-card p-8 text-center lg:p-12">
@@ -226,7 +237,7 @@ export function ContactForm() {
               Send another message
             </Button>
           </div>
-          
+
         </DialogContent>
 
       </Dialog>
