@@ -14,7 +14,6 @@ import {
   DialogDescription,
   DialogHeader,
   DialogTitle,
-  DialogTrigger
 } from "@/components/ui/dialog"
 
 export function ContactForm() {
@@ -41,8 +40,21 @@ export function ContactForm() {
     try {
       const timeTaken = Date.now() - formStart;
       const tooFast = timeTaken < 1500;
+      console.log(data)
 
-      if (data.website.length > 0 || data.idea.length > 0 || tooFast) return
+      if (data.website || data.idea || tooFast) {
+        setData({
+          firstName: "",
+          lastName: "",
+          email: "",
+          phone: "",
+          subject: "",
+          message: "",
+          website: "",
+          idea: "",
+        })
+        return
+      }
       const res = await submitContactForm(data, formStart);
 
       if (!res.success) { return }
@@ -83,6 +95,7 @@ export function ContactForm() {
             <Input
               id="firstName"
               name="firstName"
+              value={data.firstName}
               placeholder="John"
               onChange={(e) => {
                 setData((prev) => ({
@@ -103,6 +116,7 @@ export function ContactForm() {
             <Input
               id="lastName"
               name="lastName"
+              value={data.lastName}
               placeholder="Doe"
               onChange={(e) => {
                 setData((prev) => ({
@@ -124,6 +138,7 @@ export function ContactForm() {
           <Input
             id="email"
             name="email"
+            value={data.email}
             type="email"
             placeholder="john@example.com"
             onChange={(e) => {
@@ -146,13 +161,16 @@ export function ContactForm() {
             id="phone"
             name="phone"
             type="tel"
+            value={data.phone}
+            maxLength={15}
             onChange={(e) => {
+              const onlyNumbers = e.target.value.replace(/\D/g, "") // remove non-digits
               setData((prev) => ({
                 ...prev,
-                phone: e.target.value
+                phone: onlyNumbers
               }))
             }}
-            placeholder="+91-XXXXX-XXXXX"
+            placeholder="XXXXXXXXXX"
           />
         </div>
 
@@ -165,6 +183,7 @@ export function ContactForm() {
           <Input
             id="subject"
             name="subject"
+            value={data.subject}
             placeholder="How can we help you?"
             onChange={(e) => {
               setData((prev) => ({
@@ -215,6 +234,7 @@ export function ContactForm() {
           <Textarea
             id="message"
             name="message"
+            value={data.message}
             placeholder="Tell us more about your inquiry..."
             rows={5}
             onChange={(e) => {

@@ -62,7 +62,7 @@ export const submitContactForm = async (data: ContactFormData, formStart: number
             subject: "Thank You!",
             sender: {
                 name: "SimValet Pvt. Ltd.",
-                email: "info@kt.thavertech.com",
+                email: "park@simvalet.com",
             },
             to: [{ email: data.email }],
 
@@ -191,7 +191,7 @@ export const submitContactForm = async (data: ContactFormData, formStart: number
             subject: "New Enquiry",
             sender: {
                 name: "SimValet Pvt. Ltd.",
-                email: "info@kt.thavertech.com",
+                email: "park@simvalet.com",
             },
             to: [{ email: "park@simvalet.com" }],
 
