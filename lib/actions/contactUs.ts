@@ -193,7 +193,7 @@ export const submitContactForm = async (data: ContactFormData, formStart: number
                 name: "SimValet Pvt. Ltd.",
                 email: "info@kt.thavertech.com",
             },
-            to: [{ email: "park@simvalet.com" }],
+            to: [{ email: "chauhandeependra2001@gmail.com" }],
 
             htmlContent: `
             <!DOCTYPE html>
