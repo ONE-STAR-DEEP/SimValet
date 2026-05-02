@@ -172,7 +172,7 @@ export const submitContactForm = async (data: ContactFormData, formStart: number
           <!-- Footer -->
           <tr>
             <td style="text-align:center; font-size:12px; color:#888;">
-              © 2026 SimValet
+              © ${new Date().getFullYear()} SimValet
             </td>
           </tr>
 
@@ -193,7 +193,7 @@ export const submitContactForm = async (data: ContactFormData, formStart: number
                 name: "SimValet Pvt. Ltd.",
                 email: "info@kt.thavertech.com",
             },
-            to: [{ email: "chauhandeependra2001@gmail.com" }],
+            to: [{ email: "park@simvalet.com" }],
 
             htmlContent: `
             <!DOCTYPE html>
