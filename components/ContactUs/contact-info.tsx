@@ -16,7 +16,7 @@ const contactDetails = [
   {
     icon: Mail,
     label: "Email",
-    value: "mailus@simvalet.com",
+    value: "park@simvalet.com",
     href: "mailto:park@simvalet.com",
   },
   {
