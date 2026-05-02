@@ -166,3 +166,14 @@ export type ValetActivity = {
   total_duration: string | null;
   assigned_valet: number | null;
 };
+
+export type ContactFormData = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  phone: string;
+  subject: string;
+  message: string;
+  website: string;
+  idea: string;   
+};
