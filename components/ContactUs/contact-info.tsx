@@ -17,7 +17,7 @@ const contactDetails = [
     icon: Mail,
     label: "Email",
     value: "mailus@simvalet.com",
-    href: "mailto:mailus@simvalet.com",
+    href: "mailto:park@simvalet.com",
   },
   {
     icon: Globe,
