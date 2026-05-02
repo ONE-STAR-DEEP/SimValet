@@ -34,7 +34,7 @@ export default function Home() {
               Sign In
             </Link>
             <Link
-              href="https://www.thavertech.com/contact"
+              href="/contact-us"
               className="inline-flex items-center gap-2 rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground transition-all hover:shadow-lg hover:shadow-primary/25"
             >
               Contact Us
@@ -375,7 +375,7 @@ export default function Home() {
           </p>
           <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-center">
             <Link
-              href="https://www.thavertech.com/contact"
+              href="/contact-us"
               className="inline-flex items-center justify-center gap-2 rounded-lg bg-primary-foreground px-8 py-3 font-semibold text-primary transition-all hover:shadow-lg hover:shadow-black/20"
             >
               Contact Us
@@ -413,16 +413,18 @@ export default function Home() {
 
             {/* Company */}
             <div className="flex flex-col gap-2 text-lg">
-              <p className="text-muted-foreground">A product by&nbsp; 
+              <p className="text-muted-foreground">A product by&nbsp;
                 <span
-                  className="font-semibold text-primary hover:underline"
+                  className="font-semibold text-primary"
                 >
-                   SimValet Pvt. Ltd.
+                  SimValet Pvt. Ltd.
                 </span>
               </p>
             </div>
-
-            <p>&copy; {new Date().getFullYear()} SimValet Pvt. Ltd. All rights reserved.</p>
+            <div className="flex flex-col gap-2 text-lg">
+              <p>&copy; {new Date().getFullYear()} SimValet Pvt. Ltd.</p>
+              <p> All rights reserved.</p>
+            </div>
 
           </div>
 
