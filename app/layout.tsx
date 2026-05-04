@@ -11,16 +11,20 @@ const jetbrainsMono = JetBrains_Mono({
 
 export const metadata: Metadata = {
   title: {
-    default: "SimValet",
+    default: "SimValet - Smart Valet Parking, Zero Waiting",
+
     template: "%s | SimValet",
   },
 
   description:
-    "SimValet is a smart valet parking management system that allows customers to request their vehicles instantly while valets receive real-time notifications.",
+    "Experience hassle-free parking with SimValet. Enjoy smart valet solutions, zero waiting time, and a seamless premium parking experience.",
 
   keywords: [
     "SimValet",
     "valet parking",
+    "car valet app",
+    "barcode car park",
+    "car valet service",
     "smart parking system",
     "valet management",
     "car parking app",

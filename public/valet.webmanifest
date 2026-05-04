@@ -1,7 +1,7 @@
 {
   "id": "valet-boy",
-  "name": "SimValetPark Valet Boy",
-  "short_name": "SimValetPark",
+  "name": "SimValet Valet Boy",
+  "short_name": "SimValet",
   "description": "Smart parking management for valet staff with real-time vehicle requests.",
   "start_url": "/valet-boy",
   "scope": "/valet-boy",
