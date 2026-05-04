@@ -20,15 +20,7 @@ export const metadata: Metadata = {
     "Experience hassle-free parking with SimValet. Enjoy smart valet solutions, zero waiting time, and a seamless premium parking experience.",
 
   keywords: [
-    "simvalet", 
-    "valet parking", 
-    "car valet app", 
-    "barcode car park", 
-    "car valet service", 
-    "smart parking system", 
-    "valet management", 
-    "car parking app", 
-    "parking automation", 
+    "simvalet", "valet parking", "car valet app", "barcode car park", "car valet service", "smart parking system", "valet management", "car parking app", "parking automation", 
   ],
 
   applicationName: "SimValet",
